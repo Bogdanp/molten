@@ -2,6 +2,8 @@ import re
 from collections import defaultdict
 from typing import Any, Callable, Dict, Iterator, List, Optional, Pattern, Tuple, Union
 
+from .errors import RouteNotFound, RouteParamMissing
+
 #: Alias for things that can be added to a router.
 RouteLike = Union["Route", "Include"]
 
@@ -42,6 +44,12 @@ class Router:
     """A collection of routes.
     """
 
+    __slots__ = [
+        "_routes_by_name",
+        "_routes_by_method",
+        "_route_res_by_method",
+    ]
+
     def __init__(self, routes: Optional[List[RouteLike]] = None) -> None:
         self._routes_by_name: Dict[str, Route] = {}
         self._routes_by_method: Dict[str, List[Route]] = defaultdict(list)
@@ -58,11 +66,16 @@ class Router:
             if route_like.name in self._routes_by_name:
                 raise ValueError(f"a route named {route_like.name} is already registered")
 
-            self._routes_by_name[route_like.name] = route_like
-            self._routes_by_method[route_like.method].insert(0, route_like)
-            self._route_res_by_method[route_like.method].insert(
-                0, compile_route_template(prefix + route_like.template),
+            route = Route(
+                template=prefix + route_like.template,
+                handler=route_like.handler,
+                method=route_like.method,
+                name=route_like.name,
             )
+
+            self._routes_by_name[route.name] = route
+            self._routes_by_method[route.method].insert(0, route)
+            self._route_res_by_method[route.method].insert(0, compile_route_template(route.template))
 
         else:  # pragma: no cover
             raise NotImplementedError(f"unhandled type {type(route_like)}")
@@ -85,6 +98,31 @@ class Router:
                 return route, match.groupdict()
 
         return None
+
+    def reverse_uri(self, name: str, **params: str) -> str:
+        """Build a URI from a Route.
+
+        Raises:
+          RouteNotFound: When the route doesn't exist.
+          RouteParamMissing: When a required parameter was not provided.
+        """
+        try:
+            route = self._routes_by_name[name]
+        except KeyError:
+            raise RouteNotFound(name)
+
+        uri = []
+        for kind, token in tokenize_route_template(route.template):
+            if kind == "binding" or kind == "glob":
+                try:
+                    uri.append(str(params[token]))
+                except KeyError:
+                    raise RouteParamMissing(token)
+
+            elif kind == "chunk":
+                uri.append(token)
+
+        return "".join(uri)
 
 
 def compile_route_template(template: str) -> Pattern[str]:

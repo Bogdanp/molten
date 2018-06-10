@@ -35,6 +35,7 @@ class BaseApp:
         self.router = Router(routes)
         self.add_route = self.router.add_route
         self.add_routes = self.router.add_routes
+        self.reverse_uri = self.router.reverse_uri
 
         self.parsers = parsers or [
             JSONParser(),
@@ -96,10 +97,11 @@ class App(BaseApp):
         })
 
         try:
+            handler: Callable[..., Any]
             route_and_params = self.router.match(request.method, request.path)
             if route_and_params is not None:
                 route, params = route_and_params
-                handler: Callable[..., Any] = partial(route.handler, **params)
+                handler = partial(route.handler, **params)
             else:
                 params = {}
                 handler = self.handle_404

@@ -43,3 +43,13 @@ class ParamMissing(MoltenError):
 class RequestParserNotAvailable(MoltenError):
     """Raised when no request parser can handle the incoming request.
     """
+
+
+class RouteNotFound(MoltenError):
+    """Raised when trying to reverse route to a route that doesn't exist.
+    """
+
+
+class RouteParamMissing(MoltenError):
+    """Raised when a param is missing while reversing a route.
+    """

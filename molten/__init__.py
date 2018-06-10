@@ -1,6 +1,9 @@
 from .app import App, BaseApp
 from .dependency_injection import Component, DependencyInjector, DependencyResolver
-from .errors import DIError, HeaderMissing, HTTPError, MoltenError, ParamMissing, RequestParserNotAvailable
+from .errors import (
+    DIError, HeaderMissing, HTTPError, MoltenError, ParamMissing, RequestParserNotAvailable, RouteNotFound,
+    RouteParamMissing
+)
 from .http import Headers, QueryParams, Request, Response
 from .http.status_codes import *
 from .middleware import ResponseRendererMiddleware
@@ -37,6 +40,7 @@ __all__ = [
 
     # Errors
     "MoltenError", "DIError", "HTTPError", "HeaderMissing", "ParamMissing", "RequestParserNotAvailable",
+    "RouteNotFound", "RouteParamMissing",
 
     # Testing
     "TestClient", "to_environ",

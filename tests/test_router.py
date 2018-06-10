@@ -1,6 +1,6 @@
 import pytest
 
-from molten import Include, Route, Router
+from molten import Include, Route, RouteNotFound, RouteParamMissing, Router
 from molten.router import compile_route_template, tokenize_route_template
 
 
@@ -39,6 +39,33 @@ def test_router_can_fail_to_register_a_route_if_it_already_exists():
     # Then the second call should raise a ValueError
     with pytest.raises(ValueError):
         router.add_route(Route("/route-2", handler))
+
+
+def test_router_can_reverse_routes():
+    # Given that I have a router with some nested routes
+    router = Router([
+        Include("/v1", [
+            Include("/accounts", [
+                Route("/", handler, name="get_accounts"),
+                Route("/{account_id}", handler, name="get_account"),
+            ]),
+        ]),
+    ])
+
+    # When I try to reverse a route
+    # Then I should get back a string
+    assert router.reverse_uri("get_accounts") == "/v1/accounts/"
+    assert router.reverse_uri("get_account", account_id=1) == "/v1/accounts/1"
+
+    # When I try to reverse a route that doesn't exist
+    # Then a RouteNotFound error should be raised
+    with pytest.raises(RouteNotFound):
+        router.reverse_uri("i-dont-exist")
+
+    # When I try to reverse a route that needs a particular parameter but I don't provide it
+    # Then a RouteParamMissing error should be raised
+    with pytest.raises(RouteParamMissing):
+        router.reverse_uri("get_account")
 
 
 @pytest.mark.parametrize("template,expected", [
