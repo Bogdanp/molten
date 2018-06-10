@@ -40,7 +40,9 @@ class BaseApp:
             JSONParser(),
             URLEncodingParser(),
         ]
-        self.renderers = renderers or [JSONRenderer()]
+        self.renderers = renderers or [
+            JSONRenderer(),
+        ]
         self.middleware = middleware or [
             ResponseRendererMiddleware(self.renderers)
         ]

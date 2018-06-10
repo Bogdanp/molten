@@ -1,6 +1,6 @@
 import re
 from collections import defaultdict
-from typing import Any, Callable, Dict, List, Optional, Pattern, Tuple, Union
+from typing import Any, Callable, Dict, Iterator, List, Optional, Pattern, Tuple, Union
 
 #: Alias for things that can be added to a router.
 RouteLike = Union["Route", "Include"]
@@ -61,7 +61,7 @@ class Router:
             self._routes_by_name[route_like.name] = route_like
             self._routes_by_method[route_like.method].insert(0, route_like)
             self._route_res_by_method[route_like.method].insert(
-                0, _compile_route_template(prefix + route_like.template),
+                0, compile_route_template(prefix + route_like.template),
             )
 
         else:  # pragma: no cover
@@ -87,15 +87,51 @@ class Router:
         return None
 
 
-def _compile_route_template(template: str) -> Pattern[str]:
+def compile_route_template(template: str) -> Pattern[str]:
     """Convert a route template into a regular expression.
     """
     re_template = ""
-    for segment in template.split("/")[1:]:
-        if segment.startswith("{") and segment.endswith("}"):
-            segment_name = segment[1:-1]
-            re_template += f"/(?P<{segment_name}>[^/]+)"
-        else:
-            re_template += f"/{segment}"
+    for kind, token in tokenize_route_template(template):
+        if kind == "binding":
+            re_template += f"(?P<{token}>[^/]+)"
+
+        elif kind == "glob":
+            re_template += f"(?P<{token}>.+)"
+
+        elif kind == "chunk":
+            re_template += token.replace(".", r"\.")
+
+        else:  # pragma: no cover
+            raise NotImplementedError(f"unhandled token kind {kind!r}")
 
     return re.compile(f"^{re_template}$")
+
+
+def tokenize_route_template(template: str) -> Iterator[Tuple[str, str]]:
+    """Convert a route template into a stream of tokens.
+    """
+    k, i = 0, 0
+
+    while i < len(template):
+        if template[i] == "{":
+            yield "chunk", template[k:i]
+
+            k = i
+            kind = "binding"
+            if template[i:i + 2] == "{*":
+                kind = "glob"
+                i += 1
+
+            for j in range(i + 1, len(template)):
+                if template[j] == "}":
+                    yield kind, template[i + 1:j]
+                    k = j + 1
+                    i = j
+                    break
+            else:
+                raise SyntaxError(f"unmatched {{ in route template {template!r}")
+
+        i += 1
+
+    if k != i:
+        yield "chunk", template[k:i]

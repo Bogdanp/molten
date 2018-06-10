@@ -1,5 +1,5 @@
+import functools
 import inspect
-from functools import wraps
 from inspect import Parameter
 from typing import Any, Callable, List, Optional, TypeVar, no_type_check
 
@@ -97,8 +97,8 @@ class DependencyResolver:
         """Resolve a function's dependencies.
         """
 
-        @wraps(fn)
-        def resolved():
+        @functools.wraps(fn)
+        def resolved_fn():
             nonlocal params
             params = params or {}
             signature = inspect.signature(fn)
@@ -146,4 +146,4 @@ class DependencyResolver:
 
             return fn(**params)
 
-        return resolved
+        return resolved_fn
