@@ -248,7 +248,7 @@ def test_apps_can_render_tuples():
 
     # Then I should get back that status code
     assert response.status_code == 201
-    assert response.data == '{"x": 42}'
+    assert response.json() == {"x": 42}
 
 
 def test_apps_can_return_files():

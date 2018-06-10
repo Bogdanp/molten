@@ -51,19 +51,5 @@ class Response:
 
         return content_length
 
-    @property
-    def status_code(self) -> int:
-        """Returns the HTTP status code as an integer.
-        """
-        code, _, _ = self.status.partition(" ")
-        return int(code)
-
-    @property
-    def data(self) -> str:
-        """Rewinds the output stream and returns all its data.
-        """
-        self.stream.seek(0)
-        return self.stream.read().decode("utf-8")
-
     def __repr__(self) -> str:
         return f"Response(status={repr(self.status)}, headers={repr(self.headers)})"

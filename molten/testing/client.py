@@ -1,3 +1,4 @@
+import json
 from functools import partial
 from io import BytesIO
 from json import dumps as to_json
@@ -13,6 +14,39 @@ from ..http.response import Response
 from .common import to_environ
 
 HTTP_METHODS = {"delete", "head", "get", "patch", "post", "put"}
+
+
+class TestResponse:
+    """A wrapper around Response objects that adds a few additional
+    helper methods for testing.
+    """
+
+    __slots__ = ["_response"]
+
+    def __init__(self, response: Response) -> None:
+        self._response = response
+
+    @property
+    def data(self) -> str:
+        """Rewinds the output stream and returns all its data.
+        """
+        self._response.stream.seek(0)
+        return self._response.stream.read().decode("utf-8")
+
+    @property
+    def status_code(self) -> int:
+        """Returns the HTTP status code as an integer.
+        """
+        code, _, _ = self._response.status.partition(" ")
+        return int(code)
+
+    def json(self) -> Any:
+        """Convert the response data to JSON.
+        """
+        return json.loads(self.data)
+
+    def __getattr__(self, name: str) -> Any:
+        return getattr(self._response, name)
 
 
 class TestClient:
@@ -76,7 +110,7 @@ class TestClient:
             response.stream.write(chunk)
 
         response.stream.seek(0)
-        return response
+        return TestResponse(response)
 
     def __getattr__(self, name: str) -> Any:
         if name in HTTP_METHODS:
