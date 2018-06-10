@@ -73,6 +73,15 @@ platform = "*"
 [package.dependencies]
 flake8 = "*"
 [[package]]
+name = "gunicorn"
+version = "19.8.1"
+description = "WSGI HTTP Server for UNIX"
+category = "dev"
+optional = false
+python-versions = ">=2.6, !=3.0.*, !=3.1.*"
+platform = "*"
+
+[[package]]
 name = "isort"
 version = "4.3.4"
 description = "A Python utility / library to sort Python imports."
@@ -229,7 +238,7 @@ typing = ">=3.6.2"
 [metadata]
 python-versions = "^3.6"
 platform = "*"
-content-hash = "fb3762572378ef9f448e83d217c5cdee1095c1acca3f16b92c4b1f93309fdf4d"
+content-hash = "67d9b844228d3ec0d6c85d6bbd3a64637915c4cab2265d35ef227a7a2840d54c"
 
 [metadata.hashes]
 atomicwrites = [ "a24da68318b08ac9c9c45029f4a10371ab5b20e4226738e150e6e7c571630ae6", "240831ea22da9ab882b551b31d4225591e5e447a68c5e188db5b89ca1d487585",]
@@ -239,6 +248,7 @@ coverage = [ "7608a3dd5d73cb06c531b8925e0ef8d3de31fed2544a7de6c63960a1e73ea4bc",
 flake8 = [ "c7841163e2b576d435799169b78703ad6ac1bbb0f199994fc05f700b2a90ea37", "7253265f7abd8b313e3892944044a365e3f4ac3fcdcfb4298f55ee9ddf188ba0",]
 flake8-bugbear = [ "541746f0f3b2f1a8d7278e1d2d218df298996b60b02677708560db7c7e620e3b", "5f14a99d458e29cb92be9079c970030e0dd398b2decb179d76d39a5266ea1578",]
 flake8-quotes = [ "fd9127ad8bbcf3b546fa7871a5266fd8623ce765ebe3d5aa5eabb80c01212b26",]
+gunicorn = [ "7ef2b828b335ed58e3b64ffa84caceb0a7dd7c5ca12f217241350dec36a1d5dc", "bc59005979efb6d2dd7d5ba72d99f8a8422862ad17ff3a16e900684630dd2a10",]
 isort = [ "ec9ef8f4a9bc6f71eec99e1806bfa2de401650d996c59330782b89a5555c1497", "1153601da39a25b14ddc54955dbbacbb6b2d19135386699e2ad58517953b34af", "b9c40e9750f3d77e6e4d441d8b0266cf555e7cdabdcff33c4fd06366ca761ef8",]
 mccabe = [ "ab8a6258860da4b6677da4bd2fe5dc2c659cff31b3ee4f7f5d64e79735b80d42", "dd8d182285a0fe56bace7f45b5e7d1a6ebcbf524e8f3bd87eb0f125271b8831f",]
 more-itertools = [ "a18d870ef2ffca2b8463c0070ad17b5978056f403fb64e3f15fe62a52db21cc0", "6703844a52d3588f951883005efcf555e49566a48afd4db4e965d69b883980d3", "2b6b9893337bfd9166bee6a62c2b0c9fe7735dcf85948b387ec8cba30e85d8e8",]
