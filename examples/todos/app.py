@@ -4,7 +4,7 @@ from inspect import Parameter
 from typing import Any, Callable, Iterator, List, Optional
 
 from molten import (
-    HTTP_204, HTTP_403, HTTP_404, App, Header, HTTPError, Include, JSONRenderer, RequestData,
+    HTTP_201, HTTP_204, HTTP_403, HTTP_404, App, Header, HTTPError, Include, JSONRenderer, RequestData,
     ResponseRendererMiddleware, Route
 )
 
@@ -55,7 +55,7 @@ class TodoManager:
                 todo.get("description", "no description"),
                 todo.get("status", "todo"),
             ])
-            return todo
+            return {"id": cursor.lastrowid, **todo}
 
     def get_all(self) -> List[dict]:
         with self.db.get_cursor() as cursor:
@@ -92,7 +92,7 @@ def get_todo(todo_id: str, manager: TodoManager) -> dict:
 
 
 def create_todo(todo: RequestData, manager: TodoManager) -> dict:
-    return dict(manager.create(todo))
+    return HTTP_201, dict(manager.create(todo))
 
 
 def delete_todo(todo_id: str, manager: TodoManager):
