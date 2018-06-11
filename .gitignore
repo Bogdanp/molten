@@ -2,6 +2,7 @@ __pycache__
 .coverage
 .mypy_cache
 .pytest_cache
+dist
 htmlcov
 molten.egg-info
 setup.py
