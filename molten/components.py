@@ -5,13 +5,23 @@ from .dependency_injection import DependencyResolver
 from .errors import HeaderMissing, HTTPError, ParamMissing, RequestParserNotAvailable
 from .http import HTTP_400, Cookies, Headers, QueryParams
 from .parsers import RequestParser
-from .typing import Header, QueryParam, RequestBody, RequestData, RequestInput, extract_optional_annotation
+from .typing import (
+    Header, QueryParam, RequestBody, RequestData, RequestInput, extract_optional_annotation
+)
 
 _T = TypeVar("_T")
 
 
 class HeaderComponent:
     """Retrieves a named header from the request.
+
+    Examples:
+
+      def handle(content_type: Header) -> Response:
+        ...
+
+      def handle(content_type: Optional[Header]) -> Response:
+        ...
     """
 
     is_cacheable = False
@@ -36,6 +46,14 @@ class HeaderComponent:
 
 class QueryParamComponent:
     """Retrieves a named query param from the request.
+
+    Examples:
+
+      def handle(x: QueryParam) -> Response:
+        ...
+
+      def handle(x: Optional[QueryParam]) -> Response:
+        ...
     """
 
     is_cacheable = False
@@ -59,6 +77,11 @@ class QueryParamComponent:
 
 class RequestBodyComponent:
     """A component that reads the entire request body into a string.
+
+    Examples:
+
+      def handle(body: RequestBody) -> Response:
+        ...
     """
 
     is_cacheable = True
@@ -72,7 +95,14 @@ class RequestBodyComponent:
 
 
 class RequestDataComponent:
-    """A component that parses request data.
+    """A component that parses request data based on the content-type
+    header and the set of registered request parsers.  If no request
+    parser is available, then an HTTP 415 response is returned.
+
+    Examples:
+
+      def handle(data: RequestData) -> Response:
+        ...
     """
 
     is_cacheable = True
@@ -94,6 +124,11 @@ class RequestDataComponent:
 
 class CookiesComponent:
     """A component that parses request cookies.
+
+    Examples:
+
+      def handle(cookies: Cookies) -> Response:
+        cookies["some-cookie"]
     """
 
     is_cacheable = True
