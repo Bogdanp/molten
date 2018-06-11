@@ -115,9 +115,9 @@ class RequestDataComponent:
         return parameter.annotation is RequestData
 
     def resolve(self, content_type: Optional[Header], resolver: DependencyResolver) -> RequestData:
-        content_type_str = content_type or ""
+        content_type_str = (content_type or "").lower()
         for parser in self.parsers:
-            if parser.can_parse_content(content_type_str.lower()):
+            if parser.can_parse_content(content_type_str):
                 return RequestData(resolver.resolve(parser.parse)())
         raise RequestParserNotAvailable(content_type_str)
 
