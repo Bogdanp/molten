@@ -1,8 +1,8 @@
 from .app import App, BaseApp
 from .dependency_injection import Component, DependencyInjector, DependencyResolver
 from .errors import (
-    DIError, HeaderMissing, HTTPError, MoltenError, ParamMissing, RequestParserNotAvailable, RouteNotFound,
-    RouteParamMissing
+    DIError, HeaderMissing, HTTPError, MoltenError, ParamMissing, RequestParserNotAvailable,
+    RouteNotFound, RouteParamMissing
 )
 from .http import Cookies, Headers, QueryParams, Request, Response
 from .http.status_codes import *
@@ -11,12 +11,15 @@ from .parsers import JSONParser, RequestParser, URLEncodingParser
 from .renderers import JSONRenderer, ResponseRenderer
 from .router import Include, Route, Router
 from .testing import TestClient, to_environ
-from .typing import Header, Host, Method, Port, QueryParam, QueryString, RequestBody, RequestData, RequestInput, Scheme
+from .typing import (
+    Header, Host, Method, Middleware, Port, QueryParam, QueryString, RequestBody, RequestData,
+    RequestInput, Scheme
+)
 
 __version__ = "0.1.0"
 
 __all__ = [
-    "BaseApp", "App",
+    "BaseApp", "App", "Middleware",
 
     # Router
     "Router", "Route", "Include",

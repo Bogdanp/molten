@@ -6,6 +6,9 @@ Environ = Dict[str, Any]
 #: An alias representing a WSGI start_response callback.
 StartResponse = Callable[[str, List[Tuple[str, str]], Any], None]
 
+#: The type of middleware functions.
+Middleware = Callable[[Callable[..., Any]], Callable[..., Any]]
+
 #: The request method.
 Method = NewType("Method", str)
 

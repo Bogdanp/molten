@@ -5,7 +5,8 @@ from typing import Any, Callable, Iterable, List, Optional
 from wsgiref.util import FileWrapper  # type: ignore
 
 from .components import (
-    CookiesComponent, HeaderComponent, QueryParamComponent, RequestBodyComponent, RequestDataComponent
+    CookiesComponent, HeaderComponent, QueryParamComponent, RequestBodyComponent,
+    RequestDataComponent
 )
 from .dependency_injection import Component, DependencyInjector
 from .errors import RequestParserNotAvailable
@@ -14,12 +15,11 @@ from .middleware import ResponseRendererMiddleware
 from .parsers import JSONParser, RequestParser, URLEncodingParser
 from .renderers import JSONRenderer, ResponseRenderer
 from .router import RouteLike, Router
-from .typing import Environ, Host, Method, Port, QueryString, RequestInput, Scheme, StartResponse
+from .typing import (
+    Environ, Host, Method, Middleware, Port, QueryString, RequestInput, Scheme, StartResponse
+)
 
 LOGGER = logging.getLogger(__name__)
-
-#: The type of middleware functions.
-Middleware = Callable[[Callable[..., Any]], Callable[..., Any]]
 
 
 class BaseApp:
