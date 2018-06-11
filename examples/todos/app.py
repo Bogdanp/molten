@@ -1,11 +1,11 @@
 import sqlite3
 from contextlib import contextmanager
 from inspect import Parameter
-from typing import Any, Callable, Iterator, List, Optional
+from typing import Any, Callable, Iterator, List, Optional, Tuple, Union
 
 from molten import (
-    HTTP_201, HTTP_204, HTTP_403, HTTP_404, App, Header, HTTPError, Include, JSONRenderer, RequestData,
-    ResponseRendererMiddleware, Route
+    HTTP_201, HTTP_204, HTTP_403, HTTP_404, App, Component, Header, HTTPError, Include,
+    JSONRenderer, Middleware, RequestData, ResponseRendererMiddleware, Route
 )
 
 
@@ -36,6 +36,7 @@ class DB:
 
 
 class DBComponent:
+    is_cacheable = True
     is_singleton = True
 
     def can_handle_parameter(self, parameter: Parameter) -> bool:
@@ -73,6 +74,9 @@ class TodoManager:
 
 
 class TodoManagerComponent:
+    is_cacheable = True
+    is_singleton = True
+
     def can_handle_parameter(self, parameter: Parameter) -> bool:
         return parameter.annotation is TodoManager
 
@@ -91,22 +95,22 @@ def get_todo(todo_id: str, manager: TodoManager) -> dict:
     return dict(todo)
 
 
-def create_todo(todo: RequestData, manager: TodoManager) -> dict:
+def create_todo(todo: RequestData, manager: TodoManager) -> Tuple[str, dict]:
     return HTTP_201, dict(manager.create(todo))
 
 
-def delete_todo(todo_id: str, manager: TodoManager):
+def delete_todo(todo_id: str, manager: TodoManager) -> Tuple[str, None]:
     manager.delete_by_id(int(todo_id))
     return HTTP_204, None
 
 
-components = [
+components: List[Component] = [
     DBComponent(),
     TodoManagerComponent(),
 ]
 
 
-middleware = [
+middleware: List[Middleware] = [
     ResponseRendererMiddleware([
         JSONRenderer(),
     ]),
@@ -114,7 +118,7 @@ middleware = [
 ]
 
 
-routes = [
+routes: List[Union[Route, Include]] = [
     Include("/v1/todos", [
         Route("/", list_todos),
         Route("/", create_todo, method="POST"),
