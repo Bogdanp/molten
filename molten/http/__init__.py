@@ -1,3 +1,4 @@
+from .cookies import Cookies
 from .headers import Headers
 from .query_params import QueryParams
 from .request import Request
@@ -6,7 +7,7 @@ from .status_codes import *
 
 __all__ = [
     "Request", "Response",
-    "Headers", "QueryParams",
+    "Headers", "QueryParams", "Cookies",
 
     # 1xx
     "HTTP_100", "HTTP_101", "HTTP_102",

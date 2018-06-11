@@ -4,7 +4,9 @@ from functools import partial
 from typing import Any, Callable, Iterable, List, Optional
 from wsgiref.util import FileWrapper  # type: ignore
 
-from .components import HeaderComponent, QueryParamComponent, RequestBodyComponent, RequestDataComponent
+from .components import (
+    CookiesComponent, HeaderComponent, QueryParamComponent, RequestBodyComponent, RequestDataComponent
+)
 from .dependency_injection import Component, DependencyInjector
 from .errors import RequestParserNotAvailable
 from .http import HTTP_204, HTTP_404, HTTP_415, HTTP_500, Headers, QueryParams, Request, Response
@@ -51,7 +53,8 @@ class BaseApp:
             HeaderComponent(),
             QueryParamComponent(),
             RequestBodyComponent(),
-            RequestDataComponent(self.parsers)
+            RequestDataComponent(self.parsers),
+            CookiesComponent(),
         ]
         self.injector = DependencyInjector(self.components)
 

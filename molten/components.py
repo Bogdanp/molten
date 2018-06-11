@@ -3,7 +3,7 @@ from typing import List, Optional, TypeVar
 
 from .dependency_injection import DependencyResolver
 from .errors import HeaderMissing, HTTPError, ParamMissing, RequestParserNotAvailable
-from .http import HTTP_400, Headers, QueryParams
+from .http import HTTP_400, Cookies, Headers, QueryParams
 from .parsers import RequestParser
 from .typing import Header, QueryParam, RequestBody, RequestData, RequestInput, extract_optional_annotation
 
@@ -90,3 +90,19 @@ class RequestDataComponent:
             if parser.can_parse_content(content_type_str.lower()):
                 return RequestData(resolver.resolve(parser.parse)())
         raise RequestParserNotAvailable(content_type_str)
+
+
+class CookiesComponent:
+    """A component that parses request cookies.
+    """
+
+    is_cacheable = True
+    is_singleton = False
+
+    def can_handle_parameter(self, parameter: Parameter) -> bool:
+        return parameter.annotation is Cookies
+
+    def resolve(self, cookie: Optional[Header]) -> Cookies:
+        if cookie is None:
+            return Cookies()
+        return Cookies.parse(cookie)

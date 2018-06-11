@@ -1,8 +1,11 @@
 import os
 from typing import Optional, Tuple
 
+import pytest
+
 from molten import (
-    HTTP_200, HTTP_201, HTTP_204, App, Header, QueryParam, QueryParams, Request, RequestData, Response, Route, testing
+    HTTP_200, HTTP_201, HTTP_204, App, Cookies, Header, QueryParam, QueryParams, Request,
+    RequestData, Response, Route, testing
 )
 
 
@@ -54,6 +57,10 @@ def returns_tuple() -> Tuple[str, dict]:
     return HTTP_201, {"x": 42}
 
 
+def reads_cookies(cookies: Cookies) -> Response:
+    return cookies
+
+
 def get_countries() -> Response:
     return Response(HTTP_200, stream=open(path_to("fixtures", "example.json"), mode="rb"), headers={
         "content-type": "application/json",
@@ -72,6 +79,7 @@ app = App(routes=[
     Route("/no-content", no_content),
     Route("/returns-dict", returns_dict),
     Route("/returns-tuple", returns_tuple),
+    Route("/reads-cookies", reads_cookies),
     Route("/countries", get_countries),
 ])
 client = testing.TestClient(app)
@@ -259,3 +267,18 @@ def test_apps_can_return_files():
     # Then I should get back a 200 response
     assert response.status_code == 200
     assert response.headers["content-length"] == "15813"
+
+
+@pytest.mark.parametrize("header,expected_status,expected_json", [
+    (None, 200, {}),
+    ("", 200, {}),
+    ("a=1", 200, {"a": "1"}),
+    ("a=1; b=2; a=3", 200, {"a": "3", "b": "2"}),
+    ("a=1;b=2;a=3;;", 200, {"a": "3", "b": "2"}),
+])
+def test_apps_can_parse_cookie_headers(header, expected_status, expected_json):
+    response = client.get("/reads-cookies", headers={
+        "cookie": header,
+    })
+    assert response.status_code == expected_status
+    assert response.json() == expected_json
