@@ -68,7 +68,7 @@ class TestClient:
             data: Optional[Dict[str, str]] = None,
             json: Optional[Any] = None,
             auth: Optional[Callable[[Request], Request]] = None,
-    ) -> Response:
+    ) -> TestResponse:
         """Simulate a request against the application.
 
         Raises:
