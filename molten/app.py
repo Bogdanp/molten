@@ -6,7 +6,7 @@ from wsgiref.util import FileWrapper  # type: ignore
 
 from .components import (
     CookiesComponent, HeaderComponent, QueryParamComponent, RequestBodyComponent,
-    RequestDataComponent
+    RequestDataComponent, RouteParamsComponent
 )
 from .dependency_injection import Component, DependencyInjector
 from .errors import RequestParserNotAvailable
@@ -51,10 +51,10 @@ class BaseApp:
         ]
         self.components = (components or []) + [
             HeaderComponent(),
+            CookiesComponent(),
             QueryParamComponent(),
             RequestBodyComponent(),
             RequestDataComponent(self.parsers),
-            CookiesComponent(),
         ]
         self.injector = DependencyInjector(self.components)
 
@@ -104,12 +104,12 @@ class App(BaseApp):
             route_and_params = self.router.match(request.method, request.path)
             if route_and_params is not None:
                 route, params = route_and_params
-                handler = partial(route.handler, **params)
+                handler = route.handler
+                resolver.add_component(RouteParamsComponent(params))
             else:
-                params = {}
                 handler = self.handle_404
 
-            handler = resolver.resolve(handler, params)
+            handler = resolver.resolve(handler)
             for middleware in reversed(self.middleware):
                 handler = resolver.resolve(middleware(handler))
 

@@ -99,7 +99,7 @@ class Router:
 
         return None
 
-    def reverse_uri(self, name: str, **params: str) -> str:
+    def reverse_uri(self, route_name: str, **params: str) -> str:
         """Build a URI from a Route.
 
         Raises:
@@ -107,9 +107,9 @@ class Router:
           RouteParamMissing: When a required parameter was not provided.
         """
         try:
-            route = self._routes_by_name[name]
+            route = self._routes_by_name[route_name]
         except KeyError:
-            raise RouteNotFound(name)
+            raise RouteNotFound(route_name)
 
         uri = []
         for kind, token in tokenize_route_template(route.template):

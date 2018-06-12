@@ -75,8 +75,7 @@ class DependencyInjector:
 
 class DependencyResolver:
     """The resolver does the work of actually filling in all of a
-    function's dependencies and returning a partially-applied version
-    of it.
+    function's dependencies and returning a thunk.
     """
 
     __slots__ = [
@@ -85,8 +84,11 @@ class DependencyResolver:
     ]
 
     def __init__(self, components: List[Component], instances: dict) -> None:
-        self.components = components
+        self.components = components[:]
         self.instances = instances
+
+    def add_component(self, component: Component) -> None:
+        self.components.append(component)
 
     def resolve(
             self,

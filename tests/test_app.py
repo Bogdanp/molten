@@ -61,6 +61,10 @@ def reads_cookies(cookies: Cookies) -> Response:
     return cookies
 
 
+def route_params(name: str, age: int) -> str:
+    return f"{name} is {age} years old"
+
+
 def get_countries() -> Response:
     return Response(HTTP_200, stream=open(path_to("fixtures", "example.json"), mode="rb"), headers={
         "content-type": "application/json",
@@ -80,6 +84,7 @@ app = App(routes=[
     Route("/returns-dict", returns_dict),
     Route("/returns-tuple", returns_tuple),
     Route("/reads-cookies", reads_cookies),
+    Route("/route-params/{name}/{age}", route_params),
     Route("/countries", get_countries),
 ])
 client = testing.TestClient(app)
@@ -282,3 +287,23 @@ def test_apps_can_parse_cookie_headers(header, expected_status, expected_json):
     })
     assert response.status_code == expected_status
     assert response.json() == expected_json
+
+
+def test_apps_can_handle_route_params():
+    # Given that I have an app
+    # When I make a request to a handler that uses route params
+    response = client.get(app.reverse_uri("route_params", name="Jim", age=24))
+
+    # Then I should get back a successful response
+    assert response.status_code == 200
+    assert response.json() == "Jim is 24 years old"
+
+
+def test_apps_can_fail_to_handle_route_params():
+    # Given that I have an app
+    # When I make a request to a handler that uses route params with an invalid param type
+    response = client.get(app.reverse_uri("route_params", name="Jim", age="invalid"))
+
+    # Then I should get back a 400 response
+    assert response.status_code == 400
+    assert response.json() == {"age": "expected int value"}

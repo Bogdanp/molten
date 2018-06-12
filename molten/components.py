@@ -1,5 +1,5 @@
 from inspect import Parameter
-from typing import List, Optional, TypeVar
+from typing import Any, Dict, List, Optional, TypeVar
 
 from .dependency_injection import DependencyResolver
 from .errors import HeaderMissing, HTTPError, ParamMissing, RequestParserNotAvailable
@@ -105,6 +105,8 @@ class RequestDataComponent:
         ...
     """
 
+    __slots__ = ["parsers"]
+
     is_cacheable = True
     is_singleton = False
 
@@ -141,3 +143,32 @@ class CookiesComponent:
         if cookie is None:
             return Cookies()
         return Cookies.parse(cookie)
+
+
+class RouteParamsComponent:
+    """A component that resolves route params.
+
+    Examples:
+
+      def handle(name: str, age: int) -> Response:
+        ...
+
+      app.add_route(Route("/{name}/{age}", handle))
+    """
+
+    __slots__ = ["params"]
+
+    is_cacheable = False
+    is_singleton = False
+
+    def __init__(self, params: Dict[str, str]) -> None:
+        self.params = params
+
+    def can_handle_parameter(self, parameter: Parameter) -> bool:
+        return parameter.name in self.params
+
+    def resolve(self, parameter: Parameter) -> Any:
+        try:
+            return parameter.annotation(self.params[parameter.name])
+        except (TypeError, ValueError):
+            raise HTTPError(HTTP_400, {parameter.name: f"expected {parameter.annotation.__name__} value"})
