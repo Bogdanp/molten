@@ -20,25 +20,21 @@ class Component(Protocol[_T]):  # pragma: no cover
         resolver.  This should be True for most components.  Defaults
         to True.
         """
-        ...
 
     @property
     def is_singleton(self) -> bool:
         """If True, then the component will be treated as a singleton
         and cached after its first use.  Defaults to False.
         """
-        ...
 
     def can_handle_parameter(self, parameter: Parameter) -> bool:
         """Returns True when parameter represents the desired component.
         """
-        ...
 
     @no_type_check
     def resolve(self) -> _T:
         """Returns an instance of the component.
         """
-        ...
 
 
 class DependencyInjector:
