@@ -120,7 +120,7 @@ class App(BaseApp):
             response = resolver.resolve(self.handle_415)()
         except Exception as e:
             exc_info = sys.exc_info()
-            response = resolver.resolve(self.handle_exception, {"exception": e})()
+            response = resolver.resolve(self.handle_exception)(exception=e)
 
         response.headers.add("content-length", str(response.content_length))
         start_response(response.status, list(response.headers), exc_info)

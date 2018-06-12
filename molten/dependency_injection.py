@@ -75,7 +75,7 @@ class DependencyInjector:
 
 class DependencyResolver:
     """The resolver does the work of actually filling in all of a
-    function's dependencies and returning a thunk.
+    function's dependencies.
     """
 
     __slots__ = [
@@ -93,16 +93,13 @@ class DependencyResolver:
     def resolve(
             self,
             fn: Callable[..., Any],
-            params: Optional[dict] = None,
             resolving_parameter: Optional[Parameter] = None,
     ) -> Callable[..., Any]:
         """Resolve a function's dependencies.
         """
 
         @functools.wraps(fn)
-        def resolved_fn():
-            nonlocal params
-            params = params or {}
+        def resolved_fn(**params):
             signature = inspect.signature(fn)
             for parameter in signature.parameters.values():
                 if parameter.name in params:
