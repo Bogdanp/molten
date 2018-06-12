@@ -20,25 +20,25 @@ class Component(Protocol[_T]):  # pragma: no cover
         resolver.  This should be True for most components.  Defaults
         to True.
         """
-        raise NotImplementedError("components must implement 'is_cacheable'")
+        ...
 
     @property
     def is_singleton(self) -> bool:
         """If True, then the component will be treated as a singleton
         and cached after its first use.  Defaults to False.
         """
-        raise NotImplementedError("components must implement 'is_singleton'")
+        ...
 
     def can_handle_parameter(self, parameter: Parameter) -> bool:
         """Returns True when parameter represents the desired component.
         """
-        raise NotImplementedError("components must implement 'can_handle_parameter'")
+        ...
 
     @no_type_check
     def resolve(self) -> _T:
         """Returns an instance of the component.
         """
-        raise NotImplementedError("components must implement 'resolve'")
+        ...
 
 
 class DependencyInjector:
