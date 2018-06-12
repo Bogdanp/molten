@@ -1,0 +1,8 @@
+[common]
+conn_pooling = true
+conn_pool_size = 1
+
+[dev]
+
+[prod]
+conn_pool_size = 32
