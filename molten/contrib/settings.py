@@ -5,7 +5,7 @@ from typing import Optional
 try:
     import toml
 except ImportError:  # pragma: no cover
-    raise ImportError("'toml' package missing, run 'pip install toml'")
+    raise ImportError("'toml' package missing. Run 'pip install toml'.")
 
 
 class Settings(dict):
