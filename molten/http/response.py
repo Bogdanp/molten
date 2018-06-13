@@ -37,8 +37,9 @@ class Response:
         else:
             self.stream: BinaryIO = io.BytesIO()
 
-    @property
-    def content_length(self):
+    def get_content_length(self) -> Optional[int]:
+        """Compute the content length of this response.
+        """
         content_length = self.headers.get_int("content_length")
         if content_length is None:
             try:

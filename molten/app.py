@@ -122,7 +122,10 @@ class App(BaseApp):
             exc_info = sys.exc_info()
             response = resolver.resolve(self.handle_exception)(exception=e)
 
-        response.headers.add("content-length", str(response.content_length))
+        content_length = response.get_content_length()
+        if content_length is not None:
+            response.headers.add("content-length", str(content_length))
+
         start_response(response.status, list(response.headers), exc_info)
         if response.status != HTTP_204:
             wrapper = environ.get("wsgi.file_wrapper", FileWrapper)
