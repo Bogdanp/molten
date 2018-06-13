@@ -1,3 +1,6 @@
+from urllib.parse import parse_qsl
+
+
 class Cookies(dict):
     """A set of request cookies.
     """
@@ -9,10 +12,7 @@ class Cookies(dict):
         cookies = cls()
         cookie_strings = cookie_header.split(";")
         for cookie in cookie_strings:
-            try:
-                name, value = cookie.lstrip().split("=", 1)
+            for name, value in parse_qsl(cookie.lstrip()):
                 cookies[name] = value
-            except ValueError:
-                continue
 
         return cookies
