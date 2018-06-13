@@ -4,7 +4,7 @@ from .errors import (
     DIError, HeaderMissing, HTTPError, MoltenError, ParamMissing, RequestParserNotAvailable,
     RouteNotFound, RouteParamMissing
 )
-from .http import Cookies, Headers, QueryParams, Request, Response
+from .http import Cookie, Cookies, Headers, QueryParams, Request, Response
 from .http.status_codes import *
 from .middleware import ResponseRendererMiddleware
 from .parsers import JSONParser, RequestParser, URLEncodingParser
@@ -26,7 +26,7 @@ __all__ = [
 
     # HTTP
     "Method", "Scheme", "Host", "Port", "QueryString", "QueryParams", "QueryParam",
-    "Headers", "Header", "RequestInput", "RequestBody", "RequestData", "Cookies",
+    "Headers", "Header", "RequestInput", "RequestBody", "RequestData", "Cookies", "Cookie",
     "Request", "Response",
 
     # Dependency-injection

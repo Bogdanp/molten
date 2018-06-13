@@ -2,6 +2,7 @@ import io
 import os
 from typing import BinaryIO, Optional, Union
 
+from .cookies import Cookie
 from .headers import Headers, HeadersDict
 
 
@@ -51,6 +52,11 @@ class Response:
                 self.stream.seek(0, os.SEEK_SET)
 
         return content_length
+
+    def set_cookie(self, cookie: Cookie) -> None:
+        """Add a cookie to this response.
+        """
+        self.headers.add("set-cookie", cookie.encode())
 
     def __repr__(self) -> str:
         return f"Response(status={repr(self.status)}, headers={repr(self.headers)})"
