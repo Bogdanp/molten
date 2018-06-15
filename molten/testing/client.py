@@ -2,7 +2,7 @@ import json
 from functools import partial
 from io import BytesIO
 from json import dumps as to_json
-from typing import Any, Callable, Dict, Optional, Union
+from typing import Any, BinaryIO, Callable, Dict, Optional, Union
 from urllib.parse import urlencode
 
 from ..app import BaseApp
@@ -65,6 +65,7 @@ class TestClient:
             path: str,
             headers: Optional[Union[HeadersDict, Headers]] = None,
             params: Optional[Union[ParamsDict, QueryParams]] = None,
+            body: Optional[bytes] = None,
             data: Optional[Dict[str, str]] = None,
             json: Optional[Any] = None,
             auth: Optional[Callable[[Request], Request]] = None,
@@ -83,6 +84,10 @@ class TestClient:
             headers=headers,
             params=params,
         )
+        if body is not None:
+            request.headers["content-length"] = f"{len(body)}"
+            request.body_file = BytesIO(body)
+
         if data is not None:
             request_content = urlencode(data).encode("utf-8")
             request.headers["content-type"] = "application/x-www-form-urlencoded"

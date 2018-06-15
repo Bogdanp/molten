@@ -3,14 +3,15 @@ from typing import Optional
 import pytest
 
 from molten import (
-    HTTP_200, HTTP_403, App, Header, HTTPError, JSONRenderer, Response, ResponseRendererMiddleware, Route, testing
+    HTTP_200, HTTP_403, App, Header, HTTPError, JSONRenderer, Response, ResponseRendererMiddleware,
+    Route, testing
 )
 
 
 def AuthMiddleware(handler):
     def handle(authorization: Optional[Header]):
         if authorization != "Bearer authorized":
-            raise HTTPError(HTTP_403, {"message": "Forbidden"})
+            raise HTTPError(HTTP_403, {"error": "Forbidden"})
         return handler()
     return handle
 
@@ -47,7 +48,7 @@ def test_test_client_auth():
 
     # Then I should get a 403 back
     assert response.status_code == 403
-    assert response.data == '{"message": "Forbidden"}'
+    assert response.data == '{"error": "Forbidden"}'
 
     # When I make a request with auth
     def auth(request):

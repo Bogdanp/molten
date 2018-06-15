@@ -307,3 +307,31 @@ def test_apps_can_fail_to_handle_route_params():
     # Then I should get back a 400 response
     assert response.status_code == 400
     assert response.json() == {"age": "expected int value"}
+
+
+def test_apps_can_handle_invalid_json_data():
+    # Given that I have an app
+    # When I make a request to a handler that parses request data with an invalid JSON payload
+    response = client.post(
+        app.reverse_uri("parser"),
+        headers={"content-type": "application/json"},
+        body=b"{",
+    )
+
+    # Then I should get back a 400 response
+    assert response.status_code == 400
+    assert response.json() == {"error": "JSON input could not be parsed"}
+
+
+def test_apps_can_handle_invalid_urlencoded_data():
+    # Given that I have an app
+    # When I make a request to a handler that parses request data with an invalid urlencoded
+    response = client.post(
+        app.reverse_uri("parser"),
+        headers={"content-type": "application/x-www-form-urlencoded"},
+        body=b"",
+    )
+
+    # Then I should get back a 400 response
+    assert response.status_code == 400
+    assert response.json() == {"error": "failed to parse urlencoded data"}

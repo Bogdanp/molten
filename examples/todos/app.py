@@ -12,7 +12,7 @@ from molten import (
 def AuthorizationMiddleware(handler: Callable[..., Any]) -> Callable[..., Any]:
     def middleware(authorization: Optional[Header]) -> Any:
         if authorization != "secret":
-            raise HTTPError(HTTP_403, {"message": "forbidden"})
+            raise HTTPError(HTTP_403, {"error": "forbidden"})
         return handler()
     return middleware
 
@@ -91,7 +91,7 @@ def list_todos(manager: TodoManager) -> List[dict]:
 def get_todo(todo_id: str, manager: TodoManager) -> dict:
     todo = manager.get_by_id(int(todo_id))
     if todo is None:
-        raise HTTPError(HTTP_404, {"message": f"todo {todo_id} not found"})
+        raise HTTPError(HTTP_404, {"error": f"todo {todo_id} not found"})
     return dict(todo)
 
 

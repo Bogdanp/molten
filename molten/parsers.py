@@ -33,7 +33,10 @@ class JSONParser:
         return content_type.startswith("application/json")
 
     def parse(self, data: RequestBody) -> Any:
-        return json.loads(data)
+        try:
+            return json.loads(data)
+        except json.JSONDecodeError:
+            raise ParseError("JSON input could not be parsed")
 
 
 class URLEncodingParser:
@@ -44,7 +47,10 @@ class URLEncodingParser:
         return content_type.startswith("application/x-www-form-urlencoded")
 
     def parse(self, data: RequestBody) -> MultiDict:
-        return MultiDict(parse_qsl(data.decode("utf-8")))
+        try:
+            return MultiDict(parse_qsl(data.decode("utf-8"), strict_parsing=True))
+        except ValueError:
+            raise ParseError("failed to parse urlencoded data")
 
 
 class MultiPartParser:

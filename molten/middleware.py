@@ -26,7 +26,7 @@ class ResponseRendererMiddleware:
                     status, response = HTTP_200, response
 
             except ParseError as e:
-                status, response = HTTP_400, {"message": str(e)}
+                status, response = HTTP_400, {"error": str(e)}
 
             except HTTPError as e:
                 status, response = e.status, e.response
