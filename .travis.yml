@@ -6,6 +6,8 @@ python:
   - "3.7-dev"
   - "nightly"
 matrix:
+  include:
+    - { python: "3.6", env: TESTENV=lint }
   allow_failures:
     - python: "3.6-dev"
     - python: "3.7-dev"
@@ -14,4 +16,4 @@ install:
   - pip install poetry
   - poetry develop
 script:
-  - py.test
+  - if [ "$TESTENV" = "lint" ]; then ./scripts/lint.sh; else py.test; fi
