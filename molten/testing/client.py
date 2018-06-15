@@ -2,7 +2,7 @@ import json
 from functools import partial
 from io import BytesIO
 from json import dumps as to_json
-from typing import Any, BinaryIO, Callable, Dict, Optional, Union
+from typing import Any, Callable, Dict, Optional, Union
 from urllib.parse import urlencode
 
 from ..app import BaseApp
@@ -105,7 +105,7 @@ class TestClient:
 
         response = Response(HTTP_200)
 
-        def start_response(status, response_headers, exc_info=None):
+        def start_response(status, response_headers, exc_info=None):  # type: ignore
             nonlocal response
             response.status = status
             response.headers = Headers(dict(response_headers))

@@ -8,7 +8,7 @@ from ..typing import Environ
 ParamsDict = Dict[str, Union[str, List[str]]]
 
 
-class QueryParams(MultiDict):
+class QueryParams(MultiDict[str, str]):
     """A mapping from param names to lists of values.  Once
     constructed, these instances cannot be modified.
     """

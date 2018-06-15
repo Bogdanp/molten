@@ -1,21 +1,27 @@
 from collections import defaultdict
 from typing import Dict, Iterable, Iterator, List, Optional, Tuple, TypeVar, Union
 
-_V = TypeVar("_V")
+KT = TypeVar("KT")
+VT = TypeVar("VT")
+
+Mapping = Union[
+    Dict[KT, Union[VT, List[VT]]],
+    Iterable[Tuple[KT, Union[VT, List[VT]]]]
+]
 
 
-class MultiDict(Iterable[Tuple[str, _V]]):
+class MultiDict(Iterable[Tuple[KT, VT]]):
     """A mapping from param names to lists of values.  Once
     constructed, these instances cannot be modified.
     """
 
     __slots__ = ["_data"]
 
-    def __init__(self, mapping=None) -> None:
-        self._data: Dict[str, List[_V]] = defaultdict(list)
+    def __init__(self, mapping: Optional[Mapping[KT, VT]] = None) -> None:
+        self._data: Dict[KT, List[VT]] = defaultdict(list)
         self._add_all(mapping or {})
 
-    def _add(self, name: str, value: Union[_V, List[_V]]) -> None:
+    def _add(self, name: KT, value: Union[VT, List[VT]]) -> None:
         """Add values for a particular key.
         """
         if isinstance(value, list):
@@ -23,10 +29,10 @@ class MultiDict(Iterable[Tuple[str, _V]]):
         else:
             self._data[name].append(value)
 
-    def _add_all(self, mapping) -> None:
+    def _add_all(self, mapping: Mapping[KT, VT]) -> None:
         """Add a group of values.
         """
-        items: Iterable[Tuple[str, Union[_V, List[_V]]]]
+        items: Iterable[Tuple[KT, Union[VT, List[VT]]]]
 
         if isinstance(mapping, dict):
             items = mapping.items()
@@ -36,7 +42,7 @@ class MultiDict(Iterable[Tuple[str, _V]]):
         for name, value_or_values in items:
             self._add(name, value_or_values)
 
-    def get(self, name: str, default: Optional[_V] = None) -> Optional[_V]:
+    def get(self, name: KT, default: Optional[VT] = None) -> Optional[VT]:
         """Get the last value for a given key.
         """
         try:
@@ -44,12 +50,12 @@ class MultiDict(Iterable[Tuple[str, _V]]):
         except KeyError:
             return default
 
-    def get_all(self, name: str) -> List[_V]:
+    def get_all(self, name: KT) -> List[VT]:
         """Get all the values for a given key.
         """
         return self._data[name]
 
-    def __getitem__(self, name: str) -> _V:
+    def __getitem__(self, name: KT) -> VT:
         """Get the last value for a given key.
 
         Raises:
@@ -60,7 +66,7 @@ class MultiDict(Iterable[Tuple[str, _V]]):
         except IndexError:
             raise KeyError(name)
 
-    def __iter__(self) -> Iterator[Tuple[str, _V]]:
+    def __iter__(self) -> Iterator[Tuple[KT, VT]]:
         """Iterate over all the parameters.
         """
         for name, values in self._data.items():

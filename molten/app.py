@@ -29,7 +29,7 @@ class BaseApp:
             self,
             routes: Optional[List[RouteLike]] = None,
             middleware: Optional[List[Middleware]] = None,
-            components: Optional[List[Component]] = None,
+            components: Optional[List[Component[Any]]] = None,
             parsers: Optional[List[RequestParser]] = None,
             renderers: Optional[List[ResponseRenderer]] = None,
     ) -> None:

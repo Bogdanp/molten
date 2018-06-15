@@ -37,10 +37,10 @@ RequestInput = NewType("RequestInput", BinaryIO)
 RequestBody = NewType("RequestBody", bytes)
 
 #: Parsed request data.
-RequestData = NewType("RequestData", dict)
+RequestData = NewType("RequestData", Dict[str, Any])
 
 
-def extract_optional_annotation(annotation) -> Tuple[bool, Any]:
+def extract_optional_annotation(annotation: Any) -> Tuple[bool, Any]:
     """Returns a tuple denoting whether or not the annotation is an
     Optional type and the inner annotation.
     """
@@ -49,7 +49,7 @@ def extract_optional_annotation(annotation) -> Tuple[bool, Any]:
     return False, annotation
 
 
-def is_optional_annotation(annotation) -> bool:
+def is_optional_annotation(annotation: Any) -> bool:
     """Returns True if the given annotation represents an Optional type.
     """
     try:

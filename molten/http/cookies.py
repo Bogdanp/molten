@@ -1,9 +1,9 @@
 from datetime import datetime, timedelta
-from typing import Optional, Union
+from typing import Dict, Optional, Union
 from urllib.parse import parse_qsl, urlencode
 
 
-class Cookies(dict):
+class Cookies(Dict[str, str]):
     """A set of request cookies.
     """
 

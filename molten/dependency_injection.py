@@ -1,7 +1,7 @@
 import functools
 import inspect
 from inspect import Parameter
-from typing import Any, Callable, List, Optional, TypeVar, no_type_check
+from typing import Any, Callable, Dict, List, Optional, TypeVar, no_type_check
 
 from typing_extensions import Protocol
 
@@ -47,20 +47,20 @@ class DependencyInjector:
         "singletons",
     ]
 
-    def __init__(self, components: List[Component]) -> None:
+    components: List[Component[Any]]
+    singletons: Dict[Component[Any], Any]
+
+    def __init__(self, components: List[Component[Any]]) -> None:
         self.components = components or []
-        self.singletons = singletons = {}  # type: dict
+        self.singletons = {}
 
         for component in components:
-            if getattr(component, "is_singleton", False) and component not in singletons:
+            if getattr(component, "is_singleton", False) and component not in self.singletons:
                 resolver = self.get_resolver()
                 resolved_component = resolver.resolve(component.resolve)
-                singletons[component] = resolved_component()
+                self.singletons[component] = resolved_component()
 
-    def get_resolver(
-            self,
-            instances: Optional[dict] = None,
-    ) -> "DependencyResolver":
+    def get_resolver(self, instances: Optional[Dict[Any, Any]] = None) -> "DependencyResolver":
         """Get the resolver for this Injector.
         """
         return DependencyResolver(
@@ -79,11 +79,15 @@ class DependencyResolver:
         "instances",
     ]
 
-    def __init__(self, components: List[Component], instances: dict) -> None:
+    def __init__(self, components: List[Component[Any]], instances: Dict[Component[Any], Any]) -> None:
         self.components = components[:]
         self.instances = instances
 
-    def add_component(self, component: Component) -> None:
+    def add_component(self, component: Component[Any]) -> None:
+        """Add a component to this resolver without adding it to the
+        base dependency injector.  This is useful for runtime-built
+        components like RouteParamsComponent.
+        """
         self.components.append(component)
 
     def resolve(
@@ -95,7 +99,7 @@ class DependencyResolver:
         """
 
         @functools.wraps(fn)
-        def resolved_fn(**params):
+        def resolved_fn(**params: Any) -> Any:
             signature = inspect.signature(fn)
             for parameter in signature.parameters.values():
                 if parameter.name in params:

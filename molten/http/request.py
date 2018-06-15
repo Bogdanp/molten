@@ -1,5 +1,5 @@
 from io import BytesIO
-from typing import BinaryIO, Optional, Union
+from typing import BinaryIO, Dict, List, Optional, Union
 
 from ..typing import Environ
 from .headers import Headers
@@ -29,7 +29,7 @@ class Request:
             port: int = 0,
             path: str = "/",
             params: Optional[Union[ParamsDict, QueryParams]] = None,
-            headers: Optional[Union[dict, Headers]] = None,
+            headers: Optional[Union[Dict[str, Union[str, List[str]]], Headers]] = None,
             body_file: Optional[BinaryIO] = None,
     ) -> None:
         self.method = method

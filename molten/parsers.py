@@ -2,7 +2,7 @@ import json
 import os
 import re
 from tempfile import SpooledTemporaryFile
-from typing import Any, Dict, Iterator, Tuple, Union, no_type_check
+from typing import Any, Dict, Iterator, List, Tuple, Union, no_type_check
 from urllib.parse import parse_qsl
 
 from typing_extensions import Protocol
@@ -46,7 +46,7 @@ class URLEncodingParser:
     def can_parse_content(self, content_type: str) -> bool:
         return content_type.startswith("application/x-www-form-urlencoded")
 
-    def parse(self, data: RequestBody) -> MultiDict:
+    def parse(self, data: RequestBody) -> MultiDict[str, str]:
         try:
             return MultiDict(parse_qsl(data.decode("utf-8"), strict_parsing=True))
         except ValueError:
@@ -112,7 +112,7 @@ class MultiPartParser:
     def can_parse_content(self, content_type: str) -> bool:
         return content_type.startswith("multipart/form-data")
 
-    def parse(self, content_type: Header, content_length: Header, body_file: RequestInput) -> MultiDict:
+    def parse(self, content_type: Header, content_length: Header, body_file: RequestInput) -> MultiDict[str, Union[str, UploadedFile]]:  # noqa
         matches = self.BOUNDARY_RE.search(content_type)
         if not matches:
             raise ParseError("boundary missing from content-type header")
@@ -185,7 +185,7 @@ class MultiPartParser:
         current_part_is_file: bool = False
         current_part_container: Any = None
         current_part_writer: Any = None
-        current_part_headers: Dict[str, str] = {}
+        current_part_headers: Dict[str, Union[str, List[str]]] = {}
         current_part_disposition: Dict[str, str] = {}
         current_part_past_headers: bool = False
         for line in lines:
