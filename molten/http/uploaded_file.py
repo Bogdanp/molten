@@ -32,10 +32,9 @@ class UploadedFile:
         if isinstance(destination, str):
             with open(destination, "wb+") as outfile:
                 copyfileobj(self.stream, outfile)
-                return
 
-        copyfileobj(self.stream, destination)
-        return
+        else:
+            copyfileobj(self.stream, destination)
 
     def __getattr__(self, name: str) -> Any:
         return getattr(self.stream, name)
