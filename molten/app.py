@@ -1,6 +1,5 @@
 import logging
 import sys
-from functools import partial
 from typing import Any, Callable, Iterable, List, Optional
 from wsgiref.util import FileWrapper  # type: ignore
 
@@ -12,7 +11,7 @@ from .dependency_injection import Component, DependencyInjector
 from .errors import RequestParserNotAvailable
 from .http import HTTP_204, HTTP_404, HTTP_415, HTTP_500, Headers, QueryParams, Request, Response
 from .middleware import ResponseRendererMiddleware
-from .parsers import JSONParser, RequestParser, URLEncodingParser
+from .parsers import JSONParser, MultiPartParser, RequestParser, URLEncodingParser
 from .renderers import JSONRenderer, ResponseRenderer
 from .router import RouteLike, Router
 from .typing import (
@@ -42,6 +41,7 @@ class BaseApp:
         self.parsers = parsers or [
             JSONParser(),
             URLEncodingParser(),
+            MultiPartParser(),
         ]
         self.renderers = renderers or [
             JSONRenderer(),

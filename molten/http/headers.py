@@ -17,7 +17,7 @@ class Headers(Iterable[Tuple[str, str]]):
 
     __slots__ = ["_headers"]
 
-    def __init__(self, mapping: Optional[HeadersDict] = None) -> None:
+    def __init__(self, mapping=None) -> None:
         self._headers: Dict[str, List[str]] = defaultdict(list)
         self.add_all(mapping or {})
 

@@ -4,10 +4,11 @@ from .query_params import QueryParams
 from .request import Request
 from .response import Response
 from .status_codes import *
+from .uploaded_file import UploadedFile
 
 __all__ = [
     "Request", "Response",
-    "Headers", "QueryParams", "Cookies", "Cookie",
+    "Headers", "QueryParams", "Cookies", "Cookie", "UploadedFile",
 
     # 1xx
     "HTTP_100", "HTTP_101", "HTTP_102",
