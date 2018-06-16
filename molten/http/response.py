@@ -47,9 +47,13 @@ class Response:
                 stream_stat = os.fstat(self.stream.fileno())
                 content_length = stream_stat.st_size
             except OSError:
-                self.stream.seek(0, os.SEEK_END)
-                content_length = self.stream.tell()
-                self.stream.seek(0, os.SEEK_SET)
+                old_position = self.stream.tell()
+
+                try:
+                    self.stream.seek(0, os.SEEK_END)
+                    content_length = self.stream.tell()
+                finally:
+                    self.stream.seek(old_position, os.SEEK_SET)
 
         return content_length
 
