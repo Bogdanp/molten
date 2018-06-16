@@ -5,7 +5,7 @@ from wsgiref.util import FileWrapper  # type: ignore
 
 from .components import (
     CookiesComponent, HeaderComponent, QueryParamComponent, RequestBodyComponent,
-    RequestDataComponent, RouteParamsComponent
+    RequestDataComponent, RouteParamsComponent, SchemaComponent
 )
 from .dependency_injection import Component, DependencyInjector
 from .errors import RequestParserNotAvailable
@@ -55,6 +55,7 @@ class BaseApp:
             QueryParamComponent(),
             RequestBodyComponent(),
             RequestDataComponent(self.parsers),
+            SchemaComponent(),
         ]
         self.injector = DependencyInjector(self.components)
 

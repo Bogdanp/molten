@@ -1,8 +1,9 @@
 from .app import App, BaseApp
 from .dependency_injection import Component, DependencyInjector, DependencyResolver
 from .errors import (
-    DIError, FieldTooLarge, FileTooLarge, HeaderMissing, HTTPError, MoltenError, ParamMissing,
-    ParseError, RequestParserNotAvailable, RouteNotFound, RouteParamMissing, TooManyFields
+    DIError, FieldTooLarge, FieldValidationError, FileTooLarge, HeaderMissing, HTTPError,
+    MoltenError, ParamMissing, ParseError, RequestParserNotAvailable, RouteNotFound,
+    RouteParamMissing, TooManyFields, ValidationError
 )
 from .http import Cookie, Cookies, Headers, QueryParams, Request, Response, UploadedFile
 from .http.status_codes import *
@@ -15,6 +16,7 @@ from .typing import (
     Header, Host, Method, Middleware, Port, QueryParam, QueryString, RequestBody, RequestData,
     RequestInput, Scheme
 )
+from .validation import Field, Missing, dump_schema, is_schema, load_schema, schema
 
 __version__ = "0.0.0"
 
@@ -41,10 +43,13 @@ __all__ = [
     # Middleware
     "ResponseRendererMiddleware",
 
+    # Validation
+    "Field", "Missing", "schema", "is_schema", "dump_schema", "load_schema",
+
     # Errors
     "MoltenError", "DIError", "HTTPError", "RouteNotFound", "RouteParamMissing",
     "RequestParserNotAvailable", "ParseError", "FieldTooLarge", "FileTooLarge", "TooManyFields",
-    "HeaderMissing", "ParamMissing",
+    "HeaderMissing", "ParamMissing", "ValidationError", "FieldValidationError",
 
     # Testing
     "TestClient", "to_environ",

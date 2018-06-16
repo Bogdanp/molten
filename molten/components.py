@@ -2,12 +2,15 @@ from inspect import Parameter
 from typing import Any, Dict, List, Optional, TypeVar
 
 from .dependency_injection import DependencyResolver
-from .errors import HeaderMissing, HTTPError, ParamMissing, RequestParserNotAvailable
+from .errors import (
+    HeaderMissing, HTTPError, ParamMissing, RequestParserNotAvailable, ValidationError
+)
 from .http import HTTP_400, Cookies, Headers, QueryParams
 from .parsers import RequestParser
 from .typing import (
     Header, QueryParam, RequestBody, RequestData, RequestInput, extract_optional_annotation
 )
+from .validation import is_schema, load_schema
 
 _T = TypeVar("_T")
 
@@ -172,3 +175,20 @@ class RouteParamsComponent:
             return parameter.annotation(self.params[parameter.name])
         except (TypeError, ValueError):
             raise HTTPError(HTTP_400, {parameter.name: f"expected {parameter.annotation.__name__} value"})
+
+
+class SchemaComponent:
+    """A component that validates request data according to a schema.
+    """
+
+    is_cacheable = False
+    is_singleton = False
+
+    def can_handle_parameter(self, parameter: Parameter) -> bool:
+        return is_schema(parameter.annotation)
+
+    def resolve(self, parameter: Parameter, data: RequestData) -> Any:
+        try:
+            return load_schema(parameter.annotation, data)
+        except ValidationError as e:
+            raise HTTPError(HTTP_400, {"errors": e.reasons})

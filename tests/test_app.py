@@ -4,9 +4,16 @@ from typing import Optional, Tuple
 import pytest
 
 from molten import (
-    HTTP_200, HTTP_201, HTTP_204, App, Cookies, Header, QueryParam, QueryParams, Request,
-    RequestData, Response, Route, testing
+    HTTP_200, HTTP_201, HTTP_204, App, Cookies, Field, Header, QueryParam, QueryParams, Request,
+    RequestData, Response, Route, schema, testing
 )
+
+
+@schema
+class Account:
+    username: str
+    password: str = Field(request_only=True, min_length=8)
+    is_admin: bool = False
 
 
 def path_to(*xs):
@@ -71,6 +78,10 @@ def get_countries() -> Response:
     })
 
 
+def create_account(account: Account) -> Account:
+    return account
+
+
 app = App(routes=[
     Route("/", index),
     Route("/params", params),
@@ -86,6 +97,7 @@ app = App(routes=[
     Route("/reads-cookies", reads_cookies),
     Route("/route-params/{name}/{age}", route_params),
     Route("/countries", get_countries),
+    Route("/accounts", create_account, method="POST"),
 ])
 client = testing.TestClient(app)
 
@@ -335,3 +347,51 @@ def test_apps_can_handle_invalid_urlencoded_data():
     # Then I should get back a 400 response
     assert response.status_code == 400
     assert response.json() == {"error": "failed to parse urlencoded data"}
+
+
+def test_apps_can_validate_requests():
+    # Given that I have an app
+    # When I make a request to a handler that validates the request data with an empty dict
+    response = client.post(app.reverse_uri("create_account"), json={})
+
+    # Then I should get back a 400 response
+    assert response.status_code == 400
+    assert response.json() == {
+        "errors": {
+            "username": "this field is required",
+            "password": "this field is required",
+        }
+    }
+
+    # When I make another request with almost-valid data
+    response = client.post(
+        app.reverse_uri("create_account"),
+        json={
+            "username": "jim@gcpd.gov",
+            "password": "secret",
+        },
+    )
+
+    # Then I should get back a 400 response with fewer errors
+    assert response.status_code == 400
+    assert response.json() == {
+        "errors": {
+            "password": "length must be >= 8",
+        }
+    }
+
+    # When I make another request with valid data
+    response = client.post(
+        app.reverse_uri("create_account"),
+        json={
+            "username": "jim@gcpd.gov",
+            "password": "SuperSecret123",
+        },
+    )
+
+    # Then I should get back a 200 response
+    assert response.status_code == 200
+    assert response.json() == {
+        "username": "jim@gcpd.gov",
+        "is_admin": False,
+    }

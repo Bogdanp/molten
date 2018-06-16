@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Dict
 
 
 class MoltenError(Exception):
@@ -76,4 +76,20 @@ class HeaderMissing(MoltenError):
 
 class ParamMissing(MoltenError):
     """Raised by QueryParams.__getitem__ when a param is missing.
+    """
+
+
+class ValidationError(MoltenError):
+    """Raised by validator.load when the input data is invalid.
+    """
+
+    def __init__(self, reasons: Dict[str, Any]) -> None:
+        self.reasons = reasons
+
+    def __str__(self) -> str:  # pragma: no cover
+        return str(self.reasons)
+
+
+class FieldValidationError(MoltenError):
+    """Raised by Field.validate when a given value is invalid.
     """

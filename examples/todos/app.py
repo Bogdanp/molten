@@ -4,8 +4,8 @@ from inspect import Parameter
 from typing import Any, Callable, Iterator, List, Optional, Tuple, Union
 
 from molten import (
-    HTTP_201, HTTP_204, HTTP_403, HTTP_404, App, Component, Header, HTTPError, Include,
-    JSONRenderer, Middleware, RequestData, ResponseRendererMiddleware, Route
+    HTTP_201, HTTP_204, HTTP_403, HTTP_404, App, Component, Field, Header, HTTPError, Include,
+    JSONRenderer, Middleware, ResponseRendererMiddleware, Route, schema
 )
 
 
@@ -46,27 +46,40 @@ class DBComponent:
         return DB()
 
 
+@schema
+class Todo:
+    id: Optional[int] = Field(response_only=True, default=None)
+    description: str = "no description"
+    status: str = Field(choices=["todo", "done"], default="todo")
+
+
 class TodoManager:
     def __init__(self, db: DB) -> None:
         self.db = db
 
-    def create(self, todo: dict) -> dict:
+    def create(self, todo: Todo) -> Todo:
         with self.db.get_cursor() as cursor:
             cursor.execute("insert into todos(description, status) values(?, ?)", [
-                todo.get("description", "no description"),
-                todo.get("status", "todo"),
+                todo.description,
+                todo.status,
             ])
-            return {"id": cursor.lastrowid, **todo}
 
-    def get_all(self) -> List[dict]:
+            todo.id = cursor.lastrowid
+            return todo
+
+    def get_all(self) -> List[Todo]:
         with self.db.get_cursor() as cursor:
             cursor.execute("select rowid as id, description, status from todos")
-            return cursor.fetchall()
+            return [Todo(**data) for data in cursor.fetchall()]
 
-    def get_by_id(self, todo_id: int) -> Optional[dict]:
+    def get_by_id(self, todo_id: int) -> Optional[Todo]:
         with self.db.get_cursor() as cursor:
             cursor.execute("select rowid as id, description, status from todos where rowid = ? limit 1", [todo_id])
-            return cursor.fetchone()
+            data = cursor.fetchone()
+            if data is None:
+                return None
+
+            return Todo(**data)
 
     def delete_by_id(self, todo_id: int) -> None:
         with self.db.get_cursor() as cursor:
@@ -84,19 +97,19 @@ class TodoManagerComponent:
         return TodoManager(db)
 
 
-def list_todos(manager: TodoManager) -> List[dict]:
-    return [dict(todo) for todo in manager.get_all()]
+def list_todos(manager: TodoManager) -> List[Todo]:
+    return manager.get_all()
 
 
-def get_todo(todo_id: str, manager: TodoManager) -> dict:
+def get_todo(todo_id: str, manager: TodoManager) -> Todo:
     todo = manager.get_by_id(int(todo_id))
     if todo is None:
         raise HTTPError(HTTP_404, {"error": f"todo {todo_id} not found"})
-    return dict(todo)
+    return todo
 
 
-def create_todo(todo: RequestData, manager: TodoManager) -> Tuple[str, dict]:
-    return HTTP_201, dict(manager.create(todo))
+def create_todo(todo: Todo, manager: TodoManager) -> Tuple[str, Todo]:
+    return HTTP_201, manager.create(todo)
 
 
 def delete_todo(todo_id: str, manager: TodoManager) -> Tuple[str, None]:
