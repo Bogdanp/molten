@@ -41,9 +41,9 @@ class Request:
     def __init__(
             self, *,
             method: str = "GET",
-            scheme: str = "",
-            host: str = "",
-            port: int = 0,
+            scheme: str = "http",
+            host: str = "127.0.0.1",
+            port: int = 8000,
             path: str = "/",
             params: Optional[Union[ParamsDict, QueryParams]] = None,
             headers: Optional[Union[Dict[str, Union[str, List[str]]], Headers]] = None,

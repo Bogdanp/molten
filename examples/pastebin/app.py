@@ -13,11 +13,10 @@ Usage:
     Returns the data for a paste.
 """
 import os
+import shutil
 import uuid
 
 from molten import HTTP_200, HTTP_404, App, Request, Response, Route
-
-BUFSIZE = 1024 * 16
 
 
 def generate_paste_id():
@@ -37,12 +36,7 @@ def index() -> Response:
 def upload(request: Request) -> str:
     paste_id = generate_paste_id()
     with open(relative_path("uploads", paste_id), "wb") as paste:
-        while True:
-            buff = request.body_file.read(BUFSIZE)
-            if not buff:
-                break
-
-            paste.write(buff)
+        shutil.copyfileobj(request.body_file, paste)
 
     return f"{request.scheme}://{request.host}:{request.port}/{paste_id}"
 
