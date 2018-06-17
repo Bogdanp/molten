@@ -2,7 +2,7 @@
 name = "molten"
 version = "0.0.0"
 description = "An experimental web framework for Python 3.6+."
-authors = ["Bogdan Popa <popa.bogdanp@gmail.com>"]
+authors = ["Bogdan Popa <bogdan@cleartype.io>"]
 
 [tool.poetry.dependencies]
 python = "^3.6"
