@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "molten"
 version = "0.0.0"
-description = ""
+description = "An experimental web framework for Python 3.6+."
 authors = ["Bogdan Popa <popa.bogdanp@gmail.com>"]
 
 [tool.poetry.dependencies]

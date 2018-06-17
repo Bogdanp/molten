@@ -3,10 +3,9 @@
 [![Build Status](https://travis-ci.org/Bogdanp/molten.svg?branch=master)](https://travis-ci.org/Bogdanp/molten)
 [![PyPI version](https://badge.fury.io/py/molten.svg)](https://badge.fury.io/py/molten)
 
-**molten** is an experimental web framework for Python versions 3.6
-and up.  It's meant to be minimal, extensible, fast and productive.
-
-Check out the [examples] for a taste or start reading the [user guide]!
+**molten** is an experimental web framework for Python 3.6+.  It's
+meant to be minimal, extensible, fast and productive.  Check out the
+[examples] for a taste or start reading the [user guide]!
 
 
 ## Installation
