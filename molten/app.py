@@ -94,7 +94,7 @@ class App(BaseApp):
             Scheme: Scheme(request.scheme),
             Host: Host(request.host),
             Port: Port(request.port),
-            QueryString: QueryString(environ["QUERY_STRING"]),
+            QueryString: QueryString(environ.get("QUERY_STRING", "")),
             QueryParams: request.params,
             Headers: request.headers,
             RequestInput: RequestInput(request.body_file),

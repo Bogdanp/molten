@@ -17,7 +17,7 @@ class QueryParams(MultiDict[str, str]):
     def from_environ(cls, environ: Environ) -> "QueryParams":
         """Construct a QueryParams instance from a WSGI environ.
         """
-        return cls.parse(environ["QUERY_STRING"])
+        return cls.parse(environ.get("QUERY_STRING", ""))
 
     @classmethod
     def parse(cls, query_string: str) -> "QueryParams":
