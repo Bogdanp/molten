@@ -1,7 +1,10 @@
 # molten
 
 [![Build Status](https://travis-ci.org/Bogdanp/molten.svg?branch=master)](https://travis-ci.org/Bogdanp/molten)
+[![Maintainability](https://api.codeclimate.com/v1/badges/f7ab5fdd188fda33c3e1/maintainability)](https://codeclimate.com/github/Bogdanp/molten/maintainability)
 [![PyPI version](https://badge.fury.io/py/molten.svg)](https://badge.fury.io/py/molten)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/f7ab5fdd188fda33c3e1/test_coverage)](https://codeclimate.com/github/Bogdanp/molten/test_coverage)
+[![Documentation](https://img.shields.io/badge/doc-latest-brightgreen.svg)](https://moltenframework.com)
 
 **molten** is an experimental web framework for Python 3.6+.  It's
 meant to be minimal, extensible, fast and productive.  Check out the
