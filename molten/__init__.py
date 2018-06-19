@@ -28,7 +28,7 @@ from .middleware import ResponseRendererMiddleware
 from .parsers import JSONParser, MultiPartParser, RequestParser, URLEncodingParser
 from .renderers import JSONRenderer, ResponseRenderer
 from .router import Include, Route, Router
-from .testing import TestClient, to_environ
+from .testing import TestClient, TestResponse, to_environ
 from .typing import (
     Header, Host, Method, Middleware, Port, QueryParam, QueryString, RequestBody, RequestData,
     RequestInput, Scheme
@@ -69,7 +69,7 @@ __all__ = [
     "HeaderMissing", "ParamMissing", "ValidationError", "FieldValidationError",
 
     # Testing
-    "TestClient", "to_environ",
+    "TestClient", "TestResponse", "to_environ",
 
     # Status codes
     # 1xx

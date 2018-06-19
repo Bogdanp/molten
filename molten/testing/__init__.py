@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from .client import TestClient
+from .client import TestClient, TestResponse
 from .common import to_environ
 
-__all__ = ["TestClient", "to_environ"]
+__all__ = ["TestClient", "TestResponse", "to_environ"]

@@ -37,6 +37,12 @@ class Templates:
         )
 
     def render(self, template_name: str, **context) -> Response:
+        """Find a template and render it.
+
+        Parameters:
+          template_name: The name of the template to render.
+          \**context: Bindings passed to the template.
+        """
         template = self.environment.get_template(template_name)
         rendered_template = template.render(**context)
         return Response(HTTP_200, content=rendered_template, headers={
@@ -46,6 +52,9 @@ class Templates:
 
 class TemplatesComponent:
     """A component that builds a jinja2 template renderer.
+
+    Parameters:
+      path: The path to a folder containing your templates.
     """
 
     __slots__ = ["path"]

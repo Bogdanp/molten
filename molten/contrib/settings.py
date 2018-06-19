@@ -72,6 +72,10 @@ class Settings(dict):
 
         Raises:
           FileNotFoundError: When the settings file does not exist.
+
+        Parameters:
+          path: The path to the TOML file containing your settings.
+          environment: The config environment to use.
         """
         all_settings = toml.load(open(path))
         common_settings = all_settings.get("common", {})
@@ -101,6 +105,12 @@ class SettingsComponent:
       [prod]
       con_pool_size = 32
 
+    Parameters:
+      path: The path to the TOML file containing your settings.
+      environment: The config environment to use.  If not provided,
+        this defaults to the value of the "ENVIRONMENT" environment
+        variable.  If that's not set either, then this defaults to
+        "dev".
     """
 
     __slots__ = ["path", "environment"]

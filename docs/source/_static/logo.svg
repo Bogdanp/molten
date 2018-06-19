@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="177px" height="59px" viewBox="0 0 177 59" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
+    <title>Logo</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <polygon id="path-1" points="13.194633 58.5776433 110 58.5776433 70.6850316 4.4173882 70.6850316 12.4278202 59.8993111 1.78487131 62.2425856 16.2678567 47.1135087 0 44.1973087 11.4688467 39.7770621 1.78487131 36.4993845 7.59825982 35.9081742 4.98490168 30.0635843 13.0574702 29.5816142 9.22986106 0 58.5776433"></polygon>
+    </defs>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Logo">
+            <text id="MOLTEN" font-family="HelveticaNeue-CondensedBlack, Helvetica Neue" font-size="36" font-style="condensed" font-weight="700" fill="#DA0000">
+                <tspan x="59.374" y="54">MOLTEN</tspan>
+            </text>
+            <mask id="mask-2" fill="white">
+                <use xlink:href="#path-1"></use>
+            </mask>
+            <use id="Path" fill="#BE0A0A" xlink:href="#path-1"></use>
+            <text id="MOLTEN" mask="url(#mask-2)" font-family="HelveticaNeue-CondensedBlack, Helvetica Neue" font-size="36" font-style="condensed" font-weight="700" fill="#FFFFFF">
+                <tspan x="59.374" y="54">MOLTEN</tspan>
+            </text>
+        </g>
+    </g>
+</svg>
