@@ -8,9 +8,15 @@ SPHINXPROJ    = molten
 SOURCEDIR     = source
 BUILDDIR      = build
 
-# Put it first so that "make" without argument is like "make help".
+
+.PHONY: deploy
+deploy: html
+	gcloud app deploy --project molten-207708 app.yaml
+
+
 help:
 	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+
 
 .PHONY: help Makefile
 
