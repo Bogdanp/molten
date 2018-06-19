@@ -24,4 +24,4 @@ molten is licensed under the LGPL.  Please see [COPYING] and
 [COPYING.LESSER]: https://github.com/Bogdanp/molten/blob/master/COPYING.LESSER
 [COPYING]: https://github.com/Bogdanp/molten/blob/master/COPYING
 [examples]: https://github.com/Bogdanp/molten/blob/master/examples
-[user guide]: https://example.com
+[user guide]: https://moltenframework.com/guide.html
