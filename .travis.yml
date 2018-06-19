@@ -1,3 +1,6 @@
+env:
+  global:
+    - CC_TEST_REPORTER_ID=2609815ad1c6d2d807e761812030b6d8ae9e0e52cdb58315ab2a57067dc4a1c6
 language: python
 sudo: required
 python:
@@ -12,8 +15,18 @@ matrix:
     - python: "3.6-dev"
     - python: "3.7-dev"
     - python: "nightly"
+
 install:
   - pip install poetry
   - poetry develop
+
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
+
 script:
-  - if [ "$TESTENV" = "lint" ]; then ./scripts/lint.sh; else py.test; fi
+  - if [ "$TESTENV" = "lint" ]; then ./scripts/lint.sh; else py.test --cov-report xml; fi
+
+after_script:
+  - if [ ! "$TESTENV" = "lint" ]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi
