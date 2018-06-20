@@ -441,36 +441,39 @@ CORS Support
 
 molten can support CORS headers via wsgicors_.  To add CORS support to
 your app, install ``wsgicors`` then wrap your app instance in a call
-to ``CORS``::
+to ``CORS``:
 
-  from wsgicors import CORS
+.. code-block:: python
+   :emphasize-lines: 28
 
-  ...
+   from wsgicors import CORS
 
-  app = App(
-      components=[
-          DBComponent(),
-          TodoManagerComponent(),
-      ],
-      middleware=[
-          ResponseRendererMiddleware([
-              JSONRenderer(),
-              MsgpackRenderer(),
-          ]),
-          AuthorizationMiddleware,
-      ],
-      routes=[
-          Route("/todos", create_todo, method="POST"),
-      ],
-      parsers=[
-          JSONParser(),
-          MsgpackParser(),
-          URLEncodingParser(),
-          MultiPartParser(),
-      ],
-  )
+   ...
 
-  app = CORS(app, headers="*", methods="*", origin="*", maxage="86400")
+   app = App(
+       components=[
+           DBComponent(),
+           TodoManagerComponent(),
+       ],
+       middleware=[
+           ResponseRendererMiddleware([
+               JSONRenderer(),
+               MsgpackRenderer(),
+           ]),
+           AuthorizationMiddleware,
+       ],
+       routes=[
+           Route("/todos", create_todo, method="POST"),
+       ],
+       parsers=[
+           JSONParser(),
+           MsgpackParser(),
+           URLEncodingParser(),
+           MultiPartParser(),
+       ],
+   )
+
+   app = CORS(app, headers="*", methods="*", origin="*", maxage="86400")
 
 Check out the wsgicors_ documentation for details.
 

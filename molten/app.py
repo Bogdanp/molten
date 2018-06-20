@@ -40,6 +40,16 @@ LOGGER = logging.getLogger(__name__)
 
 class BaseApp:
     """Base class for App implementations.
+
+    Parameters:
+      routes: An optional list of routes to register with the router.
+      middleware: An optional list of middleware.  If provided, this
+        replaces the default set of middleware, including the response
+        renderer so make sure to include that in your middleware list.
+      parsers: An optional list of request parsers to use.  If
+        provided, this replaces the default list of request parsers.
+      renderers: An optional list of response renderers.  If provided,
+        this replaces the default list of response renderers.
     """
 
     def __init__(
@@ -91,6 +101,9 @@ class BaseApp:
         """Called whenever an unhandled exception occurs in middleware
         or a handler.  Dependencies are injected into this just like a
         normal handler.
+
+        Parameters:
+          exception: The exception that occurred.
         """
         LOGGER.exception("An unhandled exception occurred.")
         return Response(HTTP_500, content="Internal Server Error")
@@ -101,6 +114,16 @@ class BaseApp:
 
 class App(BaseApp):
     """An application that implements the WSGI interface.
+
+    Parameters:
+      routes: An optional list of routes to register with the router.
+      middleware: An optional list of middleware.  If provided, this
+        replaces the default set of middleware, including the response
+        renderer so make sure to include that in your middleware list.
+      parsers: An optional list of request parsers to use.  If
+        provided, this replaces the default list of request parsers.
+      renderers: An optional list of response renderers.  If provided,
+        this replaces the default list of response renderers.
     """
 
     def __call__(self, environ: Environ, start_response: StartResponse) -> Iterable[bytes]:

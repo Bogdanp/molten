@@ -48,7 +48,41 @@ class Validator(Protocol[_T]):  # pragma: no cover
 
 
 class Field(Generic[_T]):
-    """An individual field on a schema.
+    """An individual field on a schema.  The @schema decorator
+    automatically turns annotated attributes into fields, but the
+    field class can also be used to enrich annotated attributes with
+    metadata.
+
+    Examples:
+
+      >>> @schema
+      ... class Application:
+      ...   name: str
+      ...   rating: int = Field(minimum=1, maximum=5)
+
+    Parameters:
+      name: The name of the field.  Automatically populated by the
+        schema decorator.
+      annotation: The field's annotation.  Like name, this is
+        automatically populated by @schema.
+      description: An optional description for the field.
+      default: An optional default value for the field.
+      default_factory: An optional default function for the field.
+      request_name: The field's name within a request.  This is the
+        same as the field's name by default.
+      response_name: The field's name within a response.  This is the
+        same as the field's name by default.
+      request_only: Whether or not to exclude this field from
+        responses.  Defaults to False.
+      response_only: Whether or not to ignore this field when loading
+        requests.  Defaults to False.
+      allow_coerce: Whether or not values passed to this field may be
+        coerced to the correct type.  Defaults to False.
+      validator: The validator to use when loading data.  The schema
+        decorator will automatically pick a validator for builtin
+        types.
+      \**validator_options: Arbitrary options passed to the field's
+        validator.
     """
 
     __slots__ = [
@@ -217,19 +251,21 @@ class ListValidator:
     When a generic parameter is provided, then the values will be
     validated against that annotation::
 
-      @schema
-      class Setting:
-        name: str
-        value: str
+      >>> @schema
+      ... class Setting:
+      ...   name: str
+      ...   value: str
 
-      @schema
-      class Account:
-        settings: List[Setting]
+      >>> @schema
+      ... class Account:
+      ...   settings: List[Setting]
 
       >>> load_schema(Account, {"settings": [{"name": "a", "value": "b"}]})
       Account(settings=[Setting(name="a", value="b")])
 
       >>> load_schema(Account, {"settings": [{"name": "a"}]})
+      Traceback (most recent call last):
+        ...
       ValidationError({"settings": {0: {"value": "this field is required"}}})
 
     When a generic parameter isn't provided, then any list is accepted.
@@ -286,11 +322,11 @@ class DictValidator:
     When the ``fields`` option is provided, only the declared fields
     are going to be extracted from the input and will be validated.
 
-      @schema
-      class Account:
-        settings: Dict[str, str] = Field(fields={
-          "a": Field(annotation=str),
-        })
+      >>> @schema
+      ... class Account:
+      ...   settings: Dict[str, str] = Field(fields={
+      ...     "a": Field(annotation=str),
+      ...   })
 
       >>> load_schema(Account, {"settings": {}})
       Account(settings={})
@@ -299,15 +335,17 @@ class DictValidator:
       Account(settings={"settings" {"a": "b"}})
 
       >>> load_schema(Account, {"settings": {"a": 42}})
+      Traceback (most recent call last):
+        ...
       ValidationError({"settings": {"a": "unexpected type int"}})
 
     When the ``fields`` option is not provided and the annotation has
     generic parameters, then the items from the input will be
     validated against the generic parameter annotations::
 
-      @schema
-      class Account:
-        settings: Dict[str, str]
+      >>> @schema
+      ... class Account:
+      ...   settings: Dict[str, str]
 
       >>> load_schema(Account, {"settings": {}})
       Account(settings={})
@@ -316,6 +354,8 @@ class DictValidator:
       Account(settings={"a": "b"})
 
       >>> load_schema(Account, {"settings": {"a": 42})  # invalid
+      Traceback (most recent call last):
+        ...
       ValidationError({"settings": {"a": "unexpected type int"}})
 
     When neither ``fields`` or generic parameters are provided, then

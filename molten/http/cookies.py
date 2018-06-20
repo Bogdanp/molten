@@ -21,7 +21,7 @@ from urllib.parse import parse_qsl, urlencode
 
 
 class Cookies(Dict[str, str]):
-    """A set of request cookies.
+    """A dictionary of request cookies.
     """
 
     @classmethod

@@ -25,6 +25,13 @@ from .headers import Headers, HeadersDict
 
 class Response:
     """An HTTP response.
+
+    Parameters:
+      status: The status line of the response.
+      headers: Optional response headers.
+      content: Optional response content as a string.
+      stream: Optional response content as a file-like object.
+      encoding: An optional encoding for the response.
     """
 
     __slots__ = [

@@ -27,8 +27,31 @@ _T = TypeVar("_T")
 def schema(cls: Type[_T]) -> Type[_T]:
     """Construct a schema from a class.
 
+    Schemas are plain Python classes with automatically-generated
+    ``__init__``, ``__eq__`` and ``__repr__`` methods.  They may be
+    used to validate requests and serialize responses.
+
+    Examples:
+
+      >>> @schema
+      ... class Account:
+      ...   username: str
+      ...   password: str = Field(request_only=True)
+      ...   is_admin: bool = Field(response_only=True, default=False)
+
+      >>> load_schema(Account, {})
+      Traceback (most recent call last):
+        ...
+      ValidationError: {'username': 'this field is required', 'password': 'this field is required'}
+
+      >>> load_schema(Account, {"username": "example", "password": "secret"})
+      Account(username='example', password='secret', is_admin=False)
+
+      >>> dump_schema(load_schema(Account, {"username": "example", "password": "secret"}))
+      {'username': 'example', 'is_admin': False}
+
     Raises:
-      RuntimeError: when the attributes are invalid.
+      RuntimeError: When the attributes are invalid.
     """
     fields = {}
     annotations = get_type_hints(cls)

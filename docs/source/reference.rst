@@ -6,13 +6,20 @@ API Reference
 Apps
 ----
 
-.. autoclass:: BaseApp
-   :members:
-   :member-order: bysource
 .. autoclass:: App
    :members:
    :member-order: bysource
    :inherited-members:
+
+
+Routing
+-------
+
+.. autoclass:: Router
+   :members:
+   :member-order: bysource
+.. autoclass:: Route
+.. autoclass:: Include
 
 
 Middleware
@@ -36,6 +43,7 @@ requested by handlers with DI::
 .. autoclass:: QueryParams
    :members:
    :member-order: bysource
+   :inherited-members:
 .. autoclass:: Headers
    :members:
    :member-order: bysource
@@ -109,14 +117,26 @@ Dependency Injection
 Validation
 ----------
 
+Schemas
+^^^^^^^
+
 .. autofunction:: schema
 .. autofunction:: is_schema
 .. autofunction:: dump_schema
 .. autofunction:: load_schema
+
+Fields and Validators
+^^^^^^^^^^^^^^^^^^^^^
+
 .. autoclass:: Field
    :members:
    :member-order: bysource
-.. autodata:: Missing
+.. autoclass:: molten.validation.field.Validator
+.. autoclass:: molten.validation.field.NumberValidator
+.. autoclass:: molten.validation.field.StringValidator
+.. autoclass:: molten.validation.field.ListValidator
+.. autoclass:: molten.validation.field.DictValidator
+.. autoclass:: molten.validation.field.SchemaValidator
 
 
 Testing

@@ -24,6 +24,11 @@ from .renderers import ResponseRenderer
 
 class ResponseRendererMiddleware:
     """A middleware that renders responses.
+
+    Parameters:
+      renderers: The list of response renderers that is used to render
+        responses.  The first renderer whose can_render_response
+        method returns True is used to render the current response.
     """
 
     def __init__(self, renderers: List[ResponseRenderer]) -> None:

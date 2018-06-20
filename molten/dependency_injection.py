@@ -41,6 +41,7 @@ class Component(Protocol[_T]):  # pragma: no cover
       ...
       ...   def resolve(self, settings: Settings) -> DB:
       ...     return DB(settings["database_dsn"])
+
     """
 
     @property
@@ -70,6 +71,10 @@ class Component(Protocol[_T]):  # pragma: no cover
 class DependencyInjector:
     """The dependency injector maintains component state and
     instantiates the resolver.
+
+    Parameters:
+      components: The list of components that are used to resolve
+        functions' dependencies.
     """
 
     __slots__ = [

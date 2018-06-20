@@ -25,6 +25,16 @@ from .query_params import ParamsDict, QueryParams
 
 class Request:
     """Represents an individual HTTP request.
+
+    Attributes:
+      method: The HTTP method.
+      scheme: The URL scheme.
+      host: The hostname.
+      port: The port.
+      path: The path.
+      params: The query parameters.
+      headers: The request headers.
+      body_file: A file-like object representing the request body.
     """
 
     __slots__ = [

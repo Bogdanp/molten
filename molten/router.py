@@ -27,6 +27,19 @@ RouteLike = Union["Route", "Include"]
 
 class Route:
     """An individual route.
+
+    Examples:
+
+      >>> Route("/accounts", list_accounts)
+      >>> Route("/accounts", create_account, method="POST")
+      >>> Route("/accounts/{account_id}", get_account)
+
+    Parameters:
+      template: A route template.
+      handler: The request handler for this route.
+      method: The request method.
+      name: An optional name for the route.  Used in calls to
+        reverse_uri.  Defaults to the name of the handler.
     """
 
     __slots__ = [
@@ -45,6 +58,15 @@ class Route:
 
 class Include:
     """Groups of routes prefixed by a common path.
+
+    Examples:
+
+      >>> Include("/v1/accounts", [
+      ...   Route("/", create_account, method="POST"),
+      ...   Route("/", list_accounts),
+      ...   Route("/{account_id}", get_account),
+      ... ])
+
     """
 
     __slots__ = [
@@ -105,7 +127,8 @@ class Router:
 
     def match(self, method: str, path: str) -> Union[None, Tuple[Route, Dict[str, str]]]:
         """Look up the route matching the given method and path.
-        Returns the route and any path params.
+        Returns the route and any path params that were extracted from
+        the path.
         """
         routes = self._routes_by_method[method]
         route_res = self._route_res_by_method[method]
@@ -122,6 +145,10 @@ class Router:
         Raises:
           RouteNotFound: When the route doesn't exist.
           RouteParamMissing: When a required parameter was not provided.
+
+        Parameters:
+          route_name: The name of the route to reverse.
+          \**params: Route params used to build up the path.
         """
         try:
             route = self._routes_by_name[route_name]
