@@ -183,20 +183,25 @@ the DB component::
           return TodoManager(db)
 
 Now we can update our ``create_todo`` handler and add these components
-to our app::
+to our app:
 
-  def create_todo(todo: Todo, manager: TodoManager) -> Todo:
-      return manager.create(todo)
+.. code-block:: python
+   :emphasize-lines: 7-10
 
-  app = App(
-    components=[
-      DBComponent(),
-      TodoManagerComponent(),
-    ],
-    routes=[
-      Route("/todos", create_todo, method="POST"),
-    ],
-  )
+   ...
+
+   def create_todo(todo: Todo, manager: TodoManager) -> Todo:
+       return manager.create(todo)
+
+   app = App(
+       components=[
+           DBComponent(),
+           TodoManagerComponent(),
+       ],
+       routes=[
+           Route("/todos", create_todo, method="POST"),
+       ],
+   )
 
 Whenever we create a new todo now, it'll have an associated id::
 
@@ -230,25 +235,28 @@ handler in line as a parameter and return a new handler function so
 here our middleware takes the request handler as a parameter and
 returns a new handler that either raises a 403 error or executes the
 request handler based on the value of the ``Authorization`` header.
-If we then add that middleware to our app::
+If we then add that middleware to our app:
 
-  from molten import ResponseRendererMiddleware, JSONRenderer
+.. code-block:: python
+   :emphasize-lines: 10-13
 
-  ...
+   from molten import ResponseRendererMiddleware, JSONRenderer
 
-  app = App(
-    components=[
-      DBComponent(),
-      TodoManagerComponent(),
-    ],
-    middleware=[
-      ResponseRendererMiddleware([JSONRenderer()]),
-      AuthorizationMiddleware,
-    ],
-    routes=[
-      Route("/todos", create_todo, method="POST"),
-    ],
-  )
+   ...
+
+   app = App(
+       components=[
+           DBComponent(),
+           TodoManagerComponent(),
+       ],
+       middleware=[
+           ResponseRendererMiddleware([JSONRenderer()]),
+           AuthorizationMiddleware,
+       ],
+       routes=[
+           Route("/todos", create_todo, method="POST"),
+       ],
+   )
 
 And try to make the same kind of request we made before, we'll get
 back an authorization error::
@@ -261,6 +269,136 @@ work as expected::
 
   $ curl -H'Authorization: secret' -F'description=test' -F'status=done' 127.1:8000/todos
   {"id": 1, "description": "test", "status": "done"}
+
+Request Parsers
+---------------
+
+You may have noticed that requests containing urlencoded data or JSON
+data are automatically parsed as part of the validation process.  If
+you send a request using a content type that isn't supported, then the
+app will return a ``415 Unsupported Media Type``::
+
+  $ curl -H'authorization: secret' -H'content-type: invalid' -d'{"description": "test"}' 127.1:8000/todos
+  Unsupported Media Type
+
+If, for example, you'd like your API to be able to parse `msgpack`_
+requests, you could implement a msgpack request parser by implementing
+the :class:`RequestParser<molten.RequestParser>` protocol::
+
+  import msgpack
+
+  from molten.errors import ParseError
+
+
+  class MsgpackParser:
+      def can_parse_content(self, content_type: str) -> bool:
+          return content_type.startswith("application/x-msgpack")
+
+      def parse(self, data: RequestBody) -> Any:
+          try:
+              return msgpack.unpackb(data)
+          except Exception:
+              raise ParseError("failed to parse msgpack data")
+
+During the content negociation phase of the request-response cycle,
+molten chooses the first request parser whose ``can_parse_content``
+method returns ``True`` from the list of registered parsers.  That
+parser is then used to attempt to parse the input data.  If the data
+is valid then, the result is returned via the |RequestData| component
+(which schemas use internally), otherwise a |ParseError| is raised
+which triggers an HTTP 400 response to be returned.
+
+To register the new parser with your app, you can provide it via the
+``parsers`` keyword argument along with all the other parsers you want
+to use:
+
+.. code-block:: python
+   :emphasize-lines: 17-22
+
+   from molten import JSONParser, URLEncodingParser, MultiPartParser
+
+   ...
+
+   app = App(
+       components=[
+           DBComponent(),
+           TodoManagerComponent(),
+       ],
+       middleware=[
+           ResponseRendererMiddleware([JSONRenderer()]),
+           AuthorizationMiddleware,
+       ],
+       routes=[
+           Route("/todos", create_todo, method="POST"),
+       ],
+       parsers=[
+           JSONParser(),
+           MsgpackParser(),
+           URLEncodingParser(),
+           MultiPartParser(),
+       ],
+   )
+
+
+.. _msgpack: https://msgpack.org
+
+Response Renderers
+------------------
+
+Similarly, |ResponseRenderers| are used to render handler results
+according to the ``Accept`` header that the client sends.  If the
+client sends an ``Accept`` header with a mime type that isn't
+supported, then a ``406 Not Acceptable`` response is returned.
+
+Here's what a msgpack renderer might look like::
+
+  import msgpack
+
+  from molten import Response
+
+
+  class MsgpackRenderer:
+      def can_render_response(self, accept: str) -> bool:
+          return accept.startswith("application/x-msgpack")
+
+      def render(self, status: str, response_data: Any) -> Response:
+          content = msgpack.packb(response_data)
+          return Response(status, content=content, headers={
+              "content-type": "application/x-msgpack",
+          })
+
+And you can register it when you instantiate the app:
+
+.. code-block:: python
+   :emphasize-lines: 23-26
+
+   from molten import JSONRenderer
+
+   ...
+
+   app = App(
+       components=[
+           DBComponent(),
+           TodoManagerComponent(),
+       ],
+       middleware=[
+           ResponseRendererMiddleware([JSONRenderer()]),
+           AuthorizationMiddleware,
+       ],
+       routes=[
+           Route("/todos", create_todo, method="POST"),
+       ],
+       parsers=[
+           JSONParser(),
+           MsgpackParser(),
+           URLEncodingParser(),
+           MultiPartParser(),
+       ],
+       renderers=[
+           JSONRenderer(),
+           MsgpackRenderer(),
+       ],
+   )
 
 Wrapping Up
 -----------

@@ -5,12 +5,14 @@ Motivation
 
 The reason molten exists is I (`@Bogdanp`_) wanted a modern Python
 framework for building HTTP APIs that leveraged the support for type
-annotations added in recent versions of Python 3.  `API Star`_ came
-close to what I wanted but I found certain things off-putting (such as
-hooks instead of real middleware, no support for singleton components
-or control over component caching and others).
+annotations added in recent versions of Python 3.
 
-molten's driving principles are as follows:
+`API Star`_ came close to what I wanted but I found certain things
+off-putting (such as the use of hooks instead of real middleware, lack
+of support for singleton components or control over component caching
+and others).
+
+molten's core principles are as follows:
 
 * simple and easy to understand core -- anyone should be able to read
   the source code and fully understand it in an afternoon.

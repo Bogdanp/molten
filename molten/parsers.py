@@ -35,11 +35,16 @@ class RequestParser(Protocol):  # pragma: no cover
     """
 
     def can_parse_content(self, content_type: str) -> bool:
-        ...
+        """Returns True if this parser can parse the given content type.
+        """
 
     @no_type_check
-    def parse(self):
-        ...
+    def parse(self) -> Any:
+        """Attempt to parse the input data.
+
+        Raises:
+          ParseError: if the data cannot be parsed.
+        """
 
 
 class JSONParser:

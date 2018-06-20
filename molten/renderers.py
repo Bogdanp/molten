@@ -29,10 +29,12 @@ class ResponseRenderer(Protocol):  # pragma: no cover
     """
 
     def can_render_response(self, accept: str) -> bool:
-        ...
+        """Returns True if this renderer can render data for the given mime type.
+        """
 
     def render(self, status: str, response_data: Any) -> Response:
-        ...
+        """Attempt to render the response data.
+        """
 
 
 class JSONRenderer:
