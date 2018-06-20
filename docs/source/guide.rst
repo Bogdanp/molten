@@ -439,25 +439,40 @@ And you can register it when you instantiate the app:
 CORS Support
 ------------
 
-molten has built-in support for CORS via wsgicors_ (which has to be
-installed separately from molten).  To add CORS support to your app,
-you can import |CORSMixin| and subclass |App|::
+molten can support CORS headers via wsgicors_.  To add CORS support to
+your app, install ``wsgicors`` then wrap your app instance in a call
+to ``CORS``::
 
-  from molten import App
-  from molten.contrib.cors import CORSMixin
+  from wsgicors import CORS
 
-  class App(CORSMixin, App):
-      pass
+  ...
 
-If you want to customize the options that are passed to ``wsgicors``,
-you can import ``make_cors_mixin`` instead and use that to generate a
-custom mixin::
+  app = App(
+      components=[
+          DBComponent(),
+          TodoManagerComponent(),
+      ],
+      middleware=[
+          ResponseRendererMiddleware([
+              JSONRenderer(),
+              MsgpackRenderer(),
+          ]),
+          AuthorizationMiddleware,
+      ],
+      routes=[
+          Route("/todos", create_todo, method="POST"),
+      ],
+      parsers=[
+          JSONParser(),
+          MsgpackParser(),
+          URLEncodingParser(),
+          MultiPartParser(),
+      ],
+  )
 
-  from molten.contrib.cors import make_cors_mixin
+  app = CORS(app, headers="*", methods="*", origin="*", maxage="86400")
 
-  CORSMixin = make_cors_mixin(methods="GET,POST", maxage="86400", origin="example.com")
-
-Check out the wsgicors_ documentation for a list of accepted parameters.
+Check out the wsgicors_ documentation for details.
 
 .. _wsgicors: https://github.com/may-day/wsgicors
 

@@ -152,14 +152,6 @@ Errors
 Contrib
 -------
 
-CORS
-^^^^
-
-The ``CORSMixin`` can be used to add CORS support to your app.
-
-.. autofunction:: molten.contrib.cors.make_cors_mixin
-.. autoclass:: molten.contrib.cors.CORSMixin
-
 Settings
 ^^^^^^^^
 

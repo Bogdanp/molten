@@ -1,9 +1,6 @@
+from wsgicors import CORS
+
 from molten import App, Route, testing
-from molten.contrib.cors import CORSMixin
-
-
-class App(CORSMixin, App):
-    pass
 
 
 def index() -> dict:
@@ -11,6 +8,8 @@ def index() -> dict:
 
 
 app = App(routes=[Route("/", index)])
+app = CORS(app, headers="*", methods="*", origin="*", maxage="86400")
+
 client = testing.TestClient(app)
 
 
