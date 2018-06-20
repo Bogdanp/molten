@@ -30,7 +30,7 @@ from ..http.request import Request
 from ..http.response import Response
 from .common import to_environ
 
-HTTP_METHODS = {"delete", "head", "get", "patch", "post", "put"}
+HTTP_METHODS = {"delete", "head", "get", "options", "patch", "post", "put"}
 
 
 class TestResponse:

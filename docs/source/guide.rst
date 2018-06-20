@@ -370,7 +370,7 @@ Here's what a msgpack renderer might look like::
 And you can register it when you instantiate the app:
 
 .. code-block:: python
-   :emphasize-lines: 23-26
+   :emphasize-lines: 11-14
 
    from molten import JSONRenderer
 
@@ -382,7 +382,10 @@ And you can register it when you instantiate the app:
            TodoManagerComponent(),
        ],
        middleware=[
-           ResponseRendererMiddleware([JSONRenderer()]),
+           ResponseRendererMiddleware([
+               JSONRenderer(),
+               MsgpackRenderer(),
+           ]),
            AuthorizationMiddleware,
        ],
        routes=[
@@ -394,11 +397,32 @@ And you can register it when you instantiate the app:
            URLEncodingParser(),
            MultiPartParser(),
        ],
-       renderers=[
-           JSONRenderer(),
-           MsgpackRenderer(),
-       ],
    )
+
+CORS Support
+------------
+
+molten has built-in support for CORS via wsgicors_ (which has to be
+installed separately from molten).  To add CORS support to your app,
+you can import |CORSMixin| and subclass |App|::
+
+  from molten import App
+  from molten.contrib.cors import CORSMixin
+
+  class App(CORSMixin, App):
+      pass
+
+If you want to customize the options that are passed to ``wsgicors``,
+you can import ``make_cors_mixin`` instead and use that to generate a
+custom mixin::
+
+  from molten.contrib.cors import make_cors_mixin
+
+  CORSMixin = make_cors_mixin(methods="GET,POST", maxage="86400", origin="example.com")
+
+Check out the wsgicors_ documentation for a list of accepted parameters.
+
+.. _wsgicors: https://github.com/may-day/wsgicors
 
 Wrapping Up
 -----------

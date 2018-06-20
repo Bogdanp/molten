@@ -37,6 +37,15 @@ platform = "*"
 [package.dependencies]
 pytz = ">=0a"
 [[package]]
+name = "backports.functools-lru-cache"
+version = "1.5"
+description = "backports.functools_lru_cache"
+category = "dev"
+optional = false
+python-versions = ">=2.6"
+platform = "*"
+
+[[package]]
 name = "bumpversion"
 version = "0.5.3"
 description = "Version-bump your software with a single command!"
@@ -494,16 +503,29 @@ optional = false
 python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, <4"
 platform = "*"
 
+[[package]]
+name = "wsgicors"
+version = "0.7.0"
+description = "WSGI for Cross Origin Resource Sharing (CORS)"
+category = "dev"
+optional = false
+python-versions = "*"
+platform = "UNKNOWN"
+
+[package.dependencies]
+"backports.functools_lru_cache" = ">=1.0"
+
 [metadata]
 python-versions = "^3.6"
 platform = "*"
-content-hash = "142cd81b2e5d11fbc559f6b367252582163f4bd22f5ceb7cdddf29f1ff347576"
+content-hash = "e026b264be4e089e96734aa3a0e4f95949de0fdabc10e6d3fb791ac21a676c63"
 
 [metadata.hashes]
 alabaster = [ "2eef172f44e8d301d25aff8068fddd65f767a3f04b5f15b0f4922f113aa1c732", "37cdcb9e9954ed60912ebc1ca12a9d12178c26637abdf124e3cde2341c257fe0",]
 atomicwrites = [ "a24da68318b08ac9c9c45029f4a10371ab5b20e4226738e150e6e7c571630ae6", "240831ea22da9ab882b551b31d4225591e5e447a68c5e188db5b89ca1d487585",]
 attrs = [ "4b90b09eeeb9b88c35bc642cbac057e45a5fd85367b985bd2809c62b7b939265", "e0d0eb91441a3b53dab4d9b743eafc1ac44476296a2053b6ca3af0b139faf87b",]
 babel = [ "6778d85147d5d85345c14a26aada5e478ab04e39b078b0745ee6870c2b5cf669", "8cba50f48c529ca3fa18cf81fa9403be176d374ac4d60738b839122dfaaa3d23",]
+"backports.functools-lru-cache" = [ "f0b0e4eba956de51238e17573b7087e852dfe9854afd2e9c873f73fc0ca0a6dd", "9d98697f088eb1b0fa451391f91afb5e3ebde16bbdb272819fd091151fda4f1a",]
 bumpversion = [ "6753d9ff3552013e2130f7bc03c1007e24473b4835952679653fb132367bdd57", "6744c873dd7aafc24453d8b6a1a0d6d109faf63cd0cd19cb78fd46e74932c77e",]
 certifi = [ "9fa520c1bacfb634fa7af20a76bcbd3d5fb390481724c597da32c719a7dca4b0", "13e698f54293db9f89122b0581843a782ad0934a4fe0172d2a980ba77fc61bb7",]
 chardet = [ "fc323ffcaeaed0e0a02bf4d117757b98aed530d9ed4531e3e15460124c106691", "84ab92ed1c4d4f16916e05906b6b75a6c0fb5db821cc65e70cbd64a3e2a5eaae",]
@@ -548,3 +570,4 @@ typed-ast = [ "0948004fa228ae071054f5208840a1e88747a357ec1101c17217bfe99b299d58"
 typing = [ "b2c689d54e1144bbcfd191b0832980a21c2dbcf7b5ff7a66248a60c90e951eb8", "3a887b021a77b292e151afb75323dea88a7bc1b3dfa92176cff8e44c8b68bddf", "d400a9344254803a2368533e4533a4200d21eb7b6b729c173bc38201a74db3f2",]
 typing-extensions = [ "8b0962ecb92847974514b1724c8ae2b6dd1ffe86bcdfac429517f5e583ada658", "be7b05ddab71727fabf1f071365043cf034e4cdac9cade1f1d61a6cc526aaafe", "1c0a8e3b4ce55207a03dd0dcb98bc47a704c71f14fe4311ec860cc8af8f4bd27",]
 urllib3 = [ "b5725a0bd4ba422ab0e66e89e030c806576753ea3ee08554382c14e685d117b5", "a68ac5e15e76e7e5dd2b8f94007233e01effe3e50e8daddf69acfd81cb686baf",]
+wsgicors = [ "ccab43d60f02971d548f24209939818bb85fddf9367d4668e0db787b071f3d99",]
