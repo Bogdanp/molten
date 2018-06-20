@@ -103,6 +103,7 @@ Dependency Injection
    :members:
 .. autoclass:: Component
    :members:
+   :member-order: bysource
 
 
 Validation

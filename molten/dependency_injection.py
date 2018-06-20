@@ -29,19 +29,32 @@ _T = TypeVar("_T", covariant=True)
 
 class Component(Protocol[_T]):  # pragma: no cover
     """The component protocol.
+
+    Examples:
+
+      >>> class DBComponent:
+      ...   is_cacheable = True
+      ...   is_singleton = True
+      ...
+      ...   def can_handle_parameter(self, parameter: Parameter) -> bool:
+      ...     return parameter.annotation is DB
+      ...
+      ...   def resolve(self, settings: Settings) -> DB:
+      ...     return DB(settings["database_dsn"])
     """
 
     @property
     def is_cacheable(self) -> bool:
         """If True, then the component will be cached within a
-        resolver.  This should be True for most components.  Defaults
-        to True.
+        resolver meaning that instances of the resolved component will
+        be reused within a single request-response cycle.  This should
+        be True for most components.  Defaults to True.
         """
 
     @property
     def is_singleton(self) -> bool:
         """If True, then the component will be treated as a singleton
-        and cached after its first use.  Defaults to False.
+        and cached forever after its first use.  Defaults to False.
         """
 
     def can_handle_parameter(self, parameter: Parameter) -> bool:

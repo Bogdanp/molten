@@ -47,8 +47,8 @@ Handlers can also validate route parameters.  If you update the
 
 When you make a curl request to ``127.1:8000/hello/Jim/26`` you'll get
 back a JSON response containing the string, but if you pass an invalid
-integer to the age param, you'll get back an HTTP 400 response
-containing an error message::
+integer to the ``age`` param, you'll get back an ``400 Bad Request``
+response containing an error message::
 
   $ curl 127.1:8000/hello/Jim/abc
   {"age": "expected int value"}
@@ -93,7 +93,7 @@ handlers' parameters with the ``Todo`` type::
   app = App(routes=[Route("/todos", create_todo, method="POST")])
 
 The server should automatically restart once you save the file so you
-can try to make a bunch of POST request to ``/todos`` using curl::
+can try to make a bunch of POST requests to ``/todos`` using curl::
 
   $ curl -F'description=test' 127.1:8000/todos
   {"id": null, "description": "test", "status": "todo"}
@@ -238,6 +238,19 @@ Whenever we create a new todo now, it'll have an associated id::
   $ curl -F'description=test' -F'status=done' 127.1:8000/todos
   {"id": 3, "description": "test", "status": "done"}
 
+Components whose ``is_cacheable`` property is ``True`` (the default if
+the property isn't defined) are instantiated once and reused by all
+functions run during a single request and components whose
+``is_singleton`` property is ``True`` (defaults to ``False`` if not
+defined) are instantiated exactly once at process startup and
+subsequently reused forever.
+
+.. note::
+
+   All functions that use DI (such as request handlers or components'
+   ``resolve()`` methods) must annotate all of their parameters.
+   Otherwise a |DIError| will be raised.
+
 Authorization
 -------------
 
@@ -300,7 +313,7 @@ Request Parsers
 You may have noticed that requests containing urlencoded data or JSON
 data are automatically parsed as part of the validation process.  If
 you send a request using a content type that isn't supported, then the
-app will return a ``415 Unsupported Media Type``::
+app will return a ``415 Unsupported Media Type`` response::
 
   $ curl -H'authorization: secret' -H'content-type: invalid' -d'{"description": "test"}' 127.1:8000/todos
   Unsupported Media Type
@@ -328,7 +341,7 @@ During the content negociation phase of the request-response cycle,
 molten chooses the first request parser whose ``can_parse_content``
 method returns ``True`` from the list of registered parsers.  That
 parser is then used to attempt to parse the input data.  If the data
-is valid then, the result is returned via the |RequestData| component
+is valid then the result is returned via the |RequestData| component
 (which schemas use internally), otherwise a |ParseError| is raised
 which triggers an HTTP 400 response to be returned.
 
