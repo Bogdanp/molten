@@ -32,8 +32,26 @@ gunicorn with::
 If you then make a curl request to ``127.1:8000/hello/Jim`` you'll
 get back a JSON response containing the string ``"Hello Jim!"``::
 
-  $ curl 127.1:8000/hello/boo
-  "Hello boo"
+  $ curl 127.1:8000/hello/Jim
+  "Hello Jim"
+
+Handlers can also validate route parameters.  If you update the
+``hello`` handler and its route to take an integer ``age`` parameter::
+
+
+  def hello(name: str, age: int) -> str:
+      return f"Hello {name}! I hear you're {age} years old."
+
+
+  app = App(routes=[Route("/hello/{name}/{age}", hello)])
+
+When you make a curl request to ``127.1:8000/hello/Jim/26`` you'll get
+back a JSON response containing the string, but if you pass an invalid
+integer to the age param, you'll get back an HTTP 400 response
+containing an error message::
+
+  $ curl http://127.1:8000/hello/Jim/abc
+  {"age": "expected int value"}
 
 Request Validation
 ------------------
