@@ -51,7 +51,7 @@ integer to the ``age`` param, you'll get back an ``400 Bad Request``
 response containing an error message::
 
   $ curl 127.1:8000/hello/Jim/abc
-  {"age": "expected int value"}
+  {"errors": {"age": "expected int value"}}
 
 Request Validation
 ------------------

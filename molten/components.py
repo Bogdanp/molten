@@ -61,7 +61,7 @@ class HeaderComponent:
             if is_optional:
                 return None
 
-            raise HTTPError(HTTP_400, {header_name: "missing"})
+            raise HTTPError(HTTP_400, {"errors": {header_name: "missing"}})
 
 
 class QueryParamComponent:
@@ -92,7 +92,7 @@ class QueryParamComponent:
             if is_optional:
                 return None
 
-            raise HTTPError(HTTP_400, {parameter.name: "missing"})
+            raise HTTPError(HTTP_400, {"errors": {parameter.name: "missing"}})
 
 
 class RequestBodyComponent:
@@ -191,7 +191,9 @@ class RouteParamsComponent:
         try:
             return parameter.annotation(self.params[parameter.name])
         except (TypeError, ValueError):
-            raise HTTPError(HTTP_400, {parameter.name: f"expected {parameter.annotation.__name__} value"})
+            raise HTTPError(HTTP_400, {"errors": {
+                parameter.name: f"invalid {parameter.annotation.__name__} value",
+            }})
 
 
 class SchemaComponent:

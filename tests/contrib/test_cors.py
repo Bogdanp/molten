@@ -9,7 +9,6 @@ def index() -> dict:
 
 app = App(routes=[Route("/", index)])
 app = CORS(app, headers="*", methods="*", origin="*", maxage="86400")
-
 client = testing.TestClient(app)
 
 

@@ -141,7 +141,7 @@ def test_apps_can_handle_requests_with_missing_named_headers():
 
     # Then I should get back a 400 response
     assert response.status_code == 400
-    assert response.data == '{"content-type": "missing"}'
+    assert response.data == '{"errors": {"content-type": "missing"}}'
 
 
 def test_apps_can_handle_requests_with_missing_named_optional_headers():
@@ -318,7 +318,7 @@ def test_apps_can_fail_to_handle_route_params():
 
     # Then I should get back a 400 response
     assert response.status_code == 400
-    assert response.json() == {"age": "expected int value"}
+    assert response.json() == {"errors": {"age": "invalid int value"}}
 
 
 def test_apps_can_handle_invalid_json_data():
