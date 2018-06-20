@@ -50,7 +50,7 @@ back a JSON response containing the string, but if you pass an invalid
 integer to the age param, you'll get back an HTTP 400 response
 containing an error message::
 
-  $ curl http://127.1:8000/hello/Jim/abc
+  $ curl 127.1:8000/hello/Jim/abc
   {"age": "expected int value"}
 
 Request Validation
@@ -76,6 +76,12 @@ responses and ignored during requests (defaulting to ``None``).  Any
 string is going to be a valid ``description`` and the ``status`` field
 is only going to accept ``"todo"`` and ``"done"`` as values in a
 request.
+
+The ``@schema`` decorator detects all of the field definitions on the
+class and collects them into a ``_FIELDS`` class variable.
+Additionally, it adds ``__init__``, ``__eq__`` and ``__repr__``
+methods to the class if they don't already exist.  |Field| is used to
+optionally assign metadata to individual attributes on a schema.
 
 We can now hook that into a handler by simply annotating one of the
 handlers' parameters with the ``Todo`` type::
