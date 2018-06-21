@@ -53,6 +53,15 @@ response containing an error message::
   $ curl 127.1:8000/hello/Jim/abc
   {"errors": {"age": "expected int value"}}
 
+Handlers may return any value and the |ResponseRendererMiddleware|
+will attempt to render the returned value in an appropriate way for
+the current response.  If you need control over the returned response,
+then you can return an explicit |Response| object, in which case that
+response will be returned as-is.  Additionally, you may return a
+custom status along with your value by returning a tuple::
+
+  return HTTP_201, something
+
 Request Validation
 ------------------
 

@@ -93,9 +93,8 @@ Special Components
 ------------------
 
 Sometimes it may be useful for functions to gain access to the current
-|DependencyResolver| instance.  Any parameter whose annotation is
-``DependencyResolver`` will have the current resolver injected into
-it::
+dependency resolver instance.  Any parameter whose annotation is
+|DependencyResolver| will have the current resolver injected into it::
 
   def index(resolver: DependencyResolver) -> None:
       ...

@@ -14,5 +14,7 @@
 .. |RequestData| replace:: :data:`RequestData<molten.RequestData>`
 .. |RequestInput| replace:: :data:`RequestInput<molten.RequestInput>`
 .. |Request| replace:: :data:`Request<molten.Request>`
+.. |ResponseRendererMiddleware| replace:: :data:`ResponseRendererMiddleware<molten.ResponseRendererMiddleware>`
 .. |ResponseRenderers| replace:: :class:`ResponseRenderers<molten.ResponseRenderer>`
+.. |Response| replace:: :data:`Response<molten.Response>`
 .. |SettingsComponent| replace:: :class:`SettingsComponent<molten.contrib.settings.SettingsComponent>`
