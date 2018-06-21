@@ -1,5 +1,5 @@
-from molten import App, Route
-from molten.contrib.settings import Settings, SettingsComponent
+from molten import App, Route, Settings
+from molten.contrib.toml_settings import TOMLSettingsComponent
 
 
 def index(settings: Settings) -> dict:
@@ -7,6 +7,6 @@ def index(settings: Settings) -> dict:
 
 
 app = App(
-    components=[SettingsComponent()],
+    components=[TOMLSettingsComponent()],
     routes=[Route("/", index)],
 )

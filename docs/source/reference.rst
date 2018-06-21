@@ -30,14 +30,17 @@ Middleware
 .. autoclass:: ResponseRendererMiddleware
 
 
+Settings
+--------
+
+.. autoclass:: Settings
+   :members:
+   :member-order: bysource
+.. autoclass:: SettingsComponent
+
+
 Request Objects
 ---------------
-
-All of the following types, except for ``UploadedFile`` can be
-requested by handlers with DI::
-
-  def index(request: Request):
-    ...
 
 .. autoclass:: Request
    :members:
@@ -181,7 +184,7 @@ The ``SQLAlchemyComponent`` automatically creates database session
 objects whenever a handler requests a parameter whose type is
 ``sqlalchemy.Session``.
 
-This component depends on the |SettingsComponent|.
+This component requires a |Settings| component.
 
 .. autoclass:: molten.contrib.sqlalchemy.SQLAlchemyEngineComponent
 .. autoclass:: molten.contrib.sqlalchemy.SQLAlchemySessionComponent
@@ -192,16 +195,16 @@ If you need access to the SQLAlchemy engine instance, you may request
 
 .. autodata:: molten.contrib.sqlalchemy.EngineData
 
-Settings
-^^^^^^^^
+TOML Settings
+^^^^^^^^^^^^^
 
-The ``SettingsComponent`` loads environment-specific settings from a
-TOML config file.  You'll have to install the ``toml`` package
+The ``TOMLSettingsComponent`` loads environment-specific settings from
+a TOML config file.  You'll have to install the ``toml`` package
 yourself before using this module.
 
-.. autoclass:: molten.contrib.settings.Settings
+.. autoclass:: molten.contrib.toml_settings.TOMLSettings
    :members:
-.. autoclass:: molten.contrib.settings.SettingsComponent
+.. autoclass:: molten.contrib.toml_settings.TOMLSettingsComponent
    :members:
 
 Templates

@@ -28,6 +28,7 @@ from .middleware import ResponseRendererMiddleware
 from .parsers import JSONParser, MultiPartParser, RequestParser, URLEncodingParser
 from .renderers import JSONRenderer, ResponseRenderer
 from .router import Include, Route, Router
+from .settings import Settings, SettingsComponent
 from .testing import TestClient, TestResponse, to_environ
 from .typing import (
     Header, Host, Method, Middleware, Port, QueryParam, QueryString, RequestBody, RequestData,
@@ -39,6 +40,9 @@ __version__ = "0.0.2"
 
 __all__ = [
     "BaseApp", "App", "Middleware",
+
+    # Settings
+    "Settings", "SettingsComponent",
 
     # Router
     "Router", "Route", "Include",

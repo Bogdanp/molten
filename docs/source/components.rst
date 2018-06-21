@@ -89,6 +89,42 @@ file-like object::
   def index(data: RequestData) -> None:
       print(data)
 
+Settings Components
+-------------------
+
+molten declares a |Settings| class that 3rd party component libraries
+may build components for or use internally.  This is useful because
+components -- both 3rd party and 1st party -- can depend on the
+existence of a shared settings object regardless of how those settings
+are loaded.
+
+Two settings components are provided by the library.
+
+|SettingsComponent|::
+
+  from molten import Settings, SettingsComponent
+
+  def handle(settings: Settings) -> None:
+      ...
+
+  app = App(
+      components=[SettingsComponent(Settings({"example": 42}))],
+      routes=Route("/", handle),
+  )
+
+|TOMLSettingsComponent|::
+
+  from molten import Settings
+  from molten.contrib.toml_settings import TOMLSettingsComponent
+
+  def handle(settings: Settings) -> None:
+      ...
+
+  app = App(
+      components=[TOMLSettingsComponent("settings.toml")],
+      routes=Route("/", handle),
+  )
+
 Special Components
 ------------------
 

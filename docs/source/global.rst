@@ -17,4 +17,6 @@
 .. |ResponseRendererMiddleware| replace:: :data:`ResponseRendererMiddleware<molten.ResponseRendererMiddleware>`
 .. |ResponseRenderers| replace:: :class:`ResponseRenderers<molten.ResponseRenderer>`
 .. |Response| replace:: :data:`Response<molten.Response>`
-.. |SettingsComponent| replace:: :class:`SettingsComponent<molten.contrib.settings.SettingsComponent>`
+.. |Settings| replace:: :class:`Settings<molten.Settings>`
+.. |SettingsComponent| replace:: :class:`SettingsComponent<molten.SettingsComponent>`
+.. |TOMLSettingsComponent| replace:: :class:`TOMLSettingsComponent<molten.contrib.toml_settings.TOMLSettingsComponent>`

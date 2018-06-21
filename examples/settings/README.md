@@ -1,6 +1,6 @@
 # Settings Example
 
-This app demonstrates usage of `molten.contrib.settings`.
+This app demonstrates usage of `molten.contrib.toml_settings`.
 
 ## Usage
 

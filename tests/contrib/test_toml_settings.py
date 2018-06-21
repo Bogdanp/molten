@@ -1,7 +1,7 @@
 import pytest
 
-from molten import App, Route, testing
-from molten.contrib.settings import Settings, SettingsComponent
+from molten import App, Route, Settings, testing
+from molten.contrib.toml_settings import TOMLSettings, TOMLSettingsComponent
 
 
 def index(settings: Settings) -> dict:
@@ -9,7 +9,7 @@ def index(settings: Settings) -> dict:
 
 
 app = App(
-    components=[SettingsComponent("./tests/contrib/fixtures/settings.toml", "prod")],
+    components=[TOMLSettingsComponent("./tests/contrib/fixtures/settings.toml", "prod")],
     routes=[Route("/", index)],
 )
 
@@ -37,9 +37,9 @@ def test_apps_can_load_settings():
     }
 
 
-def test_settings_can_look_up_deeply_nested_values():
+def test_toml_settings_can_look_up_deeply_nested_values():
     # Given that I have a settings object
-    settings = Settings.from_path("tests/contrib/fixtures/settings.toml", "dev")
+    settings = TOMLSettings.from_path("tests/contrib/fixtures/settings.toml", "dev")
 
     # When I call deep_get to look up a nested value that doesn't exist
     # Then I should get None back
@@ -69,9 +69,9 @@ def test_settings_can_look_up_deeply_nested_values():
     assert settings.deep_get("oauth_providers.0.name") == "Facebook"
 
 
-def test_settings_can_look_up_required_values():
+def test_toml_settings_can_look_up_required_values():
     # Given that I have a settings object
-    settings = Settings.from_path("tests/contrib/fixtures/settings.toml", "dev")
+    settings = TOMLSettings.from_path("tests/contrib/fixtures/settings.toml", "dev")
 
     # When I call strict_get with a path that doesn't exist
     # Then a RuntimeError should be raised

@@ -19,8 +19,7 @@ from collections import namedtuple
 from inspect import Parameter
 from typing import Any, Callable, NewType, Optional
 
-from molten import DependencyResolver
-from molten.contrib.settings import Settings
+from molten import DependencyResolver, Settings
 
 try:
     from sqlalchemy import create_engine
@@ -39,22 +38,24 @@ EngineData = namedtuple("EngineData", "engine, session_factory")
 
 class SQLAlchemyEngineComponent:
     """A component that sets up an SQLAlchemy Engine.  This component
-    depends on :mod:`molten.contrib.settings`.
+    depends on the availability of a :class:`molten.Settings`
+    component.
 
-    Your settings file must contain a ``database_engine_dsn`` setting
-    pointing at the database to use.  Additionally, you may provide a
-    ``database_engine_params`` setting represeting dictionary data
-    that will be passed directly to ``sqlalchemy.create_engine``.
+    Your settings dictionary must contain a ``database_engine_dsn``
+    setting pointing at the database to use.  Additionally, you may
+    provide a ``database_engine_params`` setting represeting
+    dictionary data that will be passed directly to
+    ``sqlalchemy.create_engine``.
 
     Examples:
 
       >>> from molten import App
-      >>> from molten.contrib.settings import SettingsComponent
       >>> from molten.contrib.sqlalchemy import SQLAlchemyEngineComponent, SQLAlchemySessionComponent, SQLAlchemyMiddleware
+      >>> from molten.contrib.toml_settings import TOMLSettingsComponent
 
       >>> app = App(
       ...   components=[
-      ...     SettingsComponent(),
+      ...     TOMLSettingsComponent(),
       ...     SQLAlchemyEngineComponent(),
       ...     SQLAlchemySessionComponent(),
       ...   ],

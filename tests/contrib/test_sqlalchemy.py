@@ -8,10 +8,10 @@ from molten import (
     HTTP_404, App, DependencyResolver, Field, HTTPError, JSONRenderer, ResponseRendererMiddleware,
     Route, schema, testing
 )
-from molten.contrib.settings import SettingsComponent
 from molten.contrib.sqlalchemy import (
     EngineData, SQLAlchemyEngineComponent, SQLAlchemyMiddleware, SQLAlchemySessionComponent
 )
+from molten.contrib.toml_settings import TOMLSettingsComponent
 
 Base = declarative_base()
 
@@ -58,7 +58,7 @@ def no_db(resolver: DependencyResolver) -> bool:
 
 app = App(
     components=[
-        SettingsComponent("tests/contrib/fixtures/sqlalchemy_settings.toml"),
+        TOMLSettingsComponent("tests/contrib/fixtures/sqlalchemy_settings.toml"),
         SQLAlchemyEngineComponent(),
         SQLAlchemySessionComponent(),
     ],
