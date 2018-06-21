@@ -266,7 +266,7 @@ class ListValidator:
       >>> load_schema(Account, {"settings": [{"name": "a"}]})
       Traceback (most recent call last):
         ...
-      ValidationError({"settings": {0: {"value": "this field is required"}}})
+      ValidationError: {"settings": {0: {"value": "this field is required"}}}
 
     When a generic parameter isn't provided, then any list is accepted.
     """
@@ -337,7 +337,7 @@ class DictValidator:
       >>> load_schema(Account, {"settings": {"a": 42}})
       Traceback (most recent call last):
         ...
-      ValidationError({"settings": {"a": "unexpected type int"}})
+      ValidationError: {"settings": {"a": "unexpected type int"}}
 
     When the ``fields`` option is not provided and the annotation has
     generic parameters, then the items from the input will be
@@ -356,7 +356,7 @@ class DictValidator:
       >>> load_schema(Account, {"settings": {"a": 42})  # invalid
       Traceback (most recent call last):
         ...
-      ValidationError({"settings": {"a": "unexpected type int"}})
+      ValidationError: {"settings": {"a": "unexpected type int"}}
 
     When neither ``fields`` or generic parameters are provided, then
     any dictionary will be accepted.

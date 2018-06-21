@@ -36,6 +36,13 @@ HTTP_METHODS = {"delete", "head", "get", "options", "patch", "post", "put"}
 class TestResponse:
     """A wrapper around Response objects that adds a few additional
     helper methods for testing.
+
+    Attributes:
+      status: The response status line.
+      status_code: The response status code as an integer.
+      headers: The response headers.
+      stream: The response data as a binary file.
+      data: The response data as a string.
     """
 
     __slots__ = ["_response"]
@@ -91,6 +98,17 @@ class TestClient:
 
         Raises:
           RuntimeError: If both 'data' and 'json' are provided.
+
+        Parameters:
+          method: The request method.
+          path: The request path.
+          headers: Optional request headers.
+          params: Optional query params.
+          body: An optional bytestring for the request body.
+          data: An optional dictionary for the request body that gets url-encoded.
+          json: An optional value for the request body that gets json-encoded.
+          auth: An optional function that can be used to add auth
+            headers to the request.
         """
         if data is not None and json is not None:
             raise RuntimeError("either 'data' or 'json' should be provided, not both")
