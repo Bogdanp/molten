@@ -32,7 +32,8 @@ except ImportError:  # pragma: no cover
 #: The type of session factories.
 SessionFactory = NewType("SessionFactory", sessionmaker)
 
-#: The type of engine data.
+#: A named tuple containing an instantiated SQLAlchemy ``engine``
+#: object and the ``session_factory``.
 EngineData = namedtuple("EngineData", "engine, session_factory")
 
 

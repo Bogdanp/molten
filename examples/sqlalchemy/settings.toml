@@ -1,0 +1,2 @@
+[common]
+database_engine_dsn = "sqlite://"

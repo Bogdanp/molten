@@ -187,6 +187,11 @@ This component depends on the |SettingsComponent|.
 .. autoclass:: molten.contrib.sqlalchemy.SQLAlchemySessionComponent
 .. autoclass:: molten.contrib.sqlalchemy.SQLAlchemyMiddleware
 
+If you need access to the SQLAlchemy engine instance, you may request
+``EngineData`` in your function.
+
+.. autodata:: molten.contrib.sqlalchemy.EngineData
+
 Settings
 ^^^^^^^^
 
