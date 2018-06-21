@@ -1,3 +1,5 @@
+.. include:: global.rst
+
 API Reference
 =============
 
@@ -172,10 +174,23 @@ Errors
 Contrib
 -------
 
+SQLAlchemy
+^^^^^^^^^^
+
+The ``SQLAlchemyComponent`` automatically creates database session
+objects whenever a handler requests a parameter whose type is
+``sqlalchemy.Session``.
+
+This component depends on the |SettingsComponent|.
+
+.. autoclass:: molten.contrib.sqlalchemy.SQLAlchemyEngineComponent
+.. autoclass:: molten.contrib.sqlalchemy.SQLAlchemySessionComponent
+.. autoclass:: molten.contrib.sqlalchemy.SQLAlchemyMiddleware
+
 Settings
 ^^^^^^^^
 
-The ``SettingsComponents`` loads environment-specific settings from a
+The ``SettingsComponent`` loads environment-specific settings from a
 TOML config file.  You'll have to install the ``toml`` package
 yourself before using this module.
 

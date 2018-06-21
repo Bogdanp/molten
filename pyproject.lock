@@ -5,7 +5,7 @@ description = "A configurable sidebar-enabled Sphinx theme"
 category = "dev"
 optional = false
 python-versions = "*"
-platform = "*"
+platform = "UNKNOWN"
 
 [[package]]
 name = "atomicwrites"
@@ -457,6 +457,15 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 platform = "any"
 
 [[package]]
+name = "sqlalchemy"
+version = "1.2.8"
+description = "Database Abstraction Library"
+category = "dev"
+optional = false
+python-versions = "*"
+platform = "*"
+
+[[package]]
 name = "toml"
 version = "0.9.4"
 description = "Python Library for Tom's Obvious, Minimal Language"
@@ -518,7 +527,7 @@ platform = "UNKNOWN"
 [metadata]
 python-versions = "^3.6"
 platform = "*"
-content-hash = "e026b264be4e089e96734aa3a0e4f95949de0fdabc10e6d3fb791ac21a676c63"
+content-hash = "3397454b245aaccd29ac6a3b3d5ef6af8e23e9b8c35121f456ae453cfa83f1f4"
 
 [metadata.hashes]
 alabaster = [ "2eef172f44e8d301d25aff8068fddd65f767a3f04b5f15b0f4922f113aa1c732", "37cdcb9e9954ed60912ebc1ca12a9d12178c26637abdf124e3cde2341c257fe0",]
@@ -565,6 +574,7 @@ sphinx = [ "85f7e32c8ef07f4ba5aeca728e0f7717bef0789fba8458b8d9c5c294cad134f3", "
 sphinxcontrib-napoleon = [ "cbb31953b15d2102c18f16f02591f92e2614a08ef0218c9e514e2dc4c4f9daf9", "614b779888629f14dfdfad6c17bffbb6d3813a0a0917a9541651d85384d4d6bd",]
 sphinxcontrib-versioning = [ "1a5fe9b4e36020488d0d037fccc0b21aaf71b80425cad42ef4a5e5c3c193d3cd",]
 sphinxcontrib-websupport = [ "68ca7ff70785cbe1e7bccc71a48b5b6d965d79ca50629606c7861a21b206d9dd", "9de47f375baf1ea07cdb3436ff39d7a9c76042c10a769c52353ec46e4e8fc3b9",]
+sqlalchemy = [ "2d5f08f714a886a1382c18be501e614bce50d362384dc089474019ce0768151c",]
 toml = [ "8e86bd6ce8cc11b9620cb637466453d94f5d57ad86f17e98a98d1f73e3baab2d",]
 typed-ast = [ "0948004fa228ae071054f5208840a1e88747a357ec1101c17217bfe99b299d58", "25d8feefe27eb0303b73545416b13d108c6067b846b543738a25ff304824ed9a", "c05b41bc1deade9f90ddc5d988fe506208019ebba9f2578c622516fd201f5863", "519425deca5c2b2bdac49f77b2c5625781abbaf9a809d727d3a5596b30bb4ded", "6de012d2b166fe7a4cdf505eee3aaa12192f7ba365beeefaca4ec10e31241a85", "79b91ebe5a28d349b6d0d323023350133e927b4de5b651a8aa2db69c761420c6", "a8034021801bc0440f2e027c354b4eafd95891b573e12ff0418dec385c76785c", "f19f2a4f547505fe9072e15f6f4ae714af51b5a681a97f187971f50c283193b6", "c9b060bd1e5a26ab6e8267fd46fc9e02b54eb15fffb16d112d4c7b1c12987559", "2e214b72168ea0275efd6c884b114ab42e316de3ffa125b267e732ed2abda892", "bc978ac17468fe868ee589c795d06777f75496b1ed576d308002c8a5756fb9ea", "edb04bdd45bfd76c8292c4d9654568efaedf76fe78eb246dde69bdb13b2dad87", "668d0cec391d9aed1c6a388b0d5b97cd22e6073eaa5fbaa6d2946603b4871efe", "29464a177d56e4e055b5f7b629935af7f49c196be47528cc94e0a7bf83fbc2b9", "8550177fa5d4c1f09b5e5f524411c44633c80ec69b24e0e98906dd761941ca46", "3e0d5e48e3a23e9a4d1a9f698e32a542a4a288c871d33ed8df1b092a40f3a0f9", "68ba70684990f59497680ff90d18e756a47bf4863c604098f10de9716b2c0bdd", "57fe287f0cdd9ceaf69e7b71a2e94a24b5d268b35df251a88fef5cc241bf73aa",]
 typing = [ "b2c689d54e1144bbcfd191b0832980a21c2dbcf7b5ff7a66248a60c90e951eb8", "3a887b021a77b292e151afb75323dea88a7bc1b3dfa92176cff8e44c8b68bddf", "d400a9344254803a2368533e4533a4200d21eb7b6b729c173bc38201a74db3f2",]

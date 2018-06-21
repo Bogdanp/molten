@@ -67,3 +67,17 @@ def test_settings_can_look_up_deeply_nested_values():
     # When I call deep_get with a path that leads into a list with a valid index
     # Then I should get back a value
     assert settings.deep_get("oauth_providers.0.name") == "Facebook"
+
+
+def test_settings_can_look_up_required_values():
+    # Given that I have a settings object
+    settings = Settings.from_path("tests/contrib/fixtures/settings.toml", "dev")
+
+    # When I call strict_get with a path that doesn't exist
+    # Then a RuntimeError should be raised
+    with pytest.raises(RuntimeError):
+        settings.strict_get("i.dont.exist")
+
+    # When I call strict_get with a valid path
+    # Then I should get that value back
+    assert settings.strict_get("sessions.secret")

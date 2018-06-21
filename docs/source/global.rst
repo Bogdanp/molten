@@ -5,3 +5,4 @@
 .. |ParseError| replace:: :class:`ParseError<molten.ParseError>`
 .. |RequestData| replace:: :data:`RequestData<molten.RequestData>`
 .. |ResponseRenderers| replace:: :class:`ResponseRenderers<molten.ResponseRenderer>`
+.. |SettingsComponent| replace:: :class:`SettingsComponent<molten.contrib.settings.SettingsComponent>`

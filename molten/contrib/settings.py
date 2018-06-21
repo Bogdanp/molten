@@ -36,6 +36,12 @@ class Settings(dict):
     def deep_get(self, path: str, default: Optional[Any] = None) -> Optional[Any]:
         """Look up a deeply-nested setting by its path.
 
+        Examples:
+
+          >>> settings = Settings({"a": {"b": [{"c": 42}]}})
+          >>> settings.deep_get("a.b.0.c")
+          42
+
         Raises:
           TypeError: When attempting to index into a primitive value
             or when indexing a list with a string value rather than an
@@ -65,6 +71,18 @@ class Settings(dict):
                 return default
 
         return root
+
+    def strict_get(self, path: str) -> Any:
+        """Get a required setting.
+
+        Raises:
+          RuntimeError: If the value for that setting cannot be found.
+        """
+        value = self.deep_get(path, Missing)
+        if value is Missing:
+            raise RuntimeError(f"Cannot find required setting at path {path!r}.")
+
+        return value
 
     @classmethod
     def from_path(cls, path: str, environment: str) -> "Settings":
