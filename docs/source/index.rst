@@ -214,4 +214,6 @@ Project Info
    :maxdepth: 1
 
    changelog
+   Contributing <https://github.com/Bogdanp/molten/blob/master/CONTRIBUTING.md>
+   Contributors <https://github.com/Bogdanp/molten/blob/master/CONTRIBUTORS.md>
    license
