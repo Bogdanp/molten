@@ -106,6 +106,12 @@ Response Renderers
    :member-order: bysource
 .. autoclass:: JSONRenderer
 
+HTTP Status Lines
+^^^^^^^^^^^^^^^^^
+
+.. literalinclude:: ../../molten/http/status_codes.py
+   :lines: 18-
+
 
 Dependency Injection
 --------------------
