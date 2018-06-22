@@ -5,23 +5,30 @@ import random
 import subprocess
 import sys
 import time
+from collections import Counter
 from pprint import pprint
 
 import aiohttp
+import uvloop
 
+asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 random.seed(1337)
 
 
+def shell(cmd, *, timeout=5):
+    return subprocess.run(cmd, shell=True, timeout=timeout, stdout=sys.stderr, stderr=sys.stderr)
+
+
 def build_image(name):
-    return subprocess.run(f"docker build -t bench_{name} -f Dockerfile_{name} .", shell=True)
+    return shell(f"docker build -t bench_{name} -f Dockerfile_{name} .")
 
 
 def run_container(name):
-    return subprocess.run(f"docker run -d --rm --name bench_{name} -p8000:8000 bench_{name}", shell=True)
+    return shell(f"docker run -d --rm --name bench_{name} -p8000:8000 bench_{name}")
 
 
 def stop_container(name):
-    return subprocess.run(f"docker kill bench_{name}", shell=True)
+    return shell(f"docker kill bench_{name}")
 
 
 async def get_index(session):
@@ -39,52 +46,69 @@ async def get_hello(session):
         await response.text()
 
 
+async def post_json(session):
+    payload = {"nested": {"example": {"array": [1, 2, 3]}}}
+    async with session.post("http://127.1:8000/echo", json=payload) as response:
+        await response.text()
+
+
 TASKS = [
-    get_404,
-    get_index,
-    get_hello,
+    *([get_index] * 100),
+    *([post_json] * 50),
+    *([get_hello] * 30),
+    *([get_404] * 1),
 ]
+random.shuffle(TASKS)
 
 
 async def do_bench(session):
     start_time = time.monotonic()
-    res = "n/a"
+    res, task_name = "n/a", None
 
     try:
-        await random.choice(TASKS)(session)
+        task = random.choice(TASKS)
+        task_name = task.__name__
+        await task(session)
         res = "ok"
 
     except Exception as e:
         res = "err"
 
     finally:
-        return res, time.monotonic() - start_time
+        return res, task_name, time.monotonic() - start_time
 
 
-async def benchmark(duration=30, concurrency=50, warmup=100):
+async def benchmark(duration=30, concurrency=50, warmup=1000):
     async with aiohttp.ClientSession() as session:
-        results = []
-
-        print("Warming up...")
+        print("Warming up...", file=sys.stderr)
         for _ in range(warmup):
             await do_bench(session)
 
-        print("Benchmarking...")
+        print("Benchmarking...", file=sys.stderr)
         start_time = time.monotonic()
         deadline = time.monotonic() + duration
+        pending_tasks, results = set(), []
         while time.monotonic() < deadline:
-            tasks = (do_bench(session) for _ in range(concurrency))
-            results.extend(await asyncio.gather(*tasks))
+            if len(pending_tasks) < concurrency:
+                pending_tasks.add(asyncio.ensure_future(do_bench(session)))
+
+            else:
+                done_tasks, pending_tasks = await asyncio.wait(pending_tasks, return_when=asyncio.FIRST_COMPLETED)
+                results.extend(t.result() for t in done_tasks)
+
+        done_tasks, _ = await asyncio.wait(pending_tasks)
+        results.extend(t.result() for t in done_tasks)
 
         duration = time.monotonic() - start_time
         minimum, maximum, total, errors = float("inf"), float("-inf"), 0, 0
-        for res, req_duration in results:
+        for res, _, req_duration in results:
             minimum = min(minimum, req_duration)
             maximum = max(maximum, req_duration)
             errors += 1 if res == "err" else 0
             total += req_duration
 
-        durations = sorted(d for _, d in results)
+        tasks = Counter(t for _, t, _ in results)
+        durations = sorted(d for _, _, d in results)
 
         def qtile(n):
             return durations[math.ceil(len(results) * n / 100)]
@@ -102,6 +126,7 @@ async def benchmark(duration=30, concurrency=50, warmup=100):
             "p50": f"{qtile(50) * 1000:.02f}ms",
             "requests": len(results),
             "errors": errors,
+            "tasks": dict(tasks),
         })
 
 
