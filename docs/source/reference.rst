@@ -183,6 +183,12 @@ Errors
 Contrib
 -------
 
+msgpack
+^^^^^^^
+
+.. autoclass:: molten.contrib.msgpack.MsgpackParser
+.. autoclass:: molten.contrib.msgpack.MsgpackRenderer
+
 SQLAlchemy
 ^^^^^^^^^^
 
