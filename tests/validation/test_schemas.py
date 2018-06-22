@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 import pytest
 
@@ -12,6 +12,7 @@ def safe_date():
 
 @schema
 class Account:
+    id: Optional[int] = Field(response_only=True)
     username: str
     password: str = Field(request_only=True, min_length=6)
     is_admin: bool = Field(
@@ -77,6 +78,7 @@ def test_schemas_can_be_instantiated():
     # Given that I have a schema with optional params
     # When I instantiate it
     account = Account(
+        id=None,
         username="jim@gcpd.gov",
         password="FunnyGuy123",
         is_admin=True,
@@ -140,7 +142,7 @@ def test_load_schema_fails_if_not_given_a_schema():
             "password": "FunnyGuy123",
             "is_admin": 1,
         },
-        Account("jim@gcpd.gov", "FunnyGuy123", is_admin=True),
+        Account(None, "jim@gcpd.gov", "FunnyGuy123", is_admin=True),
     ),
 
     (
@@ -148,7 +150,7 @@ def test_load_schema_fails_if_not_given_a_schema():
             "username": "jim@gcpd.gov",
             "password": "FunnyGuy123",
         },
-        Account("jim@gcpd.gov", "FunnyGuy123"),
+        Account(None, "jim@gcpd.gov", "FunnyGuy123"),
     ),
 ])
 def test_schemas_can_validate_data(data, expected):
@@ -256,8 +258,8 @@ def test_schemas_can_be_nested_within_lists():
 
     assert request_data == CreateAccountsRequest(
         accounts=[
-            Account("account1@example.com", "password123", is_admin=True),
-            Account("account2@example.com", "password234"),
+            Account(None, "account1@example.com", "password123", is_admin=True),
+            Account(None, "account2@example.com", "password234"),
         ],
     )
 
@@ -266,8 +268,9 @@ def test_schemas_can_be_nested_within_lists():
     (None, TypeError("None is not a schema")),
 
     (
-        Account("jim@gcpd.gov", "password"),
+        Account(1, "jim@gcpd.gov", "password"),
         {
+            "id": 1,
             "username": "jim@gcpd.gov",
             "isAdmin": False,
             "createdAt": safe_date(),
@@ -275,9 +278,10 @@ def test_schemas_can_be_nested_within_lists():
     ),
 
     (
-        CreateAccountRequest(Account("jim@gcpd.gov", "password")),
+        CreateAccountRequest(Account(1, "jim@gcpd.gov", "password")),
         {
             "account": {
+                "id": 1,
                 "username": "jim@gcpd.gov",
                 "isAdmin": False,
                 "createdAt": safe_date(),
@@ -288,14 +292,14 @@ def test_schemas_can_be_nested_within_lists():
     (
         CreateAccountsRequest(
             accounts=[
-                Account("account1@gcpd.gov", "password"),
-                Account("account2@gcpd.gov", "password"),
+                Account(1, "account1@gcpd.gov", "password"),
+                Account(2, "account2@gcpd.gov", "password"),
             ],
         ),
         {
             "accounts": [
-                {"username": "account1@gcpd.gov", "isAdmin": False, "createdAt": safe_date()},
-                {"username": "account2@gcpd.gov", "isAdmin": False, "createdAt": safe_date()},
+                {"id": 1, "username": "account1@gcpd.gov", "isAdmin": False, "createdAt": safe_date()},
+                {"id": 2, "username": "account2@gcpd.gov", "isAdmin": False, "createdAt": safe_date()},
             ],
         }
     ),
@@ -303,14 +307,14 @@ def test_schemas_can_be_nested_within_lists():
     (
         AccountMapping(
             accounts={
-                "account1": Account("account1@gcpd.gov", "password"),
-                "account2": Account("account2@gcpd.gov", "password"),
+                "account1": Account(1, "account1@gcpd.gov", "password"),
+                "account2": Account(2, "account2@gcpd.gov", "password"),
             },
         ),
         {
             "accounts": {
-                "account1": {"username": "account1@gcpd.gov", "isAdmin": False, "createdAt": safe_date()},
-                "account2": {"username": "account2@gcpd.gov", "isAdmin": False, "createdAt": safe_date()},
+                "account1": {"id": 1, "username": "account1@gcpd.gov", "isAdmin": False, "createdAt": safe_date()},
+                "account2": {"id": 2, "username": "account2@gcpd.gov", "isAdmin": False, "createdAt": safe_date()},
             }
         }
     ),

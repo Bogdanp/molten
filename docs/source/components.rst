@@ -71,7 +71,7 @@ optional to avoid that::
 |Cookies| gives you access to all the cookies in the current request::
 
   def index(cookies: Cookies) -> None:
-      print(headers.get("some-header"))
+      print(headers.get("some-cookie"))
 
 |RequestInput| gives you access to the request body as a binary
 file-like object::

@@ -7,11 +7,11 @@ from molten import (
     HTTP_404, App, Field, HTTPError, Include, JSONRenderer, ResponseRendererMiddleware, Route,
     schema
 )
-from molten.contrib.settings import SettingsComponent
 from molten.contrib.sqlalchemy import (
     EngineData, Session, SQLAlchemyEngineComponent, SQLAlchemyMiddleware,
     SQLAlchemySessionComponent
 )
+from molten.contrib.toml_settings import TOMLSettingsComponent
 
 Base = declarative_base()
 
@@ -25,8 +25,8 @@ class KittenModel(Base):
 
 @schema
 class Kitten:
-    id: int = Field(response_only=True, default=None)
-    name: str = ""
+    id: int = Field(response_only=True)
+    name: str
 
 
 def list_kittens(session: Session) -> List[Kitten]:
@@ -53,7 +53,7 @@ def get_kitten(kitten_id: int, session: Session) -> Kitten:
 
 app = App(
     components=[
-        SettingsComponent(),
+        TOMLSettingsComponent(),
         SQLAlchemyEngineComponent(),
         SQLAlchemySessionComponent(),
     ],

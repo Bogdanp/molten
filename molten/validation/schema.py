@@ -116,6 +116,11 @@ def load_schema(schema: Type[_T], data: Dict[str, Any]) -> _T:
     errors, params = {}, {}
     for field in schema._FIELDS.values():
         if field.response_only:
+            # Response-only fields without an explicit default have to
+            # default to _something_ so we choose None.
+            if not field.has_default:
+                params[field.name] = None
+
             continue
 
         try:
