@@ -9,6 +9,11 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 -------------
 
+Added
+^^^^^
+
+* |RequestIdMiddleware|
+
 
 `0.1.0`_ -- 2018-06-23
 ----------------------
