@@ -22,7 +22,9 @@ from .errors import (
     MoltenError, ParamMissing, ParseError, RequestParserNotAvailable, RouteNotFound,
     RouteParamMissing, TooManyFields, ValidationError
 )
-from .http import Cookie, Cookies, Headers, QueryParams, Request, Response, UploadedFile
+from .http import (
+    Cookie, Cookies, Headers, QueryParams, Request, Response, StreamingResponse, UploadedFile
+)
 from .http.status_codes import *
 from .middleware import ResponseRendererMiddleware
 from .parsers import JSONParser, MultiPartParser, RequestParser, URLEncodingParser
@@ -50,7 +52,7 @@ __all__ = [
     # HTTP
     "Method", "Scheme", "Host", "Port", "QueryString", "QueryParams", "QueryParam",
     "Headers", "Header", "RequestInput", "RequestBody", "RequestData", "Cookies", "Cookie",
-    "UploadedFile", "Request", "Response",
+    "UploadedFile", "Request", "Response", "StreamingResponse",
 
     # Dependency-injection
     "DependencyInjector", "DependencyResolver", "Component",

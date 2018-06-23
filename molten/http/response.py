@@ -17,7 +17,7 @@
 
 import io
 import os
-from typing import BinaryIO, Optional, Union
+from typing import BinaryIO, Generator, Optional, Union
 
 from .cookies import Cookie
 from .headers import Headers, HeadersDict
@@ -65,7 +65,7 @@ class Response:
     def get_content_length(self) -> Optional[int]:
         """Compute the content length of this response.
         """
-        content_length = self.headers.get_int("content_length")
+        content_length = self.headers.get_int("content-length")
         if content_length is None:
             try:
                 stream_stat = os.fstat(self.stream.fileno())
@@ -88,3 +88,56 @@ class Response:
 
     def __repr__(self) -> str:
         return f"Response(status={repr(self.status)}, headers={repr(self.headers)})"
+
+
+class StreamingResponse(Response):
+    """A chunked HTTP response, yielding content from a generator.
+
+    Parameters:
+      status: The status line of the response.
+      content: A response content generator.
+      headers: Optional response headers.
+      encoding: An optional encoding for the response.
+    """
+
+    def __init__(
+            self,
+            status: str,
+            content: Generator[bytes, None, None],
+            headers: Optional[Union[HeadersDict, Headers]] = None,
+            encoding: str = "utf-8",
+    ) -> None:
+        super().__init__(
+            status=status,
+            headers=headers,
+            stream=GenStream(content),
+            encoding=encoding,
+        )
+
+        self.headers.add("transfer-encoding", "chunked")
+
+    def get_content_length(self) -> Optional[int]:
+        """Compute the content length of this response.  Streaming
+        responses can't know their length up front so this always
+        returns None.
+        """
+        return None
+
+
+class GenStream:
+    """A file-like object backed by a generator.
+    """
+
+    __slots__ = ["gen", "buff"]
+
+    def __init__(self, gen: Generator[bytes, None, None]) -> None:
+        self.gen = gen
+        self.buff = b""
+
+    def read(self, n: int) -> bytes:
+        try:
+            self.buff += next(self.gen)
+            data, self.buff = self.buff[:n], self.buff[n:]
+            return data
+        except StopIteration:
+            return b""

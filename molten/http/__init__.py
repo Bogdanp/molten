@@ -19,12 +19,12 @@ from .cookies import Cookie, Cookies
 from .headers import Headers
 from .query_params import QueryParams
 from .request import Request
-from .response import Response
+from .response import Response, StreamingResponse
 from .status_codes import *
 from .uploaded_file import UploadedFile
 
 __all__ = [
-    "Request", "Response",
+    "Request", "Response", "StreamingResponse",
     "Headers", "QueryParams", "Cookies", "Cookie", "UploadedFile",
 
     # 1xx

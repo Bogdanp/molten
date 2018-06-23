@@ -1,11 +1,12 @@
 import os
+import time
 from typing import Optional, Tuple
 
 import pytest
 
 from molten import (
     HTTP_200, HTTP_201, HTTP_204, App, Cookies, Field, Header, QueryParam, QueryParams, Request,
-    RequestData, Response, Route, schema, testing
+    RequestData, Response, Route, StreamingResponse, schema, testing
 )
 
 
@@ -82,6 +83,15 @@ def create_account(account: Account) -> Account:
     return account
 
 
+def stream(n: int) -> StreamingResponse:
+    def gen():
+        for _ in range(n):
+            yield b"data"
+            time.sleep(1)
+
+    return StreamingResponse(HTTP_200, gen())
+
+
 app = App(routes=[
     Route("/", index),
     Route("/params", params),
@@ -98,6 +108,7 @@ app = App(routes=[
     Route("/route-params/{name}/{age}", route_params),
     Route("/countries", get_countries),
     Route("/accounts", create_account, method="POST"),
+    Route("/stream/{n}", stream),
 ])
 client = testing.TestClient(app)
 
@@ -395,3 +406,14 @@ def test_apps_can_validate_requests():
         "username": "jim@gcpd.gov",
         "is_admin": False,
     }
+
+
+def test_apps_can_stream_responses():
+    # Given that I have an app
+    # When I make a request to an endpoint that streams its response
+    response = client.get(app.reverse_uri("stream", n="2"))
+
+    # Then I should get back a 200 response
+    assert response.status_code == 200
+    # And the response should contain all the streamed data
+    assert response.data == "data" * 2

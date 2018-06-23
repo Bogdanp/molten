@@ -96,6 +96,9 @@ Response Objects
 .. autoclass:: Response
    :members:
    :member-order: bysource
+.. autoclass:: StreamingResponse
+   :members:
+   :member-order: bysource
 .. autoclass:: Cookie
 
 Response Renderers
