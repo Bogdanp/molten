@@ -9,8 +9,13 @@ SOURCEDIR     = source
 BUILDDIR      = build
 
 
+.PHONY: all
+all:
+	sphinx-versioning build -a -b -W 'v[0-9]+.[0-9]+.[0-9]+' "./docs/$(SOURCEDIR)" "$(BUILDDIR)/html/"
+
+
 .PHONY: deploy
-deploy: html
+deploy: all
 	gcloud app deploy --project molten-207708 app.yaml
 
 
