@@ -19,7 +19,7 @@ import json
 from functools import partial
 from io import BytesIO
 from json import dumps as to_json
-from typing import Any, Callable, Dict, Optional, Union
+from typing import Any, BinaryIO, Callable, Dict, Optional, Union, cast
 from urllib.parse import urlencode
 
 from ..app import BaseApp
@@ -146,6 +146,10 @@ class TestClient:
             response.headers = Headers(dict(response_headers))
 
         chunks = self.app(to_environ(request), start_response)
+        if response.headers.get("transfer-encoding") == "chunked":
+            response.stream = cast(BinaryIO, chunks)
+            return TestResponse(response)
+
         for chunk in chunks:
             response.stream.write(chunk)
 

@@ -416,4 +416,7 @@ def test_apps_can_stream_responses():
     # Then I should get back a 200 response
     assert response.status_code == 200
     # And the response should contain all the streamed data
-    assert response.data == "data" * 2
+    assert next(response.stream) == b"data"
+    assert next(response.stream) == b"data"
+    with pytest.raises(StopIteration):
+        next(response.stream)

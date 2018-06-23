@@ -1,42 +1,43 @@
 import json
 from queue import Empty, Queue
+from typing import Dict
 
 from molten import (
-    HTTP_200, HTTP_204, HTTP_404, App, HTTPError, Response, Route, StreamingResponse, dump_schema,
-    schema
+    HTTP_200, HTTP_204, HTTP_404, App, Field, HTTPError, Response, Route, StreamingResponse,
+    dump_schema, schema
 )
 
-CHANNELS = {}
+MAILBOXES: Dict[str, Queue] = {}
 
 
 @schema
 class Envelope:
     username: str
     message: str
-    recipient: str = "*"
+    recipient: str = Field(request_only=True, default="*")
 
 
 def send_envelope(envelope: Envelope) -> Response:
     if envelope.recipient != "*":
         try:
-            CHANNELS[envelope.recipient].put(envelope)
+            MAILBOXES[envelope.recipient].put(envelope)
         except KeyError:
             raise HTTPError(HTTP_404, {"error": f"user {envelope.recipient} not found"})
 
     else:
-        for channel in CHANNELS.values():
-            channel.put(envelope)
+        for mailbox in MAILBOXES.values():
+            mailbox.put(envelope)
 
     return Response(HTTP_204)
 
 
 def receive_envelopes(username: str) -> StreamingResponse:
-    CHANNELS[username] = channel = Queue()
+    MAILBOXES[username] = mailbox = Queue()  # type: ignore
 
     def listen():
         while True:
             try:
-                envelope = channel.get(timeout=5)
+                envelope = mailbox.get(timeout=30)
                 message = {"type": "envelope", "content": dump_schema(envelope)}
             except Empty:
                 message = {"type": "heartbeat"}

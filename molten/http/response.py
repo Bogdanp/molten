@@ -17,7 +17,7 @@
 
 import io
 import os
-from typing import BinaryIO, Generator, Optional, Union
+from typing import BinaryIO, Generator, Optional, Union, cast
 
 from .cookies import Cookie
 from .headers import Headers, HeadersDict
@@ -110,7 +110,7 @@ class StreamingResponse(Response):
         super().__init__(
             status=status,
             headers=headers,
-            stream=GenStream(content),
+            stream=cast(BinaryIO, GenStream(content)),
             encoding=encoding,
         )
 
