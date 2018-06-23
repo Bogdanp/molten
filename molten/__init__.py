@@ -38,7 +38,7 @@ from .typing import (
 )
 from .validation import Field, Missing, dump_schema, is_schema, load_schema, schema
 
-__version__ = "0.0.3"
+__version__ = "0.1.0"
 
 __all__ = [
     "BaseApp", "App", "Middleware",
