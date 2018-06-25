@@ -50,9 +50,9 @@ input::
 
   @schema
   class Todo:
-    id: Optional[int] = Field(response_only=True, default=None)
-    description: str = "no description provided"
-    status: str = Field(choices=["todo", "done"])
+    id: Optional[int] = Field(response_only=True)
+    description: str
+    status: str = Field(choices=["todo", "done"], default="todo")
 
 
   def create_todo(todo: Todo) -> Todo:
