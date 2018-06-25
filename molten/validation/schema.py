@@ -54,10 +54,18 @@ def schema(cls: Type[_T]) -> Type[_T]:
       RuntimeError: When the attributes are invalid.
     """
     fields = {}
+    for base in cls.__mro__[-1:0:-1]:
+        base_fields = getattr(base, "_FIELDS", {})
+        for name, field in base_fields.items():
+            fields[name] = field
+
     annotations = get_type_hints(cls)
     found_default = False
     for name, annotation in annotations.items():
         value = getattr(cls, name, Missing)
+        if value is Missing:
+            value = fields.get(name, value)
+
         if isinstance(value, Field):
             value.name = name
             value.annotation = annotation
@@ -83,8 +91,11 @@ def schema(cls: Type[_T]) -> Type[_T]:
             raise RuntimeError("attributes without a default cannot follow ones with a default")
 
         # Remove the attribute from the class definition.
-        if value is not Missing:
-            delattr(cls, name)
+        try:
+            if value is not Missing:
+                delattr(cls, name)
+        except AttributeError:
+            pass
 
     if not fields:
         raise RuntimeError(f"schema {cls.__name__} doesn't have any fields")

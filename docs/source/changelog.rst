@@ -14,6 +14,11 @@ Added
 
 * |RequestIdMiddleware|
 
+Fixed
+^^^^^
+
+* Schema field metadata inheritance.
+
 
 `0.1.0`_ -- 2018-06-23
 ----------------------

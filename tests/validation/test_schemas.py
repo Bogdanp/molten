@@ -182,6 +182,24 @@ def test_schemas_can_be_subclassed():
     assert Child._FIELDS["y"].annotation == int
 
 
+def test_schemas_with_field_metadata_can_be_subclassed():
+    # Given that I have a schema base class
+    @schema
+    class Base:
+        x: int
+        y: str = Field(min_length=8)
+
+    # When I subclass it
+    @schema
+    class Child(Base):
+        z: str
+
+    # Then the subclass should inherit the base class' fields
+    assert list(Child._FIELDS) == ["x", "y", "z"]
+    assert Child._FIELDS["y"].annotation == str
+    assert Child._FIELDS["y"].validator_options == {"min_length": 8}
+
+
 def test_schemas_can_be_nested():
     # Given that I have an Account schema and another schema with an Account field
     # When I validate some data against it
