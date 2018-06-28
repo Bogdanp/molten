@@ -74,9 +74,3 @@ def is_optional_annotation(annotation: Any) -> bool:
             issubclass(annotation.__args__[1], type(None))
     except TypeError:  # pragma: no cover
         return False
-
-
-def is_generic_annotation(annotation: Any) -> bool:
-    """Returns True if the given annotation represents a Generic type.
-    """
-    return hasattr(annotation, "__origin__")

@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 import pytest
 
@@ -51,7 +51,7 @@ def test_string_validator(options, value, expected):
 
 
 @pytest.mark.parametrize("annotation,options,value,expected", [
-    (List, {}, [None, 1, "a", {}], [None, 1, "a", {}]),
+    (List[Any], {}, [None, 1, "a", {}], [None, 1, "a", {}]),
     (List[str], {}, [], []),
     (List[str], {}, [1], ValidationError({0: "unexpected type int"})),
     (List[str], {}, [None], ValidationError({0: "this field cannot be null"})),
@@ -74,7 +74,7 @@ def test_list_validator(annotation, options, value, expected):
 
 @pytest.mark.parametrize("annotation,options,value,expected", [
     (Dict, {}, None, FieldValidationError("value must be a dict")),
-    (Dict, {}, {0: "a", "b": 42}, {0: "a", "b": 42}),
+    (Dict[Any, Any], {}, {0: "a", "b": 42, "c": None}, {0: "a", "b": 42, "c": None}),
     (Dict[str, str], {}, {}, {}),
     (Dict[str, str], {}, {"a": 1}, ValidationError({"a": "unexpected type int"})),
     (Dict[str, str], {}, {1: "a"}, ValidationError({1: "unexpected type int"})),
