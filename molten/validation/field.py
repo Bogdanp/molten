@@ -20,7 +20,7 @@ from typing import (
 )
 
 from typing_extensions import Protocol
-from typing_inspect import get_args, get_origin, is_generic_type, is_typevar
+from typing_inspect import get_origin, is_generic_type, is_typevar
 
 from ..errors import FieldValidationError, ValidationError
 from ..typing import extract_optional_annotation
@@ -277,7 +277,7 @@ class ListValidator:
 
     def can_validate_field(self, field: Field[_T]) -> bool:
         _, annotation = extract_optional_annotation(field.annotation)
-        return get_origin(annotation) is list
+        return get_origin(annotation) in (list, List)
 
     @no_type_check
     def validate(
@@ -299,7 +299,7 @@ class ListValidator:
 
         # If the argument is Any, then the list can contain anything,
         # otherwise each item needs to be validated.
-        annotation_args = get_args(field.annotation)
+        annotation_args = getattr(field.annotation, "__args__", [])
         if annotation_args != (Any,):
             # This is a little piggy but it works well enough in practice.
             item_validator_options = item_validator_options or {}
@@ -368,7 +368,7 @@ class DictValidator:
 
     def can_validate_field(self, field: Field[_T]) -> bool:
         _, annotation = extract_optional_annotation(field.annotation)
-        return get_origin(annotation) is dict
+        return get_origin(annotation) in (dict, Dict)
 
     @no_type_check
     def validate(
@@ -400,7 +400,7 @@ class DictValidator:
 
         # If the args are [Any, Any], then the dict can contain
         # anything, otherwise each item needs to be validated.
-        annotation_args = get_args(field.annotation)
+        annotation_args = getattr(field.annotation, "__args__", [])
         if annotation_args and annotation_args != (Any, Any):
             key_validator_options = key_validator_options or {}
             key_field = Field(annotation=annotation_args[0], **key_validator_options)
