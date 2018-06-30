@@ -244,3 +244,19 @@ module.
    :members:
 
 .. _jinja2: http://jinja.pocoo.org/docs/2.10/
+
+
+OpenAPI
+-------
+
+molten has builtin support for generating `OpenAPI documents`_.
+
+.. autoclass:: molten.openapi.OpenAPIHandler
+.. autoclass:: molten.openapi.Metadata
+.. autoclass:: molten.openapi.Contact
+.. autoclass:: molten.openapi.License
+.. autoclass:: molten.openapi.APIKeySecurityScheme
+.. autoclass:: molten.openapi.HTTPSecurityScheme
+.. autofunction:: molten.openapi.generate_openapi_document
+
+.. _OpenAPI documents: https://www.openapis.org/

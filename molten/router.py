@@ -17,7 +17,7 @@
 
 import re
 from collections import defaultdict
-from typing import Any, Callable, Dict, Iterator, List, Optional, Pattern, Tuple, Union
+from typing import Any, Callable, Dict, Iterator, List, Optional, Pattern, Set, Tuple, Union
 
 from .errors import RouteNotFound, RouteParamMissing
 
@@ -217,3 +217,9 @@ def tokenize_route_template(template: str) -> Iterator[Tuple[str, str]]:
 
     if k != i:
         yield "chunk", template[k:i]
+
+
+def get_route_parameters(template: str) -> Set[str]:
+    """Extract all the named route parameters from a route template.
+    """
+    return {token for kind, token in tokenize_route_template(template) if kind == "binding"}

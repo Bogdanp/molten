@@ -13,6 +13,7 @@ Added
 ^^^^^
 
 * |RequestIdMiddleware|
+* Support for generating OpenAPI documents.
 * Support for Python 3.7.
 
 Fixed

@@ -129,6 +129,7 @@ class App(BaseApp):
     def __call__(self, environ: Environ, start_response: StartResponse) -> Iterable[bytes]:
         request = Request.from_environ(environ)
         resolver = self.injector.get_resolver({
+            BaseApp: self,
             Request: request,
             Method: Method(request.method),
             Scheme: Scheme(request.scheme),
