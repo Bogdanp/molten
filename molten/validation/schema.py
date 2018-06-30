@@ -149,7 +149,7 @@ def load_schema(schema: Type[_T], data: Dict[str, Any]) -> _T:
 
 
 @no_type_check
-def dump_schema(ob: Any) -> Dict[str, Any]:
+def dump_schema(ob: Any, *, sparse: bool = False) -> Dict[str, Any]:
     """Convert a schema instance into a dictionary.
 
     Raises:
@@ -157,6 +157,8 @@ def dump_schema(ob: Any) -> Dict[str, Any]:
 
     Parameters:
       ob: An instance of a schema.
+      sparse: If true, fields whose values are None are going to be
+        dropped from the output.
     """
     if not is_schema(type(ob)):
         raise TypeError(f"{ob} is not a schema")
@@ -168,13 +170,16 @@ def dump_schema(ob: Any) -> Dict[str, Any]:
 
         value = getattr(ob, field.name)
         if is_schema(type(value)):
-            value = dump_schema(value)
+            value = dump_schema(value, sparse=sparse)
 
         elif isinstance(value, list):
-            value = [dump_schema(item) if is_schema(type(item)) else item for item in value]
+            value = [dump_schema(item, sparse=sparse) if is_schema(type(item)) else item for item in value]
 
         elif isinstance(value, dict):
-            value = {name: dump_schema(item) if is_schema(type(item)) else item for name, item in value.items()}
+            value = {name: dump_schema(item, sparse=sparse) if is_schema(type(item)) else item for name, item in value.items()}
+
+        if sparse and value is None:
+            continue
 
         data[field.response_name] = value
 
