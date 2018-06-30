@@ -28,6 +28,12 @@ class ResponseRenderer(Protocol):  # pragma: no cover
     """Protocol for response renderers.
     """
 
+    @property
+    def mime_type(self) -> str:
+        """Returns a string representing the mime type of the rendered
+        content.  This is used to generate OpenAPI documents.
+        """
+
     def can_render_response(self, accept: str) -> bool:
         """Returns True if this renderer can render data for the given mime type.
         """
@@ -40,6 +46,8 @@ class ResponseRenderer(Protocol):  # pragma: no cover
 class JSONRenderer:
     """A JSON response renderer.
     """
+
+    mime_type = "application/json"
 
     def can_render_response(self, accept: str) -> bool:
         return accept.startswith("application/json")

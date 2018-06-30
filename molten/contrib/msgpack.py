@@ -32,6 +32,8 @@ class MsgpackParser:
     .. _msgpack: https://msgpack.org/
     """
 
+    mime_type = "application/x-msgpack"
+
     def can_parse_content(self, content_type: str) -> bool:
         return content_type.startswith("application/x-msgpack")
 
@@ -47,6 +49,8 @@ class MsgpackRenderer:
 
     .. _msgpack: https://msgpack.org/
     """
+
+    mime_type = "application/x-msgpack"
 
     def can_render_response(self, accept: str) -> bool:
         return accept.startswith("application/x-msgpack")

@@ -31,6 +31,8 @@ class ResponseRendererMiddleware:
         method returns True is used to render the current response.
     """
 
+    __slots__ = ["renderers"]
+
     def __init__(self, renderers: List[ResponseRenderer]) -> None:
         self.renderers = renderers
 

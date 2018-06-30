@@ -34,6 +34,12 @@ class RequestParser(Protocol):  # pragma: no cover
     """Protocol for request parsers.
     """
 
+    @property
+    def mime_type(self) -> str:
+        """Returns a string representing the mime type of the rendered
+        content.  This is used to generate OpenAPI documents.
+        """
+
     def can_parse_content(self, content_type: str) -> bool:
         """Returns True if this parser can parse the given content type.
         """
@@ -51,6 +57,8 @@ class JSONParser:
     """A JSON request parser.
     """
 
+    mime_type = "application/json"
+
     def can_parse_content(self, content_type: str) -> bool:
         return content_type.startswith("application/json")
 
@@ -64,6 +72,8 @@ class JSONParser:
 class URLEncodingParser:
     """A parser for urlencoded requests.
     """
+
+    mime_type = "application/x-www-form-urlencoded"
 
     def can_parse_content(self, content_type: str) -> bool:
         return content_type.startswith("application/x-www-form-urlencoded")
@@ -112,6 +122,8 @@ class MultiPartParser:
 
     BOUNDARY_RE = re.compile("boundary=(.+)")
     PARAMS_RE = re.compile('([A-Za-z]+)="([^"]+)"')
+
+    mime_type = "multipart/form-data"
 
     def __init__(
             self, *,
