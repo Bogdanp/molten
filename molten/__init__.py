@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from .app import App, BaseApp
+from .common import annotate
 from .dependency_injection import Component, DependencyInjector, DependencyResolver
 from .errors import (
     DIError, FieldTooLarge, FieldValidationError, FileTooLarge, HeaderMissing, HTTPError,
@@ -41,7 +42,7 @@ from .validation import Field, Missing, dump_schema, is_schema, load_schema, sch
 __version__ = "0.1.0"
 
 __all__ = [
-    "BaseApp", "App", "Middleware",
+    "BaseApp", "App", "Middleware", "annotate",
 
     # Settings
     "Settings", "SettingsComponent",

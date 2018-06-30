@@ -22,6 +22,7 @@ Routing
    :member-order: bysource
 .. autoclass:: Route
 .. autoclass:: Include
+.. autofunction:: annotate
 
 
 Middleware

@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from collections import defaultdict
-from typing import Dict, Iterable, Iterator, List, Optional, Tuple, TypeVar, Union
+from typing import Any, Callable, Dict, Iterable, Iterator, List, Optional, Tuple, TypeVar, Union
 
 KT = TypeVar("KT")
 VT = TypeVar("VT")
@@ -93,3 +93,23 @@ class MultiDict(Iterable[Tuple[KT, VT]]):
     def __repr__(self) -> str:
         mapping = ", ".join(f"{repr(name)}: {repr(value)}" for name, value in self._data.items())
         return f"{type(self).__name__}({{{mapping}}})"
+
+
+def annotate(**options: Any) -> Callable[..., Any]:
+    """Add arbitrary attributes to a callable.
+
+    Examples:
+
+      >>> @annotate(openapi_tags=["a", "b"])
+      ... def some_handler():
+      ...   ...
+
+      >>> some_handler.openapi_tags
+      ["a", "b"]
+    """
+    def wrapper(fn: Callable[..., Any]) -> Callable[..., Any]:
+        for name, value in options.items():
+            setattr(fn, name, value)
+
+        return fn
+    return wrapper
