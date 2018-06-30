@@ -16,10 +16,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from .common import Missing, is_schema
-from .field import Field, Validator
+from .field import Field, Validator, field
 from .schema import dump_schema, load_schema, schema
 
 __all__ = [
-    "Missing", "Field", "Validator",
+    "Missing", "Field", "Validator", "field",
     "schema", "dump_schema", "load_schema", "is_schema",
 ]

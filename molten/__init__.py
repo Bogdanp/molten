@@ -37,7 +37,9 @@ from .typing import (
     Header, Host, Method, Middleware, Port, QueryParam, QueryString, RequestBody, RequestData,
     RequestInput, Scheme
 )
-from .validation import Field, Missing, dump_schema, is_schema, load_schema, schema
+from .validation import (
+    Field, Missing, Validator, dump_schema, field, is_schema, load_schema, schema
+)
 
 __version__ = "0.1.0"
 
@@ -68,7 +70,7 @@ __all__ = [
     "ResponseRendererMiddleware",
 
     # Validation
-    "Field", "Missing", "schema", "is_schema", "dump_schema", "load_schema",
+    "Field", "Missing", "Validator", "field", "schema", "is_schema", "dump_schema", "load_schema",
 
     # Errors
     "MoltenError", "DIError", "HTTPError", "RouteNotFound", "RouteParamMissing",

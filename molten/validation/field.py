@@ -29,6 +29,14 @@ from .common import Missing, _Missing, is_schema
 _T = TypeVar("_T")
 
 
+@no_type_check
+def field(*args, **kwargs) -> Any:
+    """An alias for :class:`.Field` that tricks the type system into
+    submission.
+    """
+    return Field(*args, **kwargs)
+
+
 class Validator(Protocol[_T]):  # pragma: no cover
     """Validators ensure that values conform to arbitrary specifications.
     """

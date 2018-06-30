@@ -143,6 +143,7 @@ Schemas
 Fields and Validators
 ^^^^^^^^^^^^^^^^^^^^^
 
+.. autofunction:: field
 .. autoclass:: Field
    :members:
    :member-order: bysource
