@@ -227,18 +227,31 @@ def generate_openapi_document(
             # contain custom status codes followed by the response
             # objects themselves.
             response_annotation = annotations.get("return")
-            if response_annotation is not None:
-                if get_origin(response_annotation) in (tuple, Tuple):
-                    arguments = get_args(response_annotation)
-                    if len(arguments) == 2 and arguments[0] is str and is_schema(arguments[1]):
-                        response_annotation = arguments[1]
+            response_annotation_origin = get_origin(response_annotation)
+            if response_annotation is not None and response_annotation_origin in (tuple, Tuple):
+                arguments = get_args(response_annotation)
+                if len(arguments) == 2 and arguments[0] is str and is_schema(arguments[1]):
+                    response_annotation = arguments[1]
 
-            if response_annotation is not None and is_schema(response_annotation):
-                response_schema_name = _generate_schema("response", response_annotation, schemas)
-                for media_type in response_mime_types:
-                    operation["responses"]["200"]["content"][media_type] = {
-                        "schema": _make_schema_ref(response_schema_name),
-                    }
+            if response_annotation is not None:
+                if is_schema(response_annotation):
+                    response_schema_name = _generate_schema("response", response_annotation, schemas)
+                    for media_type in response_mime_types:
+                        operation["responses"]["200"]["content"][media_type] = {
+                            "schema": _make_schema_ref(response_schema_name),
+                        }
+
+                elif response_annotation_origin in (list, List):
+                    arguments = get_args(response_annotation)
+                    if is_schema(arguments[0]):
+                        response_schema_name = _generate_schema("response", arguments[0], schemas)
+                        for media_type in response_mime_types:
+                            operation["responses"]["200"]["content"][media_type] = {
+                                "schema": {
+                                    "type": "array",
+                                    "items": _make_schema_ref(response_schema_name),
+                                }
+                            }
 
             status_codes = _extract_status_codes(handler)
             for status_code in status_codes:

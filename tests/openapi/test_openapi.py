@@ -44,6 +44,11 @@ class Settings:
     last_updated_at: datetime = field(default_factory=datetime.utcnow)
 
 
+@annotate(openapi_tags=["pets"])
+def list_pets() -> List[Pet]:
+    ...
+
+
 @annotate(
     openapi_tags=["pets"],
     openapi_response_201_description="The pet was successfully added.",
@@ -128,6 +133,7 @@ app = App(
             Route("", add_pet_deprecated, method="POST"),
         ]),
         Include("/v1/pets", [
+            Route("", list_pets),
             Route("", add_pet, method="POST"),
             Include("/{pet_id}", [
                 Route("", update_pet, method="PUT"),
