@@ -5,13 +5,14 @@ from typing import Any, Callable, Iterator, List, Optional, Tuple, Union
 
 from molten import (
     HTTP_201, HTTP_204, HTTP_403, HTTP_404, App, Component, Field, Header, HTTPError, Include,
-    JSONRenderer, Middleware, ResponseRendererMiddleware, Route, schema
+    JSONRenderer, Middleware, Request, ResponseRendererMiddleware, Route, schema
 )
+from molten.openapi import HTTPSecurityScheme, Metadata, OpenAPIHandler, OpenAPIUIHandler
 
 
 def AuthorizationMiddleware(handler: Callable[..., Any]) -> Callable[..., Any]:
-    def middleware(authorization: Optional[Header]) -> Any:
-        if authorization != "secret":
+    def middleware(request: Request, authorization: Optional[Header]) -> Any:
+        if authorization != "Bearer secret" and request.path not in ["/_docs", "/_schema"]:
             raise HTTPError(HTTP_403, {"error": "forbidden"})
         return handler()
     return middleware
@@ -31,6 +32,10 @@ class DB:
 
         try:
             yield cursor
+            self._db.commit()
+        except Exception:
+            self._db.rollback()
+            raise
         finally:
             cursor.close()
 
@@ -130,6 +135,20 @@ middleware: List[Middleware] = [
     AuthorizationMiddleware,
 ]
 
+get_docs = OpenAPIUIHandler()
+
+get_schema = OpenAPIHandler(
+    metadata=Metadata(
+        title="Todo API",
+        description="An API for managing todos.",
+        version="0.0.0",
+    ),
+    security_schemes=[
+        HTTPSecurityScheme("default", "bearer"),
+    ],
+    default_security_scheme="default",
+)
+
 
 routes: List[Union[Route, Include]] = [
     Include("/v1/todos", [
@@ -137,7 +156,10 @@ routes: List[Union[Route, Include]] = [
         Route("/", create_todo, method="POST"),
         Route("/{todo_id}", get_todo),
         Route("/{todo_id}", delete_todo, method="DELETE"),
-    ])
+    ]),
+
+    Route("/_docs", get_docs),
+    Route("/_schema", get_schema),
 ]
 
 app = App(
