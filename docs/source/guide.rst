@@ -69,15 +69,15 @@ As part of this guide, we're going to build a simple API for managing
 TODOs.  To begin with, let's first declare what a ``Todo`` is supposed
 to look like::
 
-  from molten import App, Field, Route, schema
+  from molten import App, Route, field, schema
   from typing import Optional
 
 
   @schema
   class Todo:
-      id: Optional[int] = Field(response_only=True)
+      id: Optional[int] = field(response_only=True)
       description: str
-      status: str = Field(choices=["todo", "done"], default="todo")
+      status: str = field(choices=["todo", "done"], default="todo")
 
 A ``Todo`` is an object with ``id``, ``description`` and ``status``
 fields.  ``id`` fields are only going to be returned as part of
@@ -89,7 +89,7 @@ request.
 The ``@schema`` decorator detects all of the field definitions on the
 class and collects them into a ``_FIELDS`` class variable.
 Additionally, it adds ``__init__``, ``__eq__`` and ``__repr__``
-methods to the class if they don't already exist.  |Field| is used to
+methods to the class if they don't already exist.  |field| is used to
 optionally assign metadata to individual attributes on a schema.
 
 We can now hook that into a handler by simply annotating one of the
