@@ -360,7 +360,7 @@ the :class:`RequestParser<molten.RequestParser>` protocol::
           except Exception:
               raise ParseError("failed to parse msgpack data")
 
-During the content negociation phase of the request-response cycle,
+During the content negotiation phase of the request-response cycle,
 molten chooses the first request parser whose ``can_parse_content``
 method returns ``True`` from the list of registered parsers.  That
 parser is then used to attempt to parse the input data.  If the data
@@ -431,7 +431,7 @@ Here's what a msgpack renderer might look like::
 And you can register it when you instantiate the app:
 
 .. code-block:: python
-   :emphasize-lines: 1,11-14,16-17
+   :emphasize-lines: 1,11-14,26-29
 
    from molten import JSONRenderer
 
@@ -479,7 +479,7 @@ your app, install ``wsgicors`` then wrap your app instance in a call
 to ``CORS``:
 
 .. code-block:: python
-   :emphasize-lines: 28
+   :emphasize-lines: 1,32
 
    from wsgicors import CORS
 
@@ -505,6 +505,10 @@ to ``CORS``:
            MsgpackParser(),
            URLEncodingParser(),
            MultiPartParser(),
+       ],
+       renderers=[
+           JSONRenderer(),
+           MsgpackRenderer(),
        ],
    )
 
@@ -558,6 +562,10 @@ instantiate it, then expose it via a route:
            URLEncodingParser(),
            MultiPartParser(),
        ],
+       renderers=[
+           JSONRenderer(),
+           MsgpackRenderer(),
+       ],
    )
 
 Now when you make an authorized request to ``/_schema``, you should
@@ -604,6 +612,10 @@ API:
            MsgpackParser(),
            URLEncodingParser(),
            MultiPartParser(),
+       ],
+       renderers=[
+           JSONRenderer(),
+           MsgpackRenderer(),
        ],
    )
 
@@ -654,7 +666,7 @@ Wrapping Up
 -----------
 
 That's it for the user guide.  Check out the `todo API`_ example for a
-full implementation of this API or continue reading the builtin
+full implementation of this API or continue reading the built-in
 :doc:`components` section next.
 
 
