@@ -252,6 +252,7 @@ OpenAPI
 molten has builtin support for generating `OpenAPI documents`_.
 
 .. autoclass:: molten.openapi.OpenAPIHandler
+.. autoclass:: molten.openapi.OpenAPIUIHandler
 .. autoclass:: molten.openapi.Metadata
 .. autoclass:: molten.openapi.Contact
 .. autoclass:: molten.openapi.License

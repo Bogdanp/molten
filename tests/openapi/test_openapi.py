@@ -6,7 +6,7 @@ from molten import (
     HTTP_201, HTTP_204, HTTP_404, App, Header, HTTPError, Include, QueryParam, RequestData, Route,
     annotate, field, schema, testing
 )
-from molten.openapi import Contact, HTTPSecurityScheme, Metadata, OpenAPIHandler
+from molten.openapi import Contact, HTTPSecurityScheme, Metadata, OpenAPIHandler, OpenAPIUIHandler
 
 
 @schema
@@ -139,6 +139,7 @@ app = App(
             Route("/current/settings", update_settings, method="PUT"),
         ]),
         Route("/schema.json", get_schema, name="schema"),
+        Route("/docs", OpenAPIUIHandler("schema")),
     ],
 )
 
@@ -204,3 +205,14 @@ def test_complex_apps_can_return_openapi_document():
     assert response.status_code == 200
     with open("tests/openapi/fixtures/complex.json") as f:
         assert response.json() == json.load(f)
+
+
+def test_complex_apps_can_render_the_swagger_ui():
+    # Given that I have a complex app
+    # When I visit its docs uri
+    response = testing.TestClient(app).get("/docs")
+
+    # Then I should get back a successful response
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "text/html"
+    assert app.reverse_uri("schema") in response.data

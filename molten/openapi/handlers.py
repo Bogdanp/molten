@@ -17,7 +17,10 @@
 
 from typing import Any, Dict, List, Optional
 
+import pkg_resources
+
 from ..app import BaseApp
+from ..http import HTTP_200, Request, Response
 from .documents import Metadata, SecurityScheme, generate_openapi_document
 
 
@@ -40,13 +43,6 @@ class OpenAPIHandler:
         API.
     """
 
-    __slots__ = [
-        "metadata",
-        "security_schemes",
-        "default_security_scheme",
-        "document",
-    ]
-
     def __init__(
             self,
             metadata: Metadata,
@@ -57,6 +53,10 @@ class OpenAPIHandler:
         self.security_schemes = security_schemes or []
         self.default_security_scheme = default_security_scheme
         self.document: Optional[Dict[str, Any]] = None
+
+    @property
+    def __name__(self) -> str:
+        return type(self).__name__  # type: ignore
 
     def __call__(self, app: BaseApp) -> Optional[Dict[str, Any]]:
         """Generates an OpenAPI v3 document.
@@ -70,3 +70,32 @@ class OpenAPIHandler:
             )
 
         return self.document
+
+
+class OpenAPIUIHandler:
+    """Renders the `Swagger UI`_.
+
+    Parameters:
+      schema_route_name: The name of the route that exposes the
+        schema.  The actual path to the schema is looked up whenever
+        the handler is called.
+
+    .. _Swagger UI: https://github.com/swagger-api/swagger-ui
+    """
+
+    def __init__(self, schema_route_name: str = "OpenAPIHandler") -> None:
+        self.schema_route_name = schema_route_name
+        self.template = pkg_resources.resource_string(f"molten.openapi.templates", "index.html").decode("utf-8")
+
+    @property
+    def __name__(self) -> str:
+        return type(self).__name__  # type: ignore
+
+    def __call__(self, app: BaseApp, request: Request) -> Response:
+        """Renders the Swagger UI.
+        """
+        schema_uri = app.reverse_uri(self.schema_route_name)
+        rendered_template = self.template % {"schema_uri": schema_uri}
+        return Response(HTTP_200, content=rendered_template, headers={
+            "content-type": "text/html",
+        })
