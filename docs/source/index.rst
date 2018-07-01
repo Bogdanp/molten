@@ -29,7 +29,7 @@ Here's a quick taste::
 
 
   def hello(name: str, age: int) -> str:
-    return f"Hi {name}! I hear you're {age} years old."
+      return f"Hi {name}! I hear you're {age} years old."
 
 
   app = App(routes=[Route("/hello/{name}/{age}", hello)])
@@ -56,14 +56,14 @@ input::
 
   @schema
   class Todo:
-    id: Optional[int] = field(response_only=True)
-    description: str
-    status: str = field(choices=["todo", "done"], default="todo")
+      id: Optional[int] = field(response_only=True)
+      description: str
+      status: str = field(choices=["todo", "done"], default="todo")
 
 
   def create_todo(todo: Todo) -> Todo:
-    # Do something to store the todo here...
-    return todo
+      # Do something to store the todo here...
+      return todo
 
 
   app = App(routes=[Route("/todos", create_todo, method="POST")])
@@ -84,46 +84,46 @@ isolation and swap them out as needed::
 
 
   class TodoManager:
-    def __init__(self, db: DB) -> None:
-      self.db = db
+      def __init__(self, db: DB) -> None:
+          self.db = db
 
-    def get_all(self) -> List[Todo]:
-      ...
+      def get_all(self) -> List[Todo]:
+          ...
 
-    def save(self, todo: Todo) -> Todo:
-      ...
+      def save(self, todo: Todo) -> Todo:
+          ...
 
 
   class TodoManagerComponent:
-    is_cacheable = True
-    is_singleton = True
+      is_cacheable = True
+      is_singleton = True
 
-    def can_handle_parameter(self, parameter: Parameter) -> bool:
-      return parameter.annotation is TodoManager
+      def can_handle_parameter(self, parameter: Parameter) -> bool:
+          return parameter.annotation is TodoManager
 
-    def resolve(self, db: DB) -> TodoManager:
-      return TodoManager(db)
+      def resolve(self, db: DB) -> TodoManager:
+          return TodoManager(db)
 
 
   def list_todos(todo_manager: TodoManager) -> List[Todo]:
-    return todo_manager.get_all()
+      return todo_manager.get_all()
 
 
   def create_todo(todo: Todo, todo_manager: TodoManager) -> Todo:
-    return todo_manager.save(todo)
+      return todo_manager.save(todo)
 
 
   app = App(
-    components=[
-      DBComponent(),
-      TodoManagerComponent(),
-    ],
-    routes=[
-      Include("/todos", [
-        Route("/", list_todos),
-        Route("/", create_todo, method="POST"),
-      ]),
-    ],
+      components=[
+          DBComponent(),
+          TodoManagerComponent(),
+      ],
+      routes=[
+          Include("/todos", [
+              Route("/", list_todos),
+              Route("/", create_todo, method="POST"),
+          ]),
+      ],
   )
 
 Here we've declared a Todo manager whose job it is to store and load
