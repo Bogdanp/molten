@@ -17,7 +17,13 @@ Release v\ |release|. (:doc:`installation`, :doc:`changelog`)
    :target: https://badge.fury.io/py/molten
 
 **molten** is a minimal, extensible, fast and productive framework for
-building HTTP APIs with Python.  Here's a quick taste::
+building HTTP APIs with Python.
+
+.. raw:: html
+
+   <iframe width="660" height="371" src="https://www.youtube.com/embed/PvJ5rpzTyyw?rel=0&amp;showinfo=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
+Here's a quick taste::
 
   from molten import App, Route
 
