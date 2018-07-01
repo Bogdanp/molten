@@ -106,7 +106,11 @@ def add_pet(pet: Pet, pet_manager: PetManager) -> Tuple[str, Pet]:
     return HTTP_201, pet_manager.create(pet)
 
 
-@annotate(openapi_tags=["pets"])
+@annotate(
+    openapi_tags=["pets"],
+    openapi_param_pet_id_description="The id of an existing Pet.",
+    openapi_response_404_description="The Pet could not be found.",
+)
 def get_pet(pet_id: int, pet_manager: PetManager) -> Pet:
     pet = pet_manager.get_by_id(pet_id)
     if not pet:
@@ -114,7 +118,10 @@ def get_pet(pet_id: int, pet_manager: PetManager) -> Pet:
     return pet
 
 
-@annotate(openapi_tags=["pets"])
+@annotate(
+    openapi_tags=["pets"],
+    openapi_param_pet_id_description="The id of an existing Pet.",
+)
 def remove_pet(pet_id: int, pet_manager: PetManager) -> Tuple[str, None]:
     pet_manager.delete(pet_id)
     return HTTP_204, None
@@ -123,6 +130,6 @@ def remove_pet(pet_id: int, pet_manager: PetManager) -> Tuple[str, None]:
 routes = [
     Route("", list_pets),
     Route("", add_pet, method="POST"),
-    Route("{pet_id}", get_pet),
-    Route("{pet_id}", remove_pet, method="DELETE"),
+    Route("/{pet_id}", get_pet),
+    Route("/{pet_id}", remove_pet, method="DELETE"),
 ]
