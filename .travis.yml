@@ -3,6 +3,7 @@ env:
     - CC_TEST_REPORTER_ID=2609815ad1c6d2d807e761812030b6d8ae9e0e52cdb58315ab2a57067dc4a1c6
 language: python
 sudo: required
+dist: xenial
 python:
   - "3.6"
   - "3.7"
