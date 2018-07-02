@@ -31,14 +31,15 @@ gunicorn with::
 
   $ gunicorn --reload app:app
 
-If you then make a curl request to ``127.0.0.1:8000/hello/Jim`` you'll
-get back a JSON response containing the string ``"Hello Jim!"``::
+If you then make a curl request to ``http://127.0.0.1:8000/hello/Jim``
+you'll get back a JSON response containing the string ``"Hello
+Jim!"``::
 
   $ curl http://127.0.0.1:8000/hello/Jim
   "Hello Jim"
 
-Handlers can also validate route parameters.  If you update the
-``hello`` handler and its route to take an integer ``age`` parameter::
+Handlers can also validate route parameters.  Add an integer ``age``
+parameter to the ``hello`` handler and its route::
 
   def hello(name: str, age: int) -> str:
       return f"Hello {name}! I hear you're {age} years old."
@@ -46,19 +47,19 @@ Handlers can also validate route parameters.  If you update the
 
   app = App(routes=[Route("/hello/{name}/{age}", hello)])
 
-When you make a curl request to ``127.0.0.1:8000/hello/Jim/26`` you'll get
-back a JSON response containing the string, but if you pass an invalid
-integer to the ``age`` param, you'll get back an ``400 Bad Request``
-response containing an error message::
+When you make a curl request to ``http://127.0.0.1:8000/hello/Jim/26``
+you'll get back a JSON response containing the string, but if you pass
+an invalid integer to the ``age`` parameter, you'll get back a ``400
+Bad Request`` response containing an error message::
 
   $ curl http://127.0.0.1:8000/hello/Jim/abc
   {"errors": {"age": "expected int value"}}
 
 Handlers may return any value and the |ResponseRendererMiddleware|
-will attempt to render the returned value in an appropriate way for
-the current response.  If you need control over the returned response,
-then you can return an explicit |Response| object, in which case that
-response will be returned as-is.
+will attempt to render it in an appropriate way for the current
+response.  If you need control over the returned response, then you
+can return an explicit |Response| object, in which case that response
+will be returned as-is.
 
 You also have the option of returning a custom status along with your
 value by returning a tuple from your request handler::
@@ -192,8 +193,8 @@ component::
 
 This component creates an in-memory sqlite database and then exposes a
 method to grab a cursor into that database.  Next, let's define a
-component that can manage todos.  That component will itself depend on
-the DB component::
+component to manage todos.  That component will, itself, depend on the
+DB component::
 
   class TodoManager:
       def __init__(self, db: DB) -> None:
@@ -220,16 +221,17 @@ the DB component::
       def resolve(self, db: DB) -> TodoManager:
           return TodoManager(db)
 
-Now we can update our ``create_todo`` handler and add these components
-to our app:
+Now we can update the ``create_todo`` handler to request a
+``TodoManager`` instance and use it.  We also need to add these
+components to our app:
 
 .. code-block:: python
    :emphasize-lines: 7-10
 
    ...
 
-   def create_todo(todo: Todo, manager: TodoManager) -> Todo:
-       return manager.create(todo)
+   def create_todo(todo: Todo, todo_manager: TodoManager) -> Todo:
+       return todo_manager.create(todo)
 
    app = App(
        components=[
@@ -241,7 +243,8 @@ to our app:
        ],
    )
 
-Whenever we create a new todo now, it'll have an associated id::
+Whenever we create a new todo now, it'll be stored in the database and
+have an associated id::
 
   $ curl -F'description=test' -F'status=done' http://127.0.0.1:8000/todos
   {"id": 1, "description": "test", "status": "done"}
@@ -254,10 +257,10 @@ Whenever we create a new todo now, it'll have an associated id::
 
 Components whose ``is_cacheable`` property is ``True`` (the default if
 the property isn't defined) are instantiated once and reused by all
-functions run during a single request and components whose
-``is_singleton`` property is ``True`` (defaults to ``False`` if not
-defined) are instantiated exactly once at process startup and
-subsequently reused forever.
+functions (other components, middleware and handlers) run during a
+single request and components whose ``is_singleton`` property is
+``True`` (defaults to ``False`` if not defined) are instantiated
+exactly once at process startup and subsequently reused forever.
 
 .. note::
 
@@ -282,10 +285,12 @@ can fix that by introducing an Authorization middleware::
       return middleware
 
 Middleware are just functions that are expected to take the next
-handler in line as a parameter and return a new handler function so
-here our middleware takes the request handler as a parameter and
+handler in line as a parameter and return a new handler function.
+
+Here, our middleware takes the request handler as a parameter and
 returns a new handler that either raises a 403 error or executes the
 request handler based on the value of the ``Authorization`` header.
+
 If we then add that middleware to our app:
 
 .. code-block:: python
@@ -471,53 +476,6 @@ And you can register it when you instantiate the app:
    as shown above.  Otherwise features such as OpenAPI document
    generation may not work as expected.
 
-CORS Support
-------------
-
-molten can support CORS headers via wsgicors_.  To add CORS support to
-your app, install ``wsgicors`` then wrap your app instance in a call
-to ``CORS``:
-
-.. code-block:: python
-   :emphasize-lines: 1,32
-
-   from wsgicors import CORS
-
-   ...
-
-   app = App(
-       components=[
-           DBComponent(),
-           TodoManagerComponent(),
-       ],
-       middleware=[
-           ResponseRendererMiddleware([
-               JSONRenderer(),
-               MsgpackRenderer(),
-           ]),
-           AuthorizationMiddleware,
-       ],
-       routes=[
-           Route("/todos", create_todo, method="POST"),
-       ],
-       parsers=[
-           JSONParser(),
-           MsgpackParser(),
-           URLEncodingParser(),
-           MultiPartParser(),
-       ],
-       renderers=[
-           JSONRenderer(),
-           MsgpackRenderer(),
-       ],
-   )
-
-   app = CORS(app, headers="*", methods="*", origin="*", maxage="86400")
-
-Check out the wsgicors_ documentation for details.
-
-.. _wsgicors: https://github.com/may-day/wsgicors
-
 OpenAPI Schemas
 ---------------
 
@@ -635,7 +593,7 @@ API handlers don't require auth:
 Once you've done that, if you open http://127.0.0.1:8000/_docs in your
 web browser, you should be able to interact with your API.  The only
 issue is the OpenAPI stuff doesn't know how to make authorized
-requests against our API yet.  To teach it how, we can register a
+requests against your API yet.  To teach it how, you can register a
 security scheme with the |OpenAPIHandler|:
 
 .. code-block:: python
@@ -661,6 +619,53 @@ Now the Swagger UI should be able to make authorized requests against
 the API.
 
 .. _OpenAPI: https://www.openapis.org/
+
+CORS Support
+------------
+
+molten can support CORS headers via wsgicors_.  To add CORS support to
+your app, install ``wsgicors`` then wrap your app instance in a call
+to ``CORS``:
+
+.. code-block:: python
+   :emphasize-lines: 1,32
+
+   from wsgicors import CORS
+
+   ...
+
+   app = App(
+       components=[
+           DBComponent(),
+           TodoManagerComponent(),
+       ],
+       middleware=[
+           ResponseRendererMiddleware([
+               JSONRenderer(),
+               MsgpackRenderer(),
+           ]),
+           AuthorizationMiddleware,
+       ],
+       routes=[
+           Route("/todos", create_todo, method="POST"),
+       ],
+       parsers=[
+           JSONParser(),
+           MsgpackParser(),
+           URLEncodingParser(),
+           MultiPartParser(),
+       ],
+       renderers=[
+           JSONRenderer(),
+           MsgpackRenderer(),
+       ],
+   )
+
+   app = CORS(app, headers="*", methods="*", origin="*", maxage="86400")
+
+Check out the wsgicors_ documentation for details.
+
+.. _wsgicors: https://github.com/may-day/wsgicors
 
 Wrapping Up
 -----------
