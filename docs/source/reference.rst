@@ -188,6 +188,21 @@ Errors
 Contrib
 -------
 
+.. _dramatiq contrib:
+
+Dramatiq
+^^^^^^^^
+
+Dramatiq_ support for molten.
+
+This functionality requires the ``dramatiq`` package.
+
+.. autofunction:: molten.contrib.dramatiq.setup_dramatiq
+.. autofunction:: molten.contrib.dramatiq.actor
+
+.. _Dramatiq: https://dramatiq.io
+
+
 .. _msgpack contrib:
 
 msgpack

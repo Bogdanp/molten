@@ -50,16 +50,17 @@ def setup_dramatiq(app: BaseApp) -> None:
     _INJECTOR = app.injector
 
 
-@functools.wraps(dramatiq.actor)
 def actor(fn=None, **kwargs):
     """Use this in place of dramatiq.actor in order to create actors
-    that can request components via dependency injection.
+    that can request components via dependency injection.  This is
+    just a wrapper around dramatiq.actor and it takes the same
+    set of parameters.
 
     Examples:
 
       >>> from molten.contrib.dramatiq import actor
 
-      >>> @actor
+      >>> @actor(queue_name="example")
       ... def add(x, y, database: Database) -> None:
       ...   database.put(x + y)
       ...

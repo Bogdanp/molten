@@ -13,6 +13,7 @@ Added
 ^^^^^
 
 * Support for Python 3.7.
+* :ref:`Dramatiq support<dramatiq contrib>`
 * :ref:`Request Id support<request id contrib>`
 * :ref:`Session support<sessions contrib>`
 * :ref:`Prometheus metrics support<prometheus contrib>`
