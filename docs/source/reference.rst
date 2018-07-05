@@ -201,6 +201,20 @@ Request Id
 .. autofunction:: molten.contrib.request_id.set_request_id
 .. autoclass:: molten.contrib.request_id.RequestIdMiddleware
 
+Sessions
+^^^^^^^^
+
+.. autoclass:: molten.contrib.sessions.Session
+.. autoclass:: molten.contrib.sessions.SessionComponent
+.. autoclass:: molten.contrib.sessions.SessionMiddleware
+
+Session Stores
+~~~~~~~~~~~~~~
+
+.. autoclass:: molten.contrib.sessions.SessionStore
+   :members:
+.. autoclass:: molten.contrib.sessions.CookieStore
+
 SQLAlchemy
 ^^^^^^^^^^
 

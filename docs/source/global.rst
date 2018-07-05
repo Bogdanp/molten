@@ -20,6 +20,7 @@
 .. |ResponseRendererMiddleware| replace:: :data:`ResponseRendererMiddleware<molten.ResponseRendererMiddleware>`
 .. |ResponseRenderers| replace:: :class:`ResponseRenderers<molten.ResponseRenderer>`
 .. |Response| replace:: :data:`Response<molten.Response>`
+.. |SessionMiddleware| replace:: :class:`SessionMiddleware<molten.contrib.sessions.SessionMiddleware>`
 .. |SettingsComponent| replace:: :class:`SettingsComponent<molten.SettingsComponent>`
 .. |Settings| replace:: :class:`Settings<molten.Settings>`
 .. |TOMLSettingsComponent| replace:: :class:`TOMLSettingsComponent<molten.contrib.toml_settings.TOMLSettingsComponent>`
