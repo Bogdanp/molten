@@ -9,15 +9,18 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 -------------
 
+`0.2.0`_ -- 2018-07-05
+----------------------
+
 Added
 ^^^^^
 
 * Support for Python 3.7.
 * :ref:`Dramatiq support<dramatiq contrib>`
+* :ref:`OpenAPI document support<openapi reference>`
+* :ref:`Prometheus metrics support<prometheus contrib>`
 * :ref:`Request Id support<request id contrib>`
 * :ref:`Session support<sessions contrib>`
-* :ref:`Prometheus metrics support<prometheus contrib>`
-* :ref:`OpenAPI document support<openapi reference>`
 
 Fixed
 ^^^^^
@@ -34,5 +37,6 @@ Changed
 * Initial release.
 
 
-.. _Unreleased: https://github.com/Bogdanp/molten/compare/v0.1.0...HEAD
+.. _Unreleased: https://github.com/Bogdanp/molten/compare/v0.2.0...HEAD
+.. _0.2.0: https://github.com/Bogdanp/molten/compare/v0.1.0...v0.2.0
 .. _0.1.0: https://github.com/Bogdanp/molten/compare/02c76ae...v0.1.0
