@@ -12,10 +12,11 @@ All notable changes to this project will be documented in this file.
 Added
 ^^^^^
 
-* |RequestIdFilter|, |RequestIdMiddleware|
-* |SessionMiddleware|
-* Support for generating OpenAPI documents.
 * Support for Python 3.7.
+* :ref:`Request Id support<request id contrib>`
+* :ref:`Session support<sessions contrib>`
+* :ref:`Prometheus metrics support<prometheus contrib>`
+* :ref:`OpenAPI document support<openapi reference>`
 
 Fixed
 ^^^^^

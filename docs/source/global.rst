@@ -14,8 +14,8 @@
 .. |QueryString| replace:: :class:`QueryString<molten.QueryString>`
 .. |RequestBody| replace:: :data:`RequestBody<molten.RequestBody>`
 .. |RequestData| replace:: :data:`RequestData<molten.RequestData>`
-.. |RequestIdFilter| replace:: :class:`RequestIdFilter<molten.contrib.RequestIdFilter>`
-.. |RequestIdMiddleware| replace:: :class:`RequestIdMiddleware<molten.contrib.RequestIdMiddleware>`
+.. |RequestIdFilter| replace:: :class:`RequestIdFilter<molten.contrib.request_id.RequestIdFilter>`
+.. |RequestIdMiddleware| replace:: :class:`RequestIdMiddleware<molten.contrib.request_id.RequestIdMiddleware>`
 .. |RequestInput| replace:: :data:`RequestInput<molten.RequestInput>`
 .. |Request| replace:: :data:`Request<molten.Request>`
 .. |ResponseRendererMiddleware| replace:: :data:`ResponseRendererMiddleware<molten.ResponseRendererMiddleware>`
@@ -26,3 +26,10 @@
 .. |Settings| replace:: :class:`Settings<molten.Settings>`
 .. |TOMLSettingsComponent| replace:: :class:`TOMLSettingsComponent<molten.contrib.toml_settings.TOMLSettingsComponent>`
 .. |field| replace:: :class:`Field<molten.Field>`
+.. |prometheus_middleware| replace:: :class:`prometheus_middleware<molten.contrib.prometheus.prometheus_middleware>`
+.. |_conf_files| replace:: :ref:`configuration files<settings contrib>`
+.. |_prometheus| replace:: :ref:`prometheus metrics<prometheus contrib>`
+.. |_request_ids| replace:: :ref:`request ids<request id contrib>`
+.. |_sessions| replace:: :ref:`sessions<sessions contrib>`
+.. |_sqlalchemy| replace:: :ref:`SQLAlchemy<sqlalchemy contrib>`
+.. |_templating| replace:: :ref:`templating<templates contrib>`

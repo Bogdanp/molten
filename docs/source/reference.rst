@@ -188,22 +188,58 @@ Errors
 Contrib
 -------
 
+.. _msgpack contrib:
+
 msgpack
 ^^^^^^^
+
+A parser and a renderer for msgpack_ data.
+
+This functionality requires the ``msgpack`` package to be installed.
 
 .. autoclass:: molten.contrib.msgpack.MsgpackParser
 .. autoclass:: molten.contrib.msgpack.MsgpackRenderer
 
+
+.. _prometheus contrib:
+
+Prometheus
+^^^^^^^^^^
+
+Prometheus_ metrics support.
+
+This functionality requires the ``prometheus-client`` package to be
+installed.
+
+.. autofunction:: molten.contrib.prometheus.expose_metrics
+.. autofunction:: molten.contrib.prometheus.expose_metrics_multiprocess
+.. autofunction:: molten.contrib.prometheus.prometheus_middleware
+
+.. _prometheus: https://prometheus.io
+
+
+.. _request id contrib:
+
 Request Id
 ^^^^^^^^^^
+
+`Request Id`_ support for molten.
 
 .. autofunction:: molten.contrib.request_id.get_request_id
 .. autofunction:: molten.contrib.request_id.set_request_id
 .. autoclass:: molten.contrib.request_id.RequestIdFilter
 .. autoclass:: molten.contrib.request_id.RequestIdMiddleware
 
+.. _Request Id: https://stackoverflow.com/questions/25433258/what-is-the-x-request-id-http-header
+
+
+.. _sessions contrib:
+
 Sessions
 ^^^^^^^^
+
+Session support for molten.  Good APIs are stateless, but sometimes
+you may need something like this for a one-off part of your app.
 
 .. autoclass:: molten.contrib.sessions.Session
 .. autoclass:: molten.contrib.sessions.SessionComponent
@@ -212,16 +248,25 @@ Sessions
 Session Stores
 ~~~~~~~~~~~~~~
 
+Session stores determine where and how session data is stored.  molten
+comes with a stateless session store that's based on cookies by
+default, but you can implement your own by implementing the
+``SessionStore`` protocol.
+
 .. autoclass:: molten.contrib.sessions.SessionStore
    :members:
 .. autoclass:: molten.contrib.sessions.CookieStore
+
+
+.. _sqlalchemy contrib:
 
 SQLAlchemy
 ^^^^^^^^^^
 
 The ``SQLAlchemyComponent`` automatically creates database session
 objects whenever a handler requests a parameter whose type is
-``sqlalchemy.Session``.
+``sqlalchemy.Session``.  You need to install the ``sqlalchemy``
+package before you can use this package.
 
 This component requires a |Settings| component.
 
@@ -234,6 +279,9 @@ If you need access to the SQLAlchemy engine instance, you may request
 
 .. autodata:: molten.contrib.sqlalchemy.EngineData
 
+
+.. _settings contrib:
+
 TOML Settings
 ^^^^^^^^^^^^^
 
@@ -245,6 +293,9 @@ yourself before using this module.
    :members:
 .. autoclass:: molten.contrib.toml_settings.TOMLSettingsComponent
    :members:
+
+
+.. _templates contrib:
 
 Templates
 ^^^^^^^^^
@@ -260,6 +311,8 @@ module.
 
 .. _jinja2: http://jinja.pocoo.org/docs/2.10/
 
+
+.. _openapi reference:
 
 OpenAPI
 -------

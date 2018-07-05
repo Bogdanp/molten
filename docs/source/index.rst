@@ -159,8 +159,8 @@ Batteries Included
 ^^^^^^^^^^^^^^^^^^
 
 The `molten.contrib`_ package contains various functionality commonly
-required by APIs in the real world such as environment-specific
-configuration files, templating, CORS support, and more.
+required by APIs in the real world such as |_conf_files|, |_prometheus|,
+|_request_ids|, |_sessions|, |_sqlalchemy|, |_templating| and more.
 
 .. _molten.contrib: https://github.com/Bogdanp/molten/tree/master/molten/contrib
 
