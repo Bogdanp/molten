@@ -14,6 +14,7 @@
 .. |QueryString| replace:: :class:`QueryString<molten.QueryString>`
 .. |RequestBody| replace:: :data:`RequestBody<molten.RequestBody>`
 .. |RequestData| replace:: :data:`RequestData<molten.RequestData>`
+.. |RequestIdFilter| replace:: :class:`RequestIdFilter<molten.contrib.RequestIdFilter>`
 .. |RequestIdMiddleware| replace:: :class:`RequestIdMiddleware<molten.contrib.RequestIdMiddleware>`
 .. |RequestInput| replace:: :data:`RequestInput<molten.RequestInput>`
 .. |Request| replace:: :data:`Request<molten.Request>`

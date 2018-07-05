@@ -199,6 +199,7 @@ Request Id
 
 .. autofunction:: molten.contrib.request_id.get_request_id
 .. autofunction:: molten.contrib.request_id.set_request_id
+.. autoclass:: molten.contrib.request_id.RequestIdFilter
 .. autoclass:: molten.contrib.request_id.RequestIdMiddleware
 
 Sessions

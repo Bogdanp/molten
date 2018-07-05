@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import logging
 from threading import local
 from typing import Any, Callable, Optional
 from uuid import uuid4
@@ -38,6 +39,48 @@ def set_request_id(request_id: Optional[str]) -> str:
         request_id = str(uuid4())
 
     STATE.request_id = request_id
+
+
+class RequestIdFilter(logging.Filter):
+    """Adds the current request id to log records, making it possible
+    to log request ids via the standard logging module.
+
+    Example logging configuration::
+
+      import logging.config
+      logging.config.dictConfig({
+          "version": 1,
+          "filters": {
+              "request_id": {
+                  "()": "molten.contrib.request_id.RequestIdFilter"
+              },
+          },
+          "formatters": {
+              "standard": {
+                  "format": "%(levelname)-8s [%(asctime)s] [%(request_id)s] %(name)s: %(message)s"
+              },
+          },
+          "handlers": {
+              "console": {
+                  "level": "DEBUG",
+                  "class": "logging.StreamHandler",
+                  "filters": ["request_id"],
+                  "formatter": "standard",
+              },
+          },
+          "loggers": {
+              "myapp": {
+                  "handlers": ["console"],
+                  "level": "DEBUG",
+                  "propagate": False,
+              },
+          }
+      })
+    """
+
+    def filter(self, record: Any) -> bool:
+        record.request_id = get_request_id()
+        return True
 
 
 class RequestIdMiddleware:

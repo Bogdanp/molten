@@ -12,7 +12,7 @@ All notable changes to this project will be documented in this file.
 Added
 ^^^^^
 
-* |RequestIdMiddleware|
+* |RequestIdFilter|, |RequestIdMiddleware|
 * |SessionMiddleware|
 * Support for generating OpenAPI documents.
 * Support for Python 3.7.
