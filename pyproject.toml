@@ -13,6 +13,7 @@ typing-inspect = "^0.3.1"
 [tool.poetry.dev-dependencies]
 alabaster = "^0.7.10"
 bumpversion = "^0.5.3"
+dramatiq = {version = "^1.3", extras = ["rabbitmq"]}
 flake8 = "^3.5"
 flake8-bugbear = "^18.2"
 flake8-quotes = "^1.0"
