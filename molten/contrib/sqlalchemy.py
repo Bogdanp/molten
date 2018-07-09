@@ -114,6 +114,8 @@ class SQLAlchemyMiddleware:
 
     def __call__(self, handler: Callable[..., Any]) -> Callable[..., Any]:
         def middleware(resolver: DependencyResolver) -> Any:
+            session = None
+
             try:
                 response = handler()
                 session = get_optional_session(resolver)
@@ -127,6 +129,10 @@ class SQLAlchemyMiddleware:
                     session.rollback()
 
                 raise
+            finally:
+                if session is not None:
+                    session.close()
+
         return middleware
 
 
