@@ -9,6 +9,16 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 -------------
 
+`0.2.1`_ -- 2018-07-09
+----------------------
+
+Fixed
+^^^^^
+
+* |_sqlalchemy| sessions are now explicitly closed at the end of the
+  request.
+
+
 `0.2.0`_ -- 2018-07-05
 ----------------------
 
@@ -37,6 +47,7 @@ Changed
 * Initial release.
 
 
-.. _Unreleased: https://github.com/Bogdanp/molten/compare/v0.2.0...HEAD
+.. _Unreleased: https://github.com/Bogdanp/molten/compare/v0.2.1...HEAD
+.. _0.2.1: https://github.com/Bogdanp/molten/compare/v0.2.0...v0.2.1
 .. _0.2.0: https://github.com/Bogdanp/molten/compare/v0.1.0...v0.2.0
 .. _0.1.0: https://github.com/Bogdanp/molten/compare/02c76ae...v0.1.0
