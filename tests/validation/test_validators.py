@@ -45,6 +45,8 @@ def test_number_validator(options, value, expected):
     ({"max_length": 2}, "hi!", FieldValidationError("length must be <= 2")),
     ({"choices": ["a", "b"]}, "a", "a"),
     ({"choices": ["a", "b"]}, "c", FieldValidationError("must be one of: 'a', 'b'")),
+    ({"pattern": ".+@.+"}, "", FieldValidationError("must match pattern '.+@.+'")),
+    ({"pattern": ".+@.+"}, "jim@example", "jim@example"),
 ])
 def test_string_validator(options, value, expected):
     _test_validator(StringValidator, None, options, value, expected)

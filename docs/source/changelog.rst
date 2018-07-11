@@ -9,6 +9,12 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 -------------
 
+Added
+^^^^^
+
+* ``pattern`` support for ``StringValidator``.
+
+
 `0.2.1`_ -- 2018-07-09
 ----------------------
 

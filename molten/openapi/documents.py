@@ -92,6 +92,7 @@ class Schema:
     any_of: Optional[List[Dict[str, str]]] = field(response_name="anyOf", default=None)
     items: Optional[Dict[str, str]] = None
     choices: Optional[List[str]] = field(response_name="enum", default=None)
+    pattern: Optional[str] = None
     minimum: Optional[Union[int, float]] = None
     maximum: Optional[Union[int, float]] = None
     multiple_of: Optional[Union[int, float]] = field(response_name="multipleOf", default=None)
