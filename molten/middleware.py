@@ -56,13 +56,19 @@ class ResponseRendererMiddleware:
                 status, response = e.status, e.response
 
             try:
-                accept = request.headers["accept"]
+                accept_header = request.headers["accept"]
             except HeaderMissing:
-                accept = "*/*"
+                accept_header = "*/*"
+
+            accepted_mime_types = []
+            for mime in accept_header.split(","):
+                mime, _, _ = mime.partition(";")
+                accepted_mime_types.append(mime)
 
             for renderer in self.renderers:
-                if accept == "*/*" or renderer.can_render_response(accept):
-                    return renderer.render(status, response)
+                for mime in accepted_mime_types:
+                    if mime == "*/*" or renderer.can_render_response(mime):
+                        return renderer.render(status, response)
 
             return Response(HTTP_406, content="Not Acceptable", headers={
                 "content-type": "text/plain",

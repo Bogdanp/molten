@@ -9,6 +9,11 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 -------------
 
+Fixed
+^^^^^
+
+* Multi-valued ``accept`` headers are now handled correctly.
+
 `0.3.0`_ -- 2018-07-25
 ----------------------
 
