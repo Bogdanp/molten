@@ -12,8 +12,9 @@ All notable changes to this project will be documented in this file.
 Added
 ^^^^^
 
-* ``pattern`` support for ``StringValidator``.
-* ``strip_spaces`` support for ``StringValidator``.
+* ``namespace`` support for |Include|.
+* ``pattern`` support for |StringValidator|.
+* ``strip_spaces`` support for |StringValidator|.
 
 
 `0.2.1`_ -- 2018-07-09

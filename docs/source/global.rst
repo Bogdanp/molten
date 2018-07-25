@@ -6,6 +6,7 @@
 .. |Field| replace:: :class:`Field<molten.Field>`
 .. |Headers| replace:: :class:`Headers<molten.Headers>`
 .. |Header| replace:: :class:`Header<molten.Header>`
+.. |Include| replace:: :class:`Include<molten.Include>`
 .. |OpenAPIHandler| replace:: :class:`OpenAPIHandler<molten.openapi.OpenAPIHandler>`
 .. |OpenAPIUIHandler| replace:: :class:`OpenAPIUIHandler<molten.openapi.OpenAPIUIHandler>`
 .. |ParseError| replace:: :class:`ParseError<molten.ParseError>`
@@ -24,12 +25,13 @@
 .. |SessionMiddleware| replace:: :class:`SessionMiddleware<molten.contrib.sessions.SessionMiddleware>`
 .. |SettingsComponent| replace:: :class:`SettingsComponent<molten.SettingsComponent>`
 .. |Settings| replace:: :class:`Settings<molten.Settings>`
+.. |StringValidator| replace:: :class:`StringValidator<molten.validation.field.StringValidator>`
 .. |TOMLSettingsComponent| replace:: :class:`TOMLSettingsComponent<molten.contrib.toml_settings.TOMLSettingsComponent>`
-.. |field| replace:: :class:`Field<molten.Field>`
-.. |prometheus_middleware| replace:: :class:`prometheus_middleware<molten.contrib.prometheus.prometheus_middleware>`
 .. |_conf_files| replace:: :ref:`configuration files<settings contrib>`
 .. |_prometheus| replace:: :ref:`prometheus metrics<prometheus contrib>`
 .. |_request_ids| replace:: :ref:`request ids<request id contrib>`
 .. |_sessions| replace:: :ref:`sessions<sessions contrib>`
 .. |_sqlalchemy| replace:: :ref:`SQLAlchemy<sqlalchemy contrib>`
 .. |_templating| replace:: :ref:`templating<templates contrib>`
+.. |field| replace:: :class:`Field<molten.Field>`
+.. |prometheus_middleware| replace:: :class:`prometheus_middleware<molten.contrib.prometheus.prometheus_middleware>`

@@ -65,18 +65,26 @@ class Include:
       ...   Route("/", create_account, method="POST"),
       ...   Route("/", list_accounts),
       ...   Route("/{account_id}", get_account),
-      ... ])
+      ... ], namespace="accounts")
 
+    Parameters:
+      prefix: The path that each route will be prefixed with.
+      routes: The list of routes to include.
+      namespace: An optional prefix that will be prepended to each
+        route's name.  This is useful to avoid conflicts if your
+        handlers have similar names.
     """
 
     __slots__ = [
         "prefix",
         "routes",
+        "namespace",
     ]
 
-    def __init__(self, prefix: str, routes: List[RouteLike]) -> None:
+    def __init__(self, prefix: str, routes: List[RouteLike], *, namespace: Optional[str] = None) -> None:
         self.prefix = prefix
         self.routes = routes
+        self.namespace = namespace
 
 
 class Router:
@@ -95,35 +103,43 @@ class Router:
         self._route_res_by_method: Dict[str, List[Pattern[str]]] = defaultdict(list)
         self.add_routes(routes or [])
 
-    def add_route(self, route_like: RouteLike, prefix: str = "") -> None:
+    def add_route(self, route_like: RouteLike, prefix: str = "", namespace: Optional[str] = None) -> None:
         """Add a Route to this instance.
         """
         if isinstance(route_like, Include):
-            self.add_routes(route_like.routes, prefix + route_like.prefix)
+            self.add_routes(
+                route_like.routes,
+                prefix=prefix + route_like.prefix,
+                namespace=f"{namespace}:{route_like.namespace}" if namespace else route_like.namespace,
+            )
 
         elif isinstance(route_like, Route):
             if route_like.name in self._routes_by_name:
                 raise ValueError(f"a route named {route_like.name} is already registered")
 
+            route_name = route_like.name
+            if namespace:
+                route_name = f"{namespace}:{route_name}"
+
             route = Route(
                 template=prefix + route_like.template,
                 handler=route_like.handler,
                 method=route_like.method,
-                name=route_like.name,
+                name=route_name,
             )
 
-            self._routes_by_name[route.name] = route
+            self._routes_by_name[route_name] = route
             self._routes_by_method[route.method].insert(0, route)
             self._route_res_by_method[route.method].insert(0, compile_route_template(route.template))
 
         else:  # pragma: no cover
             raise NotImplementedError(f"unhandled type {type(route_like)}")
 
-    def add_routes(self, route_likes: List[RouteLike], prefix: str = "") -> None:
+    def add_routes(self, route_likes: List[RouteLike], prefix: str = "", namespace: Optional[str] = None) -> None:
         """Add a set of routes to this instance.
         """
         for route_like in route_likes:
-            self.add_route(route_like, prefix)
+            self.add_route(route_like, prefix, namespace)
 
     def match(self, method: str, path: str) -> Union[None, Tuple[Route, Dict[str, str]]]:
         """Look up the route matching the given method and path.

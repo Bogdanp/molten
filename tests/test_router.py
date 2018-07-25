@@ -68,6 +68,33 @@ def test_router_can_reverse_routes():
         router.reverse_uri("get_account")
 
 
+def test_nested_routes_can_be_namespaced():
+    # Given that I have a router with some nested routes
+    router = Router([
+        Include("/v1", [
+            Include("/accounts", [
+                Route("/", handler, name="get_accounts"),
+                Route("/{account_id}", handler, name="get_account"),
+            ], namespace="accounts"),
+        ], namespace="v1"),
+    ])
+
+    # When I try to reverse a route
+    # Then I should get back a string
+    assert router.reverse_uri("v1:accounts:get_accounts") == "/v1/accounts/"
+    assert router.reverse_uri("v1:accounts:get_account", account_id=1) == "/v1/accounts/1"
+
+    # When I try to reverse a route that doesn't exist
+    # Then a RouteNotFound error should be raised
+    with pytest.raises(RouteNotFound):
+        router.reverse_uri("v1:accounts:i-dont-exist")
+
+    # When I try to reverse a route that needs a particular parameter but I don't provide it
+    # Then a RouteParamMissing error should be raised
+    with pytest.raises(RouteParamMissing):
+        router.reverse_uri("v1:accounts:get_account")
+
+
 @pytest.mark.parametrize("template,expected", [
     ("", []),
     ("/v1/accounts", [("chunk", "/v1/accounts")]),
