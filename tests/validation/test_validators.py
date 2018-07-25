@@ -47,6 +47,7 @@ def test_number_validator(options, value, expected):
     ({"choices": ["a", "b"]}, "c", FieldValidationError("must be one of: 'a', 'b'")),
     ({"pattern": ".+@.+"}, "", FieldValidationError("must match pattern '.+@.+'")),
     ({"pattern": ".+@.+"}, "jim@example", "jim@example"),
+    ({"strip_spaces": True}, " testing 123 ", "testing 123"),
 ])
 def test_string_validator(options, value, expected):
     _test_validator(StringValidator, None, options, value, expected)

@@ -13,6 +13,7 @@ Added
 ^^^^^
 
 * ``pattern`` support for ``StringValidator``.
+* ``strip_spaces`` support for ``StringValidator``.
 
 
 `0.2.1`_ -- 2018-07-09

@@ -246,6 +246,7 @@ class StringValidator:
             pattern: Optional[str] = None,
             min_length: Optional[int] = None,
             max_length: Optional[int] = None,
+            strip_spaces: bool = False,
     ) -> str:
         if choices is not None and value not in choices:
             raise FieldValidationError(f"must be one of: {', '.join(repr(choice) for choice in choices)}")
@@ -258,6 +259,9 @@ class StringValidator:
 
         if max_length is not None and len(value) > max_length:
             raise FieldValidationError(f"length must be <= {max_length}")
+
+        if strip_spaces:
+            return value.strip()
 
         return value
 
