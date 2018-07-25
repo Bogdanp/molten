@@ -3,7 +3,7 @@ from typing import Dict, List, Optional
 
 import pytest
 
-from molten import Field, ValidationError, dump_schema, load_schema, schema
+from molten import Field, ValidationError, dump_schema, field, load_schema, schema
 
 
 def safe_date():
@@ -344,3 +344,19 @@ def test_dump_schema_converts_schema_instances_to_dicts(ob, expected):
 
     else:
         assert dump_schema(ob) == expected
+
+
+def test_schema_fields_can_have_custom_validators():
+    # Given that I have a custom validator
+    class TagsValidator:
+        def validate(self, field, value):
+            return value.split(",")
+
+    # When I create a schema whose fields use that validator
+    @schema
+    class Post:
+        tags: List[str] = field(validator=TagsValidator())
+
+    # Then load some data
+    # Then my validator should be used
+    assert load_schema(Post, {"tags": "a,b,c"}) == Post(tags=["a", "b", "c"])

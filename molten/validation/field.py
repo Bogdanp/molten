@@ -141,7 +141,9 @@ class Field(Generic[_T]):
     def select_validator(self) -> None:
         """Find a suitable Validator for this field.
         """
-        self.validator = _select_validator(self)
+        if self.validator is None:
+            self.validator = _select_validator(self)
+
         if self.validator_options and not self.validator:
             raise RuntimeError(f"no validator could be selected for field {self}")
 
