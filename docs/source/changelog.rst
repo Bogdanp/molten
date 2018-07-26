@@ -9,6 +9,14 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 -------------
 
+Fixed
+^^^^^
+
+* Multi-valued ``accept`` headers are now tested against renderers in
+  order.  This fixes an issue where, if the header looked liked
+  ``text/html,*/*``, the first renderer would always be chosen,
+  regardless of if there was a better one available.
+
 `0.3.2`_ -- 2018-07-25
 ----------------------
 

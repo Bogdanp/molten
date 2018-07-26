@@ -60,13 +60,10 @@ class ResponseRendererMiddleware:
             except HeaderMissing:
                 accept_header = "*/*"
 
-            accepted_mime_types = []
             for mime in accept_header.split(","):
                 mime, _, _ = mime.partition(";")
-                accepted_mime_types.append(mime)
 
-            for renderer in self.renderers:
-                for mime in accepted_mime_types:
+                for renderer in self.renderers:
                     if mime == "*/*" or renderer.can_render_response(mime):
                         return renderer.render(status, response)
 
