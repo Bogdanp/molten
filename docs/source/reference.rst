@@ -155,6 +155,16 @@ Fields and Validators
 .. autoclass:: molten.validation.field.SchemaValidator
 
 
+Helpers
+-------
+
+The ``helpers`` module contains a collection of functions that are
+useful for general purpose applications.
+
+.. autoclass:: molten.helpers.RedirectType
+.. autofunction:: molten.helpers.redirect
+
+
 Testing
 -------
 
