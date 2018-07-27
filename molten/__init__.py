@@ -23,6 +23,7 @@ from .errors import (
     MoltenError, ParamMissing, ParseError, RequestParserNotAvailable, RouteNotFound,
     RouteParamMissing, TooManyFields, ValidationError
 )
+from .helpers import redirect
 from .http import (
     Cookie, Cookies, Headers, QueryParams, Request, Response, StreamingResponse, UploadedFile
 )
@@ -71,6 +72,9 @@ __all__ = [
 
     # Validation
     "Field", "Missing", "Validator", "field", "schema", "is_schema", "dump_schema", "load_schema",
+
+    # Helpers
+    "redirect",
 
     # Errors
     "MoltenError", "DIError", "HTTPError", "RouteNotFound", "RouteParamMissing",

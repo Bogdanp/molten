@@ -9,6 +9,11 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 -------------
 
+Added
+^^^^^
+
+* :func:`redirect<molten.helpers.redirect>` helper function.
+
 `0.3.3`_ -- 2018-07-26
 ----------------------
 
