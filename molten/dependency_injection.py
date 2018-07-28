@@ -85,7 +85,7 @@ class DependencyInjector:
     components: List[Component[Any]]
     singletons: Dict[Component[Any], Any]
 
-    def __init__(self, components: List[Component[Any]], singletons: Dict[Component[Any], Any] = None) -> None:
+    def __init__(self, components: List[Component[Any]], singletons: Optional[Dict[Component[Any], Any]] = None) -> None:
         self.components = components or []
         self.singletons = singletons or {}
 

@@ -86,7 +86,7 @@ class BaseApp:
         ]
         self.injector = DependencyInjector(
             components=self.components,
-            singletons={BaseApp: self},
+            singletons={BaseApp: self},  # type: ignore
         )
 
     def handle_404(self) -> Response:
