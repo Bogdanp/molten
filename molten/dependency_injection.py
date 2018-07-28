@@ -85,9 +85,9 @@ class DependencyInjector:
     components: List[Component[Any]]
     singletons: Dict[Component[Any], Any]
 
-    def __init__(self, components: List[Component[Any]]) -> None:
+    def __init__(self, components: List[Component[Any]], singletons: Dict[Component[Any], Any] = None) -> None:
         self.components = components or []
-        self.singletons = {}
+        self.singletons = singletons or {}
 
         for component in components:
             if getattr(component, "is_singleton", False) and component not in self.singletons:

@@ -5,8 +5,8 @@ from typing import Optional, Tuple
 import pytest
 
 from molten import (
-    HTTP_200, HTTP_201, HTTP_204, App, Cookies, Field, Header, QueryParam, QueryParams, Request,
-    RequestData, Response, Route, StreamingResponse, schema, testing
+    HTTP_200, HTTP_201, HTTP_204, App, BaseApp, Cookies, Field, Header, QueryParam, QueryParams,
+    Request, RequestData, Response, Route, StreamingResponse, schema, testing
 )
 
 
@@ -420,3 +420,30 @@ def test_apps_can_stream_responses():
     assert next(response.stream) == b"data"
     with pytest.raises(StopIteration):
         next(response.stream)
+
+
+def test_apps_can_be_injected_into_singleton_components():
+    # Given that I have a singleton component that requests the app
+    class AClass:  # noqa
+        def __init__(self, app):
+            self.app = app
+
+    class AComponent:
+        is_cacheable = True
+        is_singleton = True
+
+        def can_handle_parameter(self, parameter):
+            return parameter.annotation is AClass
+
+        def resolve(self, app: BaseApp):
+            return AClass(app)
+
+    app = App(components=[AComponent()])
+
+    # When I resolve that component
+    def test(a_class: AClass):
+        # Then its app property should be the app instance
+        assert a_class.app is app
+
+    resolver = app.injector.get_resolver()
+    resolver.resolve(test)()

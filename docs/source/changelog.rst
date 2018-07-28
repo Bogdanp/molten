@@ -14,6 +14,11 @@ Added
 
 * :func:`redirect<molten.helpers.redirect>` helper function.
 
+Fixed
+^^^^^
+
+* App instances can now be injected into singleton components.
+
 `0.3.3`_ -- 2018-07-26
 ----------------------
 

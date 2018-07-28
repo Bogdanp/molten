@@ -84,7 +84,10 @@ class BaseApp:
             RequestDataComponent(self.parsers),
             SchemaComponent(),
         ]
-        self.injector = DependencyInjector(self.components)
+        self.injector = DependencyInjector(
+            components=self.components,
+            singletons={BaseApp: self},
+        )
 
     def handle_404(self) -> Response:
         """Called whenever a route cannot be found.
@@ -129,7 +132,6 @@ class App(BaseApp):
     def __call__(self, environ: Environ, start_response: StartResponse) -> Iterable[bytes]:
         request = Request.from_environ(environ)
         resolver = self.injector.get_resolver({
-            BaseApp: self,
             Request: request,
             Method: Method(request.method),
             Scheme: Scheme(request.scheme),
