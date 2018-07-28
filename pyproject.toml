@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "molten"
-version = "0.3.3"
+version = "0.4.0"
 readme = "README.md"
 description = "An experimental web framework for Python 3.6+."
 authors = ["Bogdan Popa <bogdan@cleartype.io>"]
