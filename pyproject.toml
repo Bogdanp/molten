@@ -2,6 +2,7 @@
 name = "molten"
 version = "0.4.1"
 readme = "README.md"
+homepage = "https://moltenframework.com"
 description = "An experimental web framework for Python 3.6+."
 authors = ["Bogdan Popa <bogdan@cleartype.io>"]
 
