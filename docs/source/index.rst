@@ -150,7 +150,7 @@ molten has support for function-based middleware::
           return handler()
       return middleware
 
-As you would expected, middleware functions can request dependencies
+As you would expect, middleware functions can request dependencies
 from the DI system.  In the above example, you can see how the auth
 middleware requests the ``Authorization`` header via DI and either
 cancels the request or proceeds with it based on its value.
