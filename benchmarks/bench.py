@@ -15,7 +15,7 @@ asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 random.seed(1337)
 
 
-def shell(cmd, *, timeout=5):
+def shell(cmd, *, timeout=120):
     return subprocess.run(cmd, shell=True, timeout=timeout, stdout=sys.stderr, stderr=sys.stderr)
 
 
