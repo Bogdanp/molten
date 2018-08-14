@@ -9,6 +9,10 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 -------------
 
+
+`0.4.2`_ -- 2018-08-14
+----------------------
+
 Fixed
 ^^^^^
 
@@ -116,7 +120,8 @@ Changed
 * Initial release.
 
 
-.. _Unreleased: https://github.com/Bogdanp/molten/compare/v0.4.1...HEAD
+.. _Unreleased: https://github.com/Bogdanp/molten/compare/v0.4.2...HEAD
+.. _0.4.2: https://github.com/Bogdanp/molten/compare/v0.4.1...v0.4.2
 .. _0.4.1: https://github.com/Bogdanp/molten/compare/v0.4.0...v0.4.1
 .. _0.4.0: https://github.com/Bogdanp/molten/compare/v0.3.3...v0.4.0
 .. _0.3.3: https://github.com/Bogdanp/molten/compare/v0.3.2...v0.3.3
