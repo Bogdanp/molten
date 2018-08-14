@@ -1,2 +1,2 @@
-molten==0.4.1
+molten==0.4.2
 werkzeug
