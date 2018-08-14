@@ -9,6 +9,12 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 -------------
 
+Fixed
+^^^^^
+
+* Dropped ``SCRIPT_NAME`` from ``Request.path``.
+
+
 `0.4.1`_ -- 2018-07-28
 ----------------------
 

@@ -87,7 +87,7 @@ class Request:
             scheme=environ["wsgi.url_scheme"],
             host=environ.get("HTTP_HOST", ""),
             port=environ.get("SERVER_PORT", 0),
-            path=environ.get("SCRIPT_NAME", "") + environ.get("PATH_INFO", ""),
+            path=environ.get("PATH_INFO", ""),
             params=QueryParams.from_environ(environ),
             headers=Headers.from_environ(environ),
             body_file=environ["wsgi.input"],
