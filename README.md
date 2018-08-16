@@ -6,9 +6,10 @@
 [![PyPI version](https://badge.fury.io/py/molten.svg)](https://badge.fury.io/py/molten)
 [![Documentation](https://img.shields.io/badge/doc-latest-brightgreen.svg)](https://moltenframework.com)
 
-**molten** is an experimental web framework for Python 3.6+.  It's
-meant to be minimal, extensible, fast and productive.  Check out the
-[examples] for a taste or start reading the [user guide]!
+
+**molten** is a minimal, extensible, fast and productive framework for
+building HTTP APIs with Python 3.6 and later. Check out the [examples]
+folder to get a taste of the framework or dive into the [user guide]!
 
 
 ## Installation
