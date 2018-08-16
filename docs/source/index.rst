@@ -34,8 +34,9 @@ Here's a quick taste::
 
   app = App(routes=[Route("/hello/{name}/{age}", hello)])
 
-molten is :doc:`licensed<license>` under the LGPL and it
-officially supports Python 3.6 and later.
+For more, take a look at the examples_ folder in the GitHub repo.
+
+.. _examples: https://github.com/Bogdanp/molten/tree/master/examples
 
 
 Features
