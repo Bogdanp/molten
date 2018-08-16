@@ -30,6 +30,13 @@ from ..http.request import Request
 from ..http.response import Response
 from .common import to_environ
 
+try:
+    from gunicorn.http.errors import NoMoreData  # type: ignore
+except ImportError:  # pragma: no cover
+    class NoMoreData(Exception):  # type: ignore
+        pass
+
+
 HTTP_METHODS = {"delete", "head", "get", "options", "patch", "post", "put"}
 
 
@@ -145,7 +152,11 @@ class TestClient:
             response.status = status
             response.headers = Headers(dict(response_headers))
 
-        chunks = self.app(to_environ(request), start_response)
+        try:
+            chunks = self.app(to_environ(request), start_response)
+        except NoMoreData:
+            chunks = []
+
         if response.headers.get("transfer-encoding") == "chunked":
             response.stream = cast(BinaryIO, chunks)
             return TestResponse(response)

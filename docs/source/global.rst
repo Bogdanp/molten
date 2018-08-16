@@ -33,5 +33,6 @@
 .. |_sessions| replace:: :ref:`sessions<sessions contrib>`
 .. |_sqlalchemy| replace:: :ref:`SQLAlchemy<sqlalchemy contrib>`
 .. |_templating| replace:: :ref:`templating<templates contrib>`
+.. |_websockets| replace:: :ref:`websockets<websockets contrib>`
 .. |field| replace:: :class:`Field<molten.Field>`
 .. |prometheus_middleware| replace:: :class:`prometheus_middleware<molten.contrib.prometheus.prometheus_middleware>`

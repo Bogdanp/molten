@@ -9,6 +9,11 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 -------------
 
+Added
+^^^^^
+
+* Support for |_websockets|.
+
 
 `0.4.2`_ -- 2018-08-14
 ----------------------

@@ -22,10 +22,10 @@ from wsgiref.util import FileWrapper  # type: ignore
 
 from .components import (
     CookiesComponent, HeaderComponent, QueryParamComponent, RequestBodyComponent,
-    RequestDataComponent, RouteParamsComponent, SchemaComponent
+    RequestDataComponent, RouteComponent, RouteParamsComponent, SchemaComponent
 )
 from .dependency_injection import Component, DependencyInjector
-from .errors import RequestParserNotAvailable
+from .errors import RequestHandled, RequestParserNotAvailable
 from .http import HTTP_204, HTTP_404, HTTP_415, HTTP_500, Headers, QueryParams, Request, Response
 from .middleware import ResponseRendererMiddleware
 from .parsers import JSONParser, MultiPartParser, RequestParser, URLEncodingParser
@@ -34,6 +34,11 @@ from .router import RouteLike, Router
 from .typing import (
     Environ, Host, Method, Middleware, Port, QueryString, RequestInput, Scheme, StartResponse
 )
+
+try:
+    from gunicorn.http.errors import NoMoreData
+except ImportError:  # pragma: no cover
+    pass
 
 LOGGER = logging.getLogger(__name__)
 
@@ -132,15 +137,17 @@ class App(BaseApp):
     def __call__(self, environ: Environ, start_response: StartResponse) -> Iterable[bytes]:
         request = Request.from_environ(environ)
         resolver = self.injector.get_resolver({
-            Request: request,
-            Method: Method(request.method),
-            Scheme: Scheme(request.scheme),
-            Host: Host(request.host),
-            Port: Port(request.port),
-            QueryString: QueryString(environ.get("QUERY_STRING", "")),
-            QueryParams: request.params,
+            Environ: environ,
             Headers: request.headers,
+            Host: Host(request.host),
+            Method: Method(request.method),
+            Port: Port(request.port),
+            QueryParams: request.params,
+            QueryString: QueryString(environ.get("QUERY_STRING", "")),
+            Request: request,
             RequestInput: RequestInput(request.body_file),
+            Scheme: Scheme(request.scheme),
+            StartResponse: start_response,
         })
 
         try:
@@ -149,9 +156,11 @@ class App(BaseApp):
             if route_and_params is not None:
                 route, params = route_and_params
                 handler = route.handler
+                resolver.add_component(RouteComponent(route))
                 resolver.add_component(RouteParamsComponent(params))
             else:
                 handler = self.handle_404
+                resolver.add_component(RouteComponent(None))
 
             handler = resolver.resolve(handler)
             for middleware in reversed(self.middleware):
@@ -159,6 +168,11 @@ class App(BaseApp):
 
             exc_info = None
             response = handler()
+        except RequestHandled:
+            # This is used to break out of gunicorn's keep-alive loop.
+            # If we don't do this, then gunicorn might attempt to read
+            # from a closed socket.
+            raise NoMoreData()
         except RequestParserNotAvailable:
             exc_info = None
             response = resolver.resolve(self.handle_415)()

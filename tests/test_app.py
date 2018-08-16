@@ -6,7 +6,8 @@ import pytest
 
 from molten import (
     HTTP_200, HTTP_201, HTTP_204, App, BaseApp, Cookies, Field, Header, QueryParam, QueryParams,
-    Request, RequestData, Response, Route, StreamingResponse, schema, testing
+    Request, RequestData, RequestHandled, Response, Route, StartResponse, StreamingResponse, schema,
+    testing
 )
 
 
@@ -73,6 +74,10 @@ def route_params(name: str, age: int) -> str:
     return f"{name} is {age} years old"
 
 
+def route_injection(route: Route) -> bool:
+    return route.handler is route_injection
+
+
 def get_countries() -> Response:
     return Response(HTTP_200, stream=open(path_to("fixtures", "example.json"), mode="rb"), headers={
         "content-type": "application/json",
@@ -92,6 +97,11 @@ def stream(n: int) -> StreamingResponse:
     return StreamingResponse(HTTP_200, gen())
 
 
+def upgrade(start_response: StartResponse) -> None:
+    start_response("200 OK", [("success", "yes")])
+    raise RequestHandled("request upgraded")
+
+
 app = App(routes=[
     Route("/", index),
     Route("/params", params),
@@ -106,9 +116,11 @@ app = App(routes=[
     Route("/returns-tuple", returns_tuple),
     Route("/reads-cookies", reads_cookies),
     Route("/route-params/{name}/{age}", route_params),
+    Route("/route-injection", route_injection),
     Route("/countries", get_countries),
     Route("/accounts", create_account, method="POST"),
     Route("/stream/{n}", stream),
+    Route("/upgrade", upgrade),
 ])
 client = testing.TestClient(app)
 
@@ -322,6 +334,16 @@ def test_apps_can_handle_route_params():
     assert response.json() == "Jim is 24 years old"
 
 
+def test_apps_can_inject_the_current_route():
+    # Given that I have an app
+    # When I make a request to a handler that requests the current route
+    response = client.get(app.reverse_uri("route_injection"))
+
+    # Then I should get back a successful response
+    assert response.status_code == 200
+    assert response.json() is True
+
+
 def test_apps_can_fail_to_handle_route_params():
     # Given that I have an app
     # When I make a request to a handler that uses route params with an invalid param type
@@ -447,3 +469,14 @@ def test_apps_can_be_injected_into_singleton_components():
 
     resolver = app.injector.get_resolver()
     resolver.resolve(test)()
+
+
+def test_apps_skip_response_processing_for_handled_requests():
+    # Given that I have an app
+    # When I make a request to a handler that handles its own response
+    response = client.get(app.reverse_uri("upgrade"))
+
+    # Then I should get back a 200 response
+    assert response.status_code == 200
+    # And the response should a custom header
+    assert response.headers["success"] == "yes"

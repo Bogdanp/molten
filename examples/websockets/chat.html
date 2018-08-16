@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+
+      body {
+        font: 62.5%/1.4 Helvetica, Arial, sans-serif;
+        font-size: 1rem;
+        color: #151515;
+      }
+
+      html, body, .chat { height: 100%; }
+
+      .chat {
+        height: 100%;
+        display: grid;
+        grid-template-rows: 1fr auto;
+      }
+
+      .message-list {
+        background: #fbfbfb;
+        list-style-type: none;
+      }
+
+      .message {
+        padding: 12px;
+      }
+
+      .message-form {
+        display: grid;
+        grid-template-rows: 1fr;
+        grid-template-columns: 120px 1fr 80px;
+        column-gap: 6px;
+        padding: 16px 12px;
+      }
+
+      h6 {
+        color: #999;
+        font-size: 0.8rem;
+        font-weight: 400;
+        text-transform: uppercase;
+      }
+
+      input[type=text] {
+        padding: 6px 9px;
+        border: 1px solid #eee;
+        border-right: 1px solid #ddd;
+        border-bottom: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 1rem;
+      }
+
+      input[type=text]:focus {
+        outline: 0;
+        box-shadow: 0 0 0 2px #f2f2f2;
+      }
+
+      button[type=submit] {
+        background: #000;
+        border-radius: 4px;
+        border: 0;
+        color: #fff;
+        text-transform: uppercase;
+      }
+
+      button[type=submit]:focus {
+        outline: 0;
+        box-shadow: 0 0 0 2px #f2f2f2;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="chat">
+      <ul class="message-list">
+      </ul>
+
+      <div class="message-bar">
+        <form class="message-form">
+          <input type="text" placeholder="Username" id="username" value="guest">
+          <input type="text" placeholder="Message..." id="message">
+          <button type="submit">Send</button>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      const messageListEl = document.querySelector(".message-list");
+      const usernameEl = document.querySelector("#username");
+      const messageEl = document.querySelector("#message");
+      const formEl = document.querySelector(".message-form");
+
+      const sock = new WebSocket("ws://127.1:8000/chat");
+      sock.addEventListener("open", function() {
+        console.log("connected!");
+      });
+
+      sock.addEventListener("message", function(e) {
+        addMessage(JSON.parse(e.data));
+      });
+
+      sock.addEventListener("close", function(e) {
+        console.warn("closed!", e);
+      });
+
+      function addMessage(envelope) {
+        const el = document.createElement("li");
+        el.classList.add("message");
+        el.innerHTML = `<h6>${envelope.username}<\/h6> <p>${envelope.message}<\/p>`;
+        messageListEl.appendChild(el);
+      }
+
+      formEl.addEventListener("submit", function(e) {
+        e.preventDefault();
+
+        if (!messageEl.value) {
+          return;
+        }
+
+        const envelope = {
+          username: usernameEl.value,
+          message: messageEl.value,
+        };
+
+        messageEl.value = "";
+        sock.send(JSON.stringify(envelope));
+        addMessage(envelope);
+      });
+    </script>
+  </body>
+</html>

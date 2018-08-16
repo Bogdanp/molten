@@ -337,6 +337,51 @@ module.
 .. _jinja2: http://jinja.pocoo.org/docs/2.10/
 
 
+.. _websockets contrib:
+
+Websockets
+^^^^^^^^^^
+
+molten has builtin support for websockets.  However, there are a
+couple limitations:
+
+* you must use gunicorn_ as your web server and
+* you need to use the gevent_ worker class.
+
+Check out the `websockets example`_ in the molten repo.
+
+.. autoclass:: molten.contrib.websockets.WebsocketsMiddleware
+   :members:
+.. autoclass:: molten.contrib.websockets.Websocket
+   :members:
+   :member-order: bysource
+
+Websocket Messages
+~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: molten.contrib.websockets.Message
+   :members:
+   :member-order: bysource
+.. autoclass:: molten.contrib.websockets.BinaryMessage
+.. autoclass:: molten.contrib.websockets.TextMessage
+.. autoclass:: molten.contrib.websockets.CloseMessage
+.. autoclass:: molten.contrib.websockets.PingMessage
+.. autoclass:: molten.contrib.websockets.PongMessage
+
+Websocket Errors
+~~~~~~~~~~~~~~~~
+
+.. autoclass:: molten.contrib.websockets.WebsocketError
+.. autoclass:: molten.contrib.websockets.WebsocketProtocolError
+.. autoclass:: molten.contrib.websockets.WebsocketMessageTooLargeError
+.. autoclass:: molten.contrib.websockets.WebsocketFrameTooLargeError
+.. autoclass:: molten.contrib.websockets.WebsocketClosedError
+
+.. _gunicorn: http://gunicorn.org/
+.. _gevent: http://www.gevent.org/
+.. _websockets example: https://github.com/Bogdanp/molten/tree/master/examples/websockets
+
+
 .. _openapi reference:
 
 OpenAPI

@@ -24,6 +24,7 @@ from .errors import (
 )
 from .http import HTTP_400, Cookies, Headers, QueryParams
 from .parsers import RequestParser
+from .router import Route
 from .typing import (
     Header, QueryParam, RequestBody, RequestData, RequestInput, extract_optional_annotation
 )
@@ -163,6 +164,26 @@ class CookiesComponent:
         if cookie is None:
             return Cookies()
         return Cookies.parse(cookie)
+
+
+class RouteComponent:
+    """A component that resolves the current route.
+    """
+
+    __slots__ = ["route"]
+
+    is_cacheable = True
+    is_singleton = False
+
+    def __init__(self, route: Optional[Route]) -> None:
+        self.route = route
+
+    def can_handle_parameter(self, parameter: Parameter) -> bool:
+        _, annotation = extract_optional_annotation(parameter.annotation)
+        return annotation is Route
+
+    def resolve(self) -> Optional[Route]:
+        return self.route
 
 
 class RouteParamsComponent:

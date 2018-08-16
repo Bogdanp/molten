@@ -61,6 +61,13 @@ class RouteParamMissing(MoltenError):
     """
 
 
+class RequestHandled(MoltenError):
+    """Signals to the WSGI implementation that start_response was
+    already called within a request handler.  This is useful when
+    implementing connection upgrades.
+    """
+
+
 class RequestParserNotAvailable(MoltenError):
     """Raised when no request parser can handle the incoming request.
     """
