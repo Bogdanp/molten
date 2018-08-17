@@ -6,15 +6,25 @@
 [![PyPI version](https://badge.fury.io/py/molten.svg)](https://badge.fury.io/py/molten)
 [![Documentation](https://img.shields.io/badge/doc-latest-brightgreen.svg)](https://moltenframework.com)
 
+*A minimal, extensible, fast and productive API framework for Python 3.*
 
-**molten** is a minimal, extensible, fast and productive framework for
-building HTTP APIs with Python 3.6 and later. Check out the [examples]
-folder to get a taste of the framework or dive into the [user guide]!
+<hr/>
+
+**Changelog**: https://moltenframework.com/changelog.html <br/>
+**Documentation**: https://moltenframework.com
+
+<hr/>
 
 
 ## Installation
 
     pip install molten
+
+
+## Quickstart
+
+Check out the [examples] folder to get a taste of the framework or
+read the [user guide]!
 
 
 ## License
