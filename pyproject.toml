@@ -3,7 +3,7 @@ name = "molten"
 version = "0.4.2"
 readme = "README.md"
 homepage = "https://moltenframework.com"
-description = "An experimental web framework for Python 3.6+."
+description = "A minimal, extensible, fast and productive API framework."
 authors = ["Bogdan Popa <bogdan@cleartype.io>"]
 
 [tool.poetry.dependencies]
