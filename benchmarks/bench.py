@@ -1,12 +1,12 @@
 import argparse
 import asyncio
+import json
 import math
 import random
 import subprocess
 import sys
 import time
 from collections import Counter
-from pprint import pprint
 
 import aiohttp
 import uvloop
@@ -15,8 +15,11 @@ asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 random.seed(1337)
 
 
-def shell(cmd, *, timeout=120):
-    return subprocess.run(cmd, shell=True, timeout=timeout, stdout=sys.stderr, stderr=sys.stderr)
+def shell(cmd, *, timeout=120, **opts):
+    if not opts:
+        opts = dict(stdout=sys.stderr, stderr=sys.stderr)
+
+    return subprocess.run(cmd, shell=True, timeout=timeout, **opts)
 
 
 def build_image(name, context="."):
@@ -31,8 +34,11 @@ def stop_container(name):
     return shell(f"docker kill bench_{name}")
 
 
-def get_container_stats(name):
-    return shell(f"docker stats --no-stream bench_{name}")
+def get_container_memory_usage(name):
+    res = shell(f"docker stats --format '{{{{.MemUsage}}}}' --no-stream bench_{name}", capture_output=True)
+    memory_usage = res.stdout.strip().decode()
+    current, _, _ = memory_usage.partition("/")
+    return current.strip()
 
 
 async def get_index(session):
@@ -117,7 +123,8 @@ async def benchmark(name, duration=30, concurrency=50, warmup=1000):
         def qtile(n):
             return durations[math.ceil(len(results) * n / 100)]
 
-        pprint({
+        print(json.dumps({
+            "memory_usage": get_container_memory_usage(name),
             "duration": f"{duration:.02f}s",
             "qps": f"{len(results) / duration:0.2f}",
             "minimum": f"{minimum * 1000:.02f}ms",
@@ -131,9 +138,7 @@ async def benchmark(name, duration=30, concurrency=50, warmup=1000):
             "requests": len(results),
             "errors": errors,
             "tasks": dict(tasks),
-        })
-
-        get_container_stats(name)
+        }, indent=4))
 
 
 def main():
