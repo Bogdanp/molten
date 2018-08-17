@@ -19,8 +19,8 @@ def shell(cmd, *, timeout=120):
     return subprocess.run(cmd, shell=True, timeout=timeout, stdout=sys.stderr, stderr=sys.stderr)
 
 
-def build_image(name):
-    return shell(f"docker build -t bench_{name} -f Dockerfile_{name} .")
+def build_image(name, context="."):
+    return shell(f"docker build -t bench_{name} -f Dockerfile_{name} {context}")
 
 
 def run_container(name):
@@ -137,7 +137,11 @@ def main():
     parser.add_argument("--duration", "-d", default=30, type=int)
     args = parser.parse_args()
 
-    build_image(args.framework)
+    context = "."
+    if args.framework == "molten":
+        context = ".."
+
+    build_image(args.framework, context)
     run_container(args.framework)
     time.sleep(3)
 
