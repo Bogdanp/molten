@@ -181,7 +181,7 @@ class DependencyResolver:
         return resolved_fn
 
 
-@functools.lru_cache(maxsize=1024)
+@functools.lru_cache(maxsize=128)
 def _get_parameters(fn: Callable[..., Any]) -> Iterable[Parameter]:
     # A significant amount of time is spent getting handlers' params.
     # Since they never change, it should be safe to just cache 'em.
