@@ -23,14 +23,17 @@ import logging
 import socket
 import struct
 from base64 import b64encode
+from concurrent.futures import Future, ThreadPoolExecutor
 from hashlib import sha1
 from inspect import Parameter
-from typing import Any, Callable, Optional, Pattern
+from typing import Any, Callable, Optional, Pattern, Union
 
 from molten import (
-    HTTP_400, HTTP_426, DependencyResolver, Environ, HeaderMissing, HTTPError, MoltenError, Request,
-    RequestHandled, Response, Route
+    HTTP_400, HTTP_426, BaseApp, DependencyResolver, Environ, HeaderMissing, HTTPError, MoltenError,
+    Request, RequestHandled, Response, Route, TestClient
 )
+from molten.http.headers import Headers, HeadersDict
+from molten.http.query_params import ParamsDict, QueryParams
 
 try:
     import gevent
@@ -623,3 +626,108 @@ class WebsocketsMiddleware:
 
             raise RequestHandled("websocket request was upgraded")
         return handle
+
+
+class _WebsocketsTestConnection:
+    """A proxy context manager for websocket objects.
+    """
+
+    __slots__ = ["__future", "__socket"]
+
+    def __init__(self, future: Future, socket: Websocket) -> None:
+        self.__future = future
+        self.__socket = socket
+
+    def close(self) -> None:
+        try:
+            self.__socket.send(CloseMessage())
+        except WebsocketClosedError:
+            pass
+        finally:
+            self.__future.result()
+
+    def __enter__(self) -> "WebsocketsTestConnection":
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
+
+    def __getattr__(self, name: str) -> Any:
+        return getattr(self.__socket, name)
+
+
+class WebsocketsTestClient(TestClient):
+    """This is a subclass of the standard test client that adds an
+    additional method called :meth:`.connect` that may be used to
+    connect to websocket endpoints.
+
+    Example:
+
+      >>> client = WebsocketsTestClient(app)
+      >>> with client.connect("/echo") as sock:
+      ...   sock.send(TextMessage("hi!"))
+      ...   assert sock.receive(timeout=1).get_text() == "hi!"
+
+    Note:
+
+      In order for :meth:`receive's<Websocket.receive>` "timeout"
+      parameter to work, you need use gevent to monkeypatch sockets
+      before running your tests.
+
+    """
+
+    def __init__(self, app: BaseApp) -> None:
+        self.app = app
+        self.executor = ThreadPoolExecutor(max_workers=8)
+
+    def connect(
+            self,
+            path: str,
+            headers: Optional[Union[HeadersDict, Headers]] = None,
+            params: Optional[Union[ParamsDict, QueryParams]] = None,
+            auth: Optional[Callable[[Request], Request]] = None,
+    ) -> _WebsocketsTestConnection:
+        """Initiate a websocket connection against the application.
+
+        Parameters:
+          path: The request path.
+          headers: Optional request headers.
+          params: Optional query params.
+          auth: An optional function that can be used to add auth
+            headers to the request.
+        """
+        headers = headers or Headers()
+        headers["connection"] = "upgrade"
+        headers["upgrade"] = "websocket"
+        headers["sec-websocket-key"] = b64encode(b"a" * 16)
+        headers["sec-websocket-version"] = "13"
+
+        rsock, wsock = socket.socketpair()
+
+        def prepare_environ(environ: Environ) -> Environ:
+            environ["gunicorn.socket"] = rsock
+            return environ
+
+        # Execute the websocket handler in a background thread because
+        # it blocks, waiting on the socket.  Keep a reference to it so
+        # we can figure out when exceptions occur.
+        future = self.executor.submit(
+            self.get, path, headers, params, auth=auth,
+            prepare_environ=prepare_environ,
+        )
+
+        # Consume the upgrade response and make sure it looks right.
+        response_data = b""
+        while b"\r\n\r\n" not in response_data:
+            data = wsock.recv(16384)
+            if not data:
+                break
+
+            response_data += data
+
+        assert response_data == UPGRADE_RESPONSE_TEMPLATE % {
+            b"websocket_accept": b"3HqoXi7JuX/Kr4omwxf/PWj99aU=",
+        }, "invalid upgrade response"
+
+        websocket = Websocket(_BufferedStream(wsock))
+        return _WebsocketsTestConnection(future, websocket)

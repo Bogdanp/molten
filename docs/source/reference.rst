@@ -377,6 +377,13 @@ Websocket Errors
 .. autoclass:: molten.contrib.websockets.WebsocketFrameTooLargeError
 .. autoclass:: molten.contrib.websockets.WebsocketClosedError
 
+Websocket Testing Support
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: molten.contrib.websockets.WebsocketsTestClient
+   :members:
+   :member-order: bysource
+
 .. _gunicorn: http://gunicorn.org/
 .. _gevent: http://www.gevent.org/
 .. _websockets example: https://github.com/Bogdanp/molten/tree/master/examples/websockets

@@ -28,6 +28,7 @@ from ..http.headers import Headers, HeadersDict
 from ..http.query_params import ParamsDict, QueryParams
 from ..http.request import Request
 from ..http.response import Response
+from ..typing import Environ
 from .common import to_environ
 
 try:
@@ -100,6 +101,7 @@ class TestClient:
             data: Optional[Dict[str, str]] = None,
             json: Optional[Any] = None,
             auth: Optional[Callable[[Request], Request]] = None,
+            prepare_environ: Optional[Callable[[Environ], Environ]] = None,
     ) -> TestResponse:
         """Simulate a request against the application.
 
@@ -153,7 +155,11 @@ class TestClient:
             response.headers = Headers(dict(response_headers))
 
         try:
-            chunks = self.app(to_environ(request), start_response)
+            environ = to_environ(request)
+            if prepare_environ:  # pragma: no cover
+                environ = prepare_environ(environ)
+
+            chunks = self.app(environ, start_response)
         except NoMoreData:
             chunks = []
 
