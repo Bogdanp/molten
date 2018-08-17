@@ -13,6 +13,7 @@ python:
 matrix:
   include:
     - { python: "3.7", env: TESTENV=lint }
+    - { python: "3.7", env: TESTENV=examples }
   allow_failures:
     - python: "3.7-dev"
     - python: "3.8-dev"
@@ -23,12 +24,10 @@ install:
   - poetry develop
 
 before_script:
-  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-  - chmod +x ./cc-test-reporter
-  - ./cc-test-reporter before-build
+  - ./scripts/pre-build.sh
 
 script:
-  - if [ "$TESTENV" = "lint" ]; then ./scripts/lint.sh; else py.test --cov-report xml; fi
+  - ./scripts/build.sh
 
 after_script:
-  - if [ ! "$TESTENV" = "lint" ]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi
+  - ./scripts/post-build.sh

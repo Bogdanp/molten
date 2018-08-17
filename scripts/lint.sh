@@ -2,8 +2,10 @@
 
 set -euo pipefail
 
+echo "Running flake8..."
 flake8 molten tests examples
 
+echo "Running mypy..."
 mypy --ignore-missing-imports \
      --disallow-any-unimported \
      --disallow-any-generics \
