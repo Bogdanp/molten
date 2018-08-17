@@ -22,3 +22,17 @@ def test_echo_endpoint_echos_messages_back():
 
         sock.send(BinaryMessage(b"hi!"))
         assert sock.receive(timeout=1).get_data() == b"hi!"
+
+
+def test_chat_endpoint_broadcasts_messages_to_other_sockets():
+    with client.connect(app.reverse_uri("chat")) as alice, \
+         client.connect(app.reverse_uri("chat")) as bob, \
+         client.connect(app.reverse_uri("chat")) as eve:  # noqa
+
+        alice.send(TextMessage("hi!"))
+        assert bob.receive(timeout=1).get_text() == "hi!"
+        assert eve.receive(timeout=1).get_text() == "hi!"
+
+        bob.send(TextMessage("hello!"))
+        assert alice.receive(timeout=1).get_text() == "hello!"
+        assert eve.receive(timeout=1).get_text() == "hello!"
