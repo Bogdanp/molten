@@ -29,7 +29,6 @@ from .errors import ParseError, RequestHandled, RequestParserNotAvailable
 from .http import (
     HTTP_204, HTTP_400, HTTP_404, HTTP_415, HTTP_500, Headers, QueryParams, Request, Response
 )
-from .middleware import ResponseRendererMiddleware
 from .parsers import JSONParser, MultiPartParser, RequestParser, URLEncodingParser
 from .renderers import JSONRenderer, ResponseRenderer
 from .router import RouteLike, Router
@@ -67,6 +66,11 @@ class BaseApp:
             parsers: Optional[List[RequestParser]] = None,
             renderers: Optional[List[ResponseRenderer]] = None,
     ) -> None:
+        # ResponseRendererMiddleware needs to be able to look up
+        # middleware off of the app which leads to an import cycle
+        # since the two are dependant on one another.
+        from .middleware import ResponseRendererMiddleware
+
         self.router = Router(routes)
         self.add_route = self.router.add_route
         self.add_routes = self.router.add_routes
@@ -81,7 +85,7 @@ class BaseApp:
             JSONRenderer(),
         ]
         self.middleware = middleware or [
-            ResponseRendererMiddleware(self.renderers)
+            ResponseRendererMiddleware()
         ]
         self.components = (components or []) + [
             HeaderComponent(),

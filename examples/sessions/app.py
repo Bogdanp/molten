@@ -1,6 +1,6 @@
 from typing import Optional
 
-from molten import App, JSONRenderer, QueryParam, ResponseRendererMiddleware, Route
+from molten import App, QueryParam, ResponseRendererMiddleware, Route
 from molten.contrib.sessions import CookieStore, Session, SessionComponent, SessionMiddleware
 
 cookie_store = CookieStore(b"ubersecret")
@@ -22,9 +22,7 @@ app = App(
 
     middleware=[
         SessionMiddleware(cookie_store),
-        ResponseRendererMiddleware([
-            JSONRenderer(),
-        ]),
+        ResponseRendererMiddleware(),
     ],
 
     routes=[

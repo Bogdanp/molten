@@ -4,8 +4,7 @@ OpenAPI document to represent its structure.
 from typing import Any, Callable, Optional
 
 from molten import (
-    HTTP_401, App, Header, HTTPError, Include, JSONRenderer, ResponseRendererMiddleware, Route,
-    annotate
+    HTTP_401, App, Header, HTTPError, Include, ResponseRendererMiddleware, Route, annotate
 )
 from molten.openapi import HTTPSecurityScheme, Metadata, OpenAPIHandler, OpenAPIUIHandler
 
@@ -44,7 +43,7 @@ def setup_app():
         ],
 
         middleware=[
-            ResponseRendererMiddleware([JSONRenderer()]),
+            ResponseRendererMiddleware(),
             auth_middleware,
         ],
 

@@ -15,29 +15,19 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from typing import Any, Callable, List
+from typing import Any, Callable
 
+from .app import BaseApp
 from .errors import HeaderMissing, HTTPError
 from .http import HTTP_200, HTTP_406, Request, Response
-from .renderers import ResponseRenderer
 
 
 class ResponseRendererMiddleware:
     """A middleware that renders responses.
-
-    Parameters:
-      renderers: The list of response renderers that is used to render
-        responses.  The first renderer whose can_render_response
-        method returns True is used to render the current response.
     """
 
-    __slots__ = ["renderers"]
-
-    def __init__(self, renderers: List[ResponseRenderer]) -> None:
-        self.renderers = renderers
-
     def __call__(self, handler: Callable[..., Any]) -> Callable[..., Response]:
-        def handle(request: Request) -> Response:
+        def handle(app: BaseApp, request: Request) -> Response:
             try:
                 response = handler()
                 if isinstance(response, Response):
@@ -60,7 +50,7 @@ class ResponseRendererMiddleware:
             for mime in accept_header.split(","):
                 mime, _, _ = mime.partition(";")
 
-                for renderer in self.renderers:
+                for renderer in app.renderers:
                     if mime == "*/*" or renderer.can_render_response(mime):
                         return renderer.render(status, response)
 

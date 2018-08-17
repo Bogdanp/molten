@@ -1,7 +1,7 @@
 from http import cookies
 from typing import Optional
 
-from molten import App, JSONRenderer, ResponseRendererMiddleware, Route, testing
+from molten import App, ResponseRendererMiddleware, Route, testing
 from molten.contrib.sessions import CookieStore, Session, SessionComponent, SessionMiddleware
 
 cookie_store = CookieStore(b"secret")
@@ -22,7 +22,7 @@ app = App(
 
     middleware=[
         SessionMiddleware(cookie_store),
-        ResponseRendererMiddleware([JSONRenderer()]),
+        ResponseRendererMiddleware(),
     ],
 
     routes=[
@@ -92,7 +92,7 @@ def test_apps_session_cookies_expire():
 
         middleware=[
             SessionMiddleware(cookie_store),
-            ResponseRendererMiddleware([JSONRenderer()]),
+            ResponseRendererMiddleware(),
         ],
 
         routes=[

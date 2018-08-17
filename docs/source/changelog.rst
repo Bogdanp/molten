@@ -15,6 +15,26 @@ Added
 * Support for |_websockets|.
 * :meth:`handle_parse_error<molten.App.handle_parse_error>` to apps.
 
+Changed
+^^^^^^^
+
+* |ResponseRendererMiddleware| now looks up renderers directly off of
+  the app object.  This means you no longer have to pass them to the
+  middleware upon instantiation.  This is a *breaking change*.
+
+  To upgrade, change code that looks like this::
+
+    app = App(
+      middleware=[ResponseRendererMiddleware([JSONRenderer()])],
+    )
+
+  to::
+
+    app = App(
+      middleware=[ResponseRendererMiddleware()],
+      renderers=[JSONRenderer()],
+    )
+
 
 `0.4.2`_ -- 2018-08-14
 ----------------------

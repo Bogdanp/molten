@@ -5,8 +5,8 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Session
 
 from molten import (
-    HTTP_404, App, DependencyResolver, Field, HTTPError, JSONRenderer, ResponseRendererMiddleware,
-    Route, schema, testing
+    HTTP_404, App, DependencyResolver, Field, HTTPError, ResponseRendererMiddleware, Route, schema,
+    testing
 )
 from molten.contrib.sqlalchemy import (
     EngineData, SQLAlchemyEngineComponent, SQLAlchemyMiddleware, SQLAlchemySessionComponent
@@ -63,7 +63,7 @@ app = App(
         SQLAlchemySessionComponent(),
     ],
     middleware=[
-        ResponseRendererMiddleware([JSONRenderer()]),
+        ResponseRendererMiddleware(),
         SQLAlchemyMiddleware(),
     ],
     routes=[

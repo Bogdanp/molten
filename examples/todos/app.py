@@ -5,7 +5,7 @@ from typing import Any, Callable, Iterator, List, Optional, Tuple, Union
 
 from molten import (
     HTTP_201, HTTP_204, HTTP_403, HTTP_404, App, Component, Field, Header, HTTPError, Include,
-    JSONRenderer, Middleware, Request, ResponseRendererMiddleware, Route, schema
+    Middleware, Request, ResponseRendererMiddleware, Route, schema
 )
 from molten.openapi import HTTPSecurityScheme, Metadata, OpenAPIHandler, OpenAPIUIHandler
 
@@ -129,9 +129,7 @@ components: List[Component] = [
 
 
 middleware: List[Middleware] = [
-    ResponseRendererMiddleware([
-        JSONRenderer(),
-    ]),
+    ResponseRendererMiddleware(),
     AuthorizationMiddleware,
 ]
 

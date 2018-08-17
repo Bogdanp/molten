@@ -4,8 +4,7 @@ from sqlalchemy import Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 
 from molten import (
-    HTTP_404, App, Field, HTTPError, Include, JSONRenderer, ResponseRendererMiddleware, Route,
-    schema
+    HTTP_404, App, Field, HTTPError, Include, ResponseRendererMiddleware, Route, schema
 )
 from molten.contrib.sqlalchemy import (
     EngineData, Session, SQLAlchemyEngineComponent, SQLAlchemyMiddleware,
@@ -58,7 +57,7 @@ app = App(
         SQLAlchemySessionComponent(),
     ],
     middleware=[
-        ResponseRendererMiddleware([JSONRenderer()]),
+        ResponseRendererMiddleware(),
         SQLAlchemyMiddleware(),
     ],
     routes=[

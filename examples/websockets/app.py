@@ -1,4 +1,4 @@
-from molten import App, JSONRenderer, ResponseRendererMiddleware, Route, annotate
+from molten import App, ResponseRendererMiddleware, Route, annotate
 from molten.contrib.websockets import Websocket, WebsocketsMiddleware
 
 LISTENERS = set()
@@ -31,7 +31,7 @@ def chat(sock: Websocket):
 
 app = App(
     middleware=[
-        ResponseRendererMiddleware([JSONRenderer()]),
+        ResponseRendererMiddleware(),
         WebsocketsMiddleware(),
     ],
 

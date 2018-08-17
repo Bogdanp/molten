@@ -1,8 +1,6 @@
 from typing import Any, Dict
 
-from molten import (
-    HTTP_400, App, HTTPError, JSONRenderer, ResponseRendererMiddleware, Route, testing
-)
+from molten import HTTP_400, App, HTTPError, ResponseRendererMiddleware, Route, testing
 from molten.contrib.prometheus import expose_metrics, prometheus_middleware
 
 
@@ -21,7 +19,7 @@ def exception() -> None:
 app = App(
     middleware=[
         prometheus_middleware,
-        ResponseRendererMiddleware([JSONRenderer()]),
+        ResponseRendererMiddleware(),
     ],
 
     routes=[

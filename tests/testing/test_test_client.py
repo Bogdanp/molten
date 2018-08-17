@@ -3,8 +3,8 @@ from typing import Optional
 import pytest
 
 from molten import (
-    HTTP_200, HTTP_403, App, Header, HTTPError, JSONRenderer, Response, ResponseRendererMiddleware,
-    Route, testing
+    HTTP_200, HTTP_403, App, Header, HTTPError, Response, ResponseRendererMiddleware, Route,
+    testing
 )
 
 
@@ -23,7 +23,7 @@ def index() -> Response:
 app = App(
     routes=[Route("/", index)],
     middleware=[
-        ResponseRendererMiddleware([JSONRenderer()]),
+        ResponseRendererMiddleware(),
         AuthMiddleware,
     ],
 )

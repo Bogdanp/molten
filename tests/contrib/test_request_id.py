@@ -4,7 +4,7 @@ import logging.config
 import pytest
 
 from molten import App as BaseApp
-from molten import JSONRenderer, Response, ResponseRendererMiddleware, Route, testing
+from molten import Response, ResponseRendererMiddleware, Route, testing
 from molten.contrib.request_id import RequestIdMiddleware, get_request_id
 
 logging.config.dictConfig({
@@ -58,9 +58,7 @@ class App(BaseApp):
 app = App(
     middleware=[
         RequestIdMiddleware(),
-        ResponseRendererMiddleware([
-            JSONRenderer(),
-        ]),
+        ResponseRendererMiddleware(),
     ],
     routes=[
         Route("/", index),

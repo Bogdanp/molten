@@ -306,7 +306,7 @@ If we then add that middleware to our app:
            TodoManagerComponent(),
        ],
        middleware=[
-           ResponseRendererMiddleware([JSONRenderer()]),
+           ResponseRendererMiddleware(),
            AuthorizationMiddleware,
        ],
        routes=[
@@ -390,7 +390,7 @@ to use:
            TodoManagerComponent(),
        ],
        middleware=[
-           ResponseRendererMiddleware([JSONRenderer()]),
+           ResponseRendererMiddleware(),
            AuthorizationMiddleware,
        ],
        routes=[
@@ -436,7 +436,7 @@ Here's what a msgpack renderer might look like::
 And you can register it when you instantiate the app:
 
 .. code-block:: python
-   :emphasize-lines: 1,11-14,26-29
+   :emphasize-lines: 1,23-26
 
    from molten import JSONRenderer
 
@@ -448,10 +448,7 @@ And you can register it when you instantiate the app:
            TodoManagerComponent(),
        ],
        middleware=[
-           ResponseRendererMiddleware([
-               JSONRenderer(),
-               MsgpackRenderer(),
-           ]),
+           ResponseRendererMiddleware(),
            AuthorizationMiddleware,
        ],
        routes=[
@@ -469,13 +466,6 @@ And you can register it when you instantiate the app:
        ],
    )
 
-.. note::
-
-   When you pass in your own |ResponseRendererMiddleware|, you should
-   register your renderers both with the middleware as well as the app
-   as shown above.  Otherwise features such as OpenAPI document
-   generation may not work as expected.
-
 OpenAPI Schemas
 ---------------
 
@@ -484,7 +474,7 @@ API.  To take advantage of this feature, you can import |OpenAPIHandler|,
 instantiate it, then expose it via a route:
 
 .. code-block:: python
-   :emphasize-lines: 1,5-11,27
+   :emphasize-lines: 1,5-11,24
 
    from molten.openapi import Metadata, OpenAPIHandler
 
@@ -504,10 +494,7 @@ instantiate it, then expose it via a route:
            TodoManagerComponent(),
        ],
        middleware=[
-           ResponseRendererMiddleware([
-               JSONRenderer(),
-               MsgpackRenderer(),
-           ]),
+           ResponseRendererMiddleware(),
            AuthorizationMiddleware,
        ],
        routes=[
@@ -532,7 +519,7 @@ can also use the |OpenAPIUIHandler| to expose a Swagger UI for your
 API:
 
 .. code-block:: python
-   :emphasize-lines: 1,13,29
+   :emphasize-lines: 1,13,26
 
    from molten.openapi import Metadata, OpenAPIHandler, OpenAPIUIHandler
 
@@ -554,10 +541,7 @@ API:
            TodoManagerComponent(),
        ],
        middleware=[
-           ResponseRendererMiddleware([
-               JSONRenderer(),
-               MsgpackRenderer(),
-           ]),
+           ResponseRendererMiddleware(),
            AuthorizationMiddleware,
        ],
        routes=[
@@ -628,7 +612,7 @@ your app, install ``wsgicors`` then wrap your app instance in a call
 to ``CORS``:
 
 .. code-block:: python
-   :emphasize-lines: 1,32
+   :emphasize-lines: 1,29
 
    from wsgicors import CORS
 
@@ -640,10 +624,7 @@ to ``CORS``:
            TodoManagerComponent(),
        ],
        middleware=[
-           ResponseRendererMiddleware([
-               JSONRenderer(),
-               MsgpackRenderer(),
-           ]),
+           ResponseRendererMiddleware(),
            AuthorizationMiddleware,
        ],
        routes=[
