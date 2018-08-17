@@ -1,5 +1,4 @@
 import os
-import time
 from typing import Optional, Tuple
 
 import pytest
@@ -92,7 +91,6 @@ def stream(n: int) -> StreamingResponse:
     def gen():
         for _ in range(n):
             yield b"data"
-            time.sleep(1)
 
     return StreamingResponse(HTTP_200, gen())
 
