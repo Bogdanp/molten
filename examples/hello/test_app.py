@@ -18,4 +18,4 @@ def test_successful_request(client):
 def test_bad_request(client):
     response = client.get(app.reverse_uri("hello", name="Jim", age="invalid"))
     assert response.status_code == 400
-    assert response.json() == {"age": "expected int value"}
+    assert response.json() == {"errors": {"age": "invalid int value"}}

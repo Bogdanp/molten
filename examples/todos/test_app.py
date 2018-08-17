@@ -12,7 +12,7 @@ def client():
 @pytest.fixture(scope="session")
 def auth():
     def auth(request):
-        request.headers["authorization"] = "secret"
+        request.headers["authorization"] = "Bearer secret"
         return request
     return auth
 
