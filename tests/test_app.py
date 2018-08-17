@@ -65,6 +65,10 @@ def returns_tuple() -> Tuple[str, dict]:
     return HTTP_201, {"x": 42}
 
 
+def returns_three_tuple() -> Tuple[str, dict, dict]:
+    return HTTP_201, {"x": 42}, {"example": "42"}
+
+
 def reads_cookies(cookies: Cookies) -> Response:
     return cookies
 
@@ -112,6 +116,7 @@ app = App(routes=[
     Route("/no-content", no_content),
     Route("/returns-dict", returns_dict),
     Route("/returns-tuple", returns_tuple),
+    Route("/returns-three-tuple", returns_three_tuple),
     Route("/reads-cookies", reads_cookies),
     Route("/route-params/{name}/{age}", route_params),
     Route("/route-injection", route_injection),
@@ -295,6 +300,17 @@ def test_apps_can_render_tuples():
     # Then I should get back that status code
     assert response.status_code == 201
     assert response.json() == {"x": 42}
+
+
+def test_apps_can_render_three_tuples():
+    # Given that I have an app
+    # When I make a request to a handler that returns a three-tuple with a custom response code and headers
+    response = client.get("/returns-three-tuple")
+
+    # Then I should get back that status code and those headers
+    assert response.status_code == 201
+    assert response.json() == {"x": 42}
+    assert response.headers["example"] == "42"
 
 
 def test_apps_can_return_files():

@@ -41,11 +41,12 @@ class HTTPError(MoltenError):
     these to short-circuit execution.
     """
 
-    __slots__ = ["status", "response"]
+    __slots__ = ["status", "response", "headers"]
 
-    def __init__(self, status: str, response: Any) -> None:
+    def __init__(self, status: str, response: Any, headers: Any = None) -> None:
         self.status = status
         self.response = response
+        self.headers = headers or {}
 
     def __str__(self) -> str:  # pragma: no cover
         return self.status

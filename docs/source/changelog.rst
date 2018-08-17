@@ -13,6 +13,7 @@ Added
 ^^^^^
 
 * Support for |_websockets|.
+* Support for returning (status, data, headers) from handlers.
 * :meth:`handle_parse_error<molten.App.handle_parse_error>` to apps.
 
 Changed

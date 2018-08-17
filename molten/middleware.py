@@ -20,6 +20,7 @@ from typing import Any, Callable
 from .app import BaseApp
 from .errors import HeaderMissing, HTTPError
 from .http import HTTP_200, HTTP_406, Request, Response
+from .http.headers import HeadersDict
 
 
 class ResponseRendererMiddleware:
@@ -29,18 +30,26 @@ class ResponseRendererMiddleware:
     def __call__(self, handler: Callable[..., Any]) -> Callable[..., Response]:
         def handle(app: BaseApp, request: Request) -> Response:
             try:
+                headers: HeadersDict = {}
                 response = handler()
                 if isinstance(response, Response):
                     return response
 
-                if isinstance(response, tuple):
-                    status, response = response
+                elif isinstance(response, tuple):
+                    if len(response) == 2:
+                        status, response = response
+
+                    elif len(response) == 3:
+                        status, response, headers = response
+
+                    else:
+                        raise RuntimeError("Response tuple must be (status, data) or (status, data, headers).")
 
                 else:
                     status, response = HTTP_200, response
 
             except HTTPError as e:
-                status, response = e.status, e.response
+                status, response, headers = e.status, e.response, e.headers
 
             try:
                 accept_header = request.headers["accept"]
@@ -52,7 +61,9 @@ class ResponseRendererMiddleware:
 
                 for renderer in app.renderers:
                     if mime == "*/*" or renderer.can_render_response(mime):
-                        return renderer.render(status, response)
+                        response = renderer.render(status, response)
+                        response.headers.add_all(headers)
+                        return response
 
             return Response(HTTP_406, content="Not Acceptable")
 
