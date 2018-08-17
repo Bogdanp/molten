@@ -17,8 +17,8 @@
 
 from typing import Any, Callable, List
 
-from .errors import HeaderMissing, HTTPError, ParseError
-from .http import HTTP_200, HTTP_400, HTTP_406, Request, Response
+from .errors import HeaderMissing, HTTPError
+from .http import HTTP_200, HTTP_406, Request, Response
 from .renderers import ResponseRenderer
 
 
@@ -49,9 +49,6 @@ class ResponseRendererMiddleware:
                 else:
                     status, response = HTTP_200, response
 
-            except ParseError as e:
-                status, response = HTTP_400, {"error": str(e)}
-
             except HTTPError as e:
                 status, response = e.status, e.response
 
@@ -67,8 +64,6 @@ class ResponseRendererMiddleware:
                     if mime == "*/*" or renderer.can_render_response(mime):
                         return renderer.render(status, response)
 
-            return Response(HTTP_406, content="Not Acceptable", headers={
-                "content-type": "text/plain",
-            })
+            return Response(HTTP_406, content="Not Acceptable")
 
         return handle

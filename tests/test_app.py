@@ -365,7 +365,7 @@ def test_apps_can_handle_invalid_json_data():
 
     # Then I should get back a 400 response
     assert response.status_code == 400
-    assert response.json() == {"error": "JSON input could not be parsed"}
+    assert response.data == "Request cannot be parsed: JSON input could not be parsed"
 
 
 def test_apps_can_handle_invalid_urlencoded_data():
@@ -379,7 +379,7 @@ def test_apps_can_handle_invalid_urlencoded_data():
 
     # Then I should get back a 400 response
     assert response.status_code == 400
-    assert response.json() == {"error": "failed to parse urlencoded data"}
+    assert response.data == "Request cannot be parsed: failed to parse urlencoded data"
 
 
 def test_apps_can_validate_requests():

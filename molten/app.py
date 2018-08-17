@@ -25,8 +25,10 @@ from .components import (
     RequestDataComponent, RouteComponent, RouteParamsComponent, SchemaComponent
 )
 from .dependency_injection import Component, DependencyInjector
-from .errors import RequestHandled, RequestParserNotAvailable
-from .http import HTTP_204, HTTP_404, HTTP_415, HTTP_500, Headers, QueryParams, Request, Response
+from .errors import ParseError, RequestHandled, RequestParserNotAvailable
+from .http import (
+    HTTP_204, HTTP_400, HTTP_404, HTTP_415, HTTP_500, Headers, QueryParams, Request, Response
+)
 from .middleware import ResponseRendererMiddleware
 from .parsers import JSONParser, MultiPartParser, RequestParser, URLEncodingParser
 from .renderers import JSONRenderer, ResponseRenderer
@@ -95,15 +97,29 @@ class BaseApp:
         )
 
     def handle_404(self) -> Response:
-        """Called whenever a route cannot be found.
+        """Called whenever a route cannot be found.  Dependencies are
+        injected into this just like a normal handler.
         """
         return Response(HTTP_404, content="Not Found")
 
     def handle_415(self) -> Response:
         """Called whenever a request comes in with an unsupported
-        content type.
+        content type.  Dependencies are injected into this just like a
+        normal handler.
         """
         return Response(HTTP_415, content="Unsupported Media Type")
+
+    def handle_parse_error(self, exception: ParseError) -> Response:
+        """Called whenever a request comes in with a payload that fails
+        to parse.  Dependencies are injected into this just like a
+        normal handler.
+
+        Parameters:
+          exception: The ParseError that was raised by the request
+            parser on failure.
+        """
+        LOGGER.warning("Request cannot be parsed: %s", exception)
+        return Response(HTTP_400, content=f"Request cannot be parsed: {exception}")
 
     def handle_exception(self, exception: BaseException) -> Response:
         """Called whenever an unhandled exception occurs in middleware
@@ -176,6 +192,9 @@ class App(BaseApp):
         except RequestParserNotAvailable:
             exc_info = None
             response = resolver.resolve(self.handle_415)()
+        except ParseError as e:
+            exc_info = None
+            response = resolver.resolve(self.handle_parse_error)(exception=e)
         except Exception as e:
             exc_info = sys.exc_info()
             response = resolver.resolve(self.handle_exception)(exception=e)

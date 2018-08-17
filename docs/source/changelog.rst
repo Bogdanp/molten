@@ -13,6 +13,7 @@ Added
 ^^^^^
 
 * Support for |_websockets|.
+* :meth:`handle_parse_error<molten.App.handle_parse_error>` to apps.
 
 
 `0.4.2`_ -- 2018-08-14
