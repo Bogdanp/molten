@@ -31,6 +31,10 @@ def stop_container(name):
     return shell(f"docker kill bench_{name}")
 
 
+def get_container_stats(name):
+    return shell(f"docker stats --no-stream bench_{name}")
+
+
 async def get_index(session):
     async with session.get("http://127.1:8000") as response:
         await response.text()
@@ -78,7 +82,7 @@ async def do_bench(session):
         return res, task_name, time.monotonic() - start_time
 
 
-async def benchmark(duration=30, concurrency=50, warmup=1000):
+async def benchmark(name, duration=30, concurrency=50, warmup=1000):
     async with aiohttp.ClientSession() as session:
         print("Warming up...", file=sys.stderr)
         for _ in range(warmup):
@@ -129,6 +133,8 @@ async def benchmark(duration=30, concurrency=50, warmup=1000):
             "tasks": dict(tasks),
         })
 
+        get_container_stats(name)
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -148,6 +154,7 @@ def main():
     try:
         loop = asyncio.get_event_loop()
         loop.run_until_complete(benchmark(
+            name=args.framework,
             duration=args.duration,
             concurrency=args.concurrency,
         ))
