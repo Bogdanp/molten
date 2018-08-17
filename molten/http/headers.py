@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import functools
 from collections import defaultdict
 from typing import Dict, Iterable, Iterator, List, Optional, Tuple, Union
 
@@ -125,5 +126,6 @@ class Headers(Iterable[Tuple[str, str]]):
 HEADER_PREFIX_LEN = len("HTTP_")
 
 
+@functools.lru_cache(maxsize=1024)
 def _parse_environ_header(header: str) -> str:
     return header[HEADER_PREFIX_LEN:].replace("_", "-")

@@ -16,9 +16,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import functools
-import inspect
-from inspect import Parameter
-from typing import Any, Callable, Dict, List, Optional, TypeVar, no_type_check
+from inspect import Parameter, signature
+from typing import Any, Callable, Dict, Iterable, List, Optional, TypeVar, no_type_check
 
 from typing_extensions import Protocol
 
@@ -135,8 +134,7 @@ class DependencyResolver:
 
         @functools.wraps(fn)
         def resolved_fn(**params: Any) -> Any:
-            signature = inspect.signature(fn)
-            for parameter in signature.parameters.values():
+            for parameter in _get_parameters(fn):
                 if parameter.name in params:
                     continue
 
@@ -181,3 +179,10 @@ class DependencyResolver:
             return fn(**params)
 
         return resolved_fn
+
+
+@functools.lru_cache(maxsize=1024)
+def _get_parameters(fn: Callable[..., Any]) -> Iterable[Parameter]:
+    # A significant amount of time is spent getting handlers' params.
+    # Since they never change, it should be safe to just cache 'em.
+    return signature(fn).parameters.values()
