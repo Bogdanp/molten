@@ -1,4 +1,5 @@
 .. |App| replace:: :class:`App<molten.App>`
+.. |BaseApp| replace:: :class:`BaseApp<molten.BaseApp>`
 .. |CORSMixin| replace:: :class:`CORSMixin<molten.contrib.cors.CORSMixin>`
 .. |Cookies| replace:: :class:`Cookies<molten.Cookies>`
 .. |DIError| replace:: :class:`DIError<molten.DIError>`

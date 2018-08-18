@@ -109,7 +109,7 @@ Two settings components are provided by the library.
 
   app = App(
       components=[SettingsComponent(Settings({"example": 42}))],
-      routes=Route("/", handle),
+      routes=[Route("/", handle)],
   )
 
 |TOMLSettingsComponent|::
@@ -122,11 +122,18 @@ Two settings components are provided by the library.
 
   app = App(
       components=[TOMLSettingsComponent("settings.toml")],
-      routes=Route("/", handle),
+      routes=[Route("/", handle)],
   )
 
 Special Components
 ------------------
+
+The current application object can be requested by annotating
+parameters with |BaseApp|::
+
+  def index(app: BaseApp) -> str:
+      return app.reverse_uri("other")
+
 
 Sometimes it may be useful for functions to gain access to the current
 dependency resolver instance.  Any parameter whose annotation is
