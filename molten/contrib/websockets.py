@@ -46,6 +46,9 @@ LOGGER = logging.getLogger(__name__)
 #: The pre-shared key defined in the Websocket spec.
 PSK = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"
 
+#: The amount of bytes to request per recv call.
+CHUNKSIZE = 16 * 1024
+
 #: The maximum number of bytes text and binary frames can contain.
 MAX_MESSAGE_SIZE = 16 * 1024 * 1024
 
@@ -81,6 +84,12 @@ CONTROL_FRAME_OPCODES = {OP_CLOSE, OP_PING, OP_PONG}
 
 #: The set of all valid opcodes.
 OPCODES = DATA_FRAME_OPCODES | CONTROL_FRAME_OPCODES
+
+#: The set of valid close message status codes.
+VALID_STATUS_CODES = {1000, 1001, 1002, 1003, 1007, 1008, 1009, 1010, 1011}
+
+#: The set of reserved close message status codes.
+RESERVED_STATUS_CODES = {1004, 1005, 1006, 1015}
 
 #: The set of supported versions.
 SUPPORTED_VERSIONS = {"7", "8", "13"}
@@ -143,7 +152,7 @@ class _BufferedStream:
 
     def read(self, n: int) -> bytes:
         while not self.closed and len(self.buf) < n:
-            data = self.socket.recv(16384)
+            data = self.socket.recv(CHUNKSIZE)
             if not data:
                 self.closed = True
                 return self.buf
@@ -282,6 +291,9 @@ class _DataFrame:
         if header.opcode not in OPCODES:
             raise WebsocketProtocolError(f"Invalid opcode 0x{header.opcode:x}.")
 
+        if header.flags != 0:
+            raise WebsocketProtocolError("Reserved flags must not be set.")
+
         if header.opcode in CONTROL_FRAME_OPCODES:
             max_size = MAX_CONTROL_FRAME_PAYLOAD_SIZE
         else:
@@ -327,9 +339,9 @@ class Message:
     def to_stream(self, stream: _BufferedStream) -> None:
         """Write this message to the output stream.
         """
-        data = self.buf.getbuffer()
-        header = _DataFrameHeader(fin=True, opcode=OPCODES_BY_MESSAGE[type(self)], length=len(data))
-        frame = _DataFrame(header, data)  # type: ignore
+        output = self.get_output()
+        header = _DataFrameHeader(fin=True, opcode=OPCODES_BY_MESSAGE[type(self)], length=len(output))
+        frame = _DataFrame(header, output)  # type: ignore
         frame.to_stream(stream)
 
     def get_data(self) -> bytes:
@@ -344,6 +356,12 @@ class Message:
             return self.buf.getvalue().decode("utf-8")
         except UnicodeDecodeError as e:
             raise WebsocketProtocolError("Invalid UTF-8 payload.") from None
+
+    def get_output(self) -> Union[bytes, bytearray, memoryview]:
+        """Get this message's output payload.  CloseMessage hooks into
+        this to prepend the status code to the payload.
+        """
+        return self.buf.getbuffer()
 
 
 class CloseMessage(Message):
@@ -370,11 +388,22 @@ class CloseMessage(Message):
                 raise WebsocketProtocolError("Expected status code in close message payload.")
 
             code = struct.unpack("!H", code_data)[0]
+            if code < 1000 or code > 4999:
+                raise WebsocketProtocolError(f"Invalid status code {code}.")
+
+            elif code in RESERVED_STATUS_CODES:
+                raise WebsocketProtocolError(f"Status code {code} is reserved.")
+
+            elif code < 3000 and code not in VALID_STATUS_CODES:
+                raise WebsocketProtocolError(f"Invalid status code {code}.")
 
         message = cls()
         message.code = code
         message.buf.write(frame.data)
         return message
+
+    def get_output(self) -> Union[bytes, bytearray, memoryview]:
+        return struct.pack("!H", self.code) + self.buf.getvalue()
 
 
 class BinaryMessage(Message):
@@ -424,13 +453,13 @@ class Websocket:
 
     Example:
       >>> from molten import annotate
-      >>> from molten.contrib.websockets import Websocket
+      >>> from molten.contrib.websockets import CloseMessage, Websocket
 
       >>> @annotate(supports_ws=True)
       ... def echo(sock: Websocket):
       ...     while not sock.closed:
       ...         message = sock.receive()
-      ...         if not message:
+      ...         if isintance(message, CloseMessage):
       ...             break
       ...
       ...         sock.send(message)
@@ -477,8 +506,9 @@ class Websocket:
                     if not frame.header.fin:
                         raise WebsocketProtocolError("Close frame is not final.")
 
-                    self.close(CloseMessage.from_frame(frame))
-                    return None
+                    message = CloseMessage.from_frame(frame)
+                    self.close(CloseMessage(reason=message.get_text()))
+                    return message
 
                 elif frame.header.opcode == OP_PING:
                     if not frame.header.fin:
@@ -572,10 +602,12 @@ class WebsocketsMiddleware:
         """
         LOGGER.exception("Unhandled error from websocket handler.")
 
-        if isinstance(exception, WebsocketProtocolError):
+        if issubclass(type(exception), WebsocketProtocolError):
             websocket.close(CloseMessage(1002, str(exception)))
+        elif issubclass(type(exception), WebsocketFrameTooLargeError):
+            websocket.close(CloseMessage(1009, str(exception)))
         else:
-            websocket.close(CloseMessage(1011, "internal server error"))
+            websocket.close(CloseMessage(1011, "Internal server error."))
 
     def __call__(self, handler: Callable[..., Any]) -> Callable[..., Response]:
         def handle(
@@ -703,32 +735,42 @@ class WebsocketsTestClient(TestClient):
         headers["sec-websocket-key"] = b64encode(b"a" * 16).decode()
         headers["sec-websocket-version"] = "13"
 
-        rsock, wsock = socket.socketpair()
+        client_sock, server_sock = socket.socketpair()
 
         def prepare_environ(environ: Environ) -> Environ:
-            environ["gunicorn.socket"] = rsock
+            nonlocal client_sock
+            environ["gunicorn.socket"] = client_sock
             return environ
 
         # Execute the websocket handler in a background thread because
-        # it blocks, waiting on the socket.  Keep a reference to it so
-        # we can figure out when exceptions occur.
+        # it may block while waiting on the socket.  Keep a reference
+        # to it so we can keep track of exceptions that occur in the
+        # handler.
         future = self.executor.submit(
             self.get, path, headers, params, auth=auth,
             prepare_environ=prepare_environ,
         )
 
+        # Delete the client sock so that, if the future completes w/o
+        # upgrading the request, it'll get freed (closed) and we're
+        # not stuck waiting for a response below.
+        del client_sock
+
         # Consume the upgrade response and make sure it looks right.
+        # This is kind of piggy, but it should be fine.
         response_data = b""
-        while b"\r\n\r\n" not in response_data:
-            data = wsock.recv(16384)
+        while b"\r\n\r\n" not in response_data and future.running():
+            data = server_sock.recv(CHUNKSIZE)
             if not data:
                 break
 
             response_data += data
 
-        assert response_data == UPGRADE_RESPONSE_TEMPLATE % {
+        expected_response = UPGRADE_RESPONSE_TEMPLATE % {
             b"websocket_accept": b"3SC6TZx4582OZaOogPVxMx5CGS0=",
-        }, f"invalid upgrade response: {response_data}"
+        }
+        if not response_data == expected_response:
+            raise ValueError(f"Invalid upgrade response: {response_data}. Did you connect() to a standard endpoint?")
 
-        websocket = Websocket(_BufferedStream(wsock))
+        websocket = Websocket(_BufferedStream(server_sock))
         return _WebsocketsTestConnection(future, websocket)

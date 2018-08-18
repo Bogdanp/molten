@@ -1,5 +1,5 @@
 from molten import App, ResponseRendererMiddleware, Route, annotate
-from molten.contrib.websockets import Websocket, WebsocketsMiddleware
+from molten.contrib.websockets import CloseMessage, Websocket, WebsocketsMiddleware
 
 LISTENERS = set()
 
@@ -8,7 +8,7 @@ LISTENERS = set()
 def echo(sock: Websocket):
     while not sock.closed:
         message = sock.receive()
-        if not message:
+        if isinstance(message, CloseMessage):
             break
 
         sock.send(message)
@@ -19,7 +19,7 @@ def chat(sock: Websocket):
     LISTENERS.add(sock)
     while not sock.closed:
         message = sock.receive()
-        if not message:
+        if isinstance(message, CloseMessage):
             break
 
         for listener in LISTENERS:
