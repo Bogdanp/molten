@@ -21,7 +21,7 @@ from typing import Any
 from molten import ParseError, RequestInput, Response, dump_schema, is_schema
 
 try:
-    import msgpack
+    from msgpack import Unpacker, packb  # type: ignore
 except ImportError:  # pragma: no cover
     raise ImportError("'msgpack' package missing. Run 'pip install msgpack'.")
 
@@ -39,7 +39,7 @@ class MsgpackParser:
 
     def parse(self, body_file: RequestInput) -> Any:
         try:
-            return next(msgpack.Unpacker(body_file, raw=False))
+            return next(Unpacker(body_file, raw=False))
         except Exception as e:
             raise ParseError(f"msgpack input could not be parsed: {e}")
 
@@ -56,7 +56,7 @@ class MsgpackRenderer:
         return accept.startswith("application/x-msgpack")
 
     def render(self, status: str, response_data: Any) -> Response:
-        content = msgpack.packb(response_data, use_bin_type=True, default=self.default)
+        content = packb(response_data, use_bin_type=True, default=self.default)
         return Response(status, stream=BytesIO(content), headers={
             "content-type": "application/x-msgpack",
         })

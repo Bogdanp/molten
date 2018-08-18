@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from inspect import Parameter
+from typing import Any, Dict
 
 from molten import HTTP_200, Response
 
@@ -36,7 +37,7 @@ class Templates:
             loader=jinja2.FileSystemLoader(path),
         )
 
-    def render(self, template_name: str, **context) -> Response:
+    def render(self, template_name: str, **context: Dict[str, Any]) -> Response:
         """Find a template and render it.
 
         Parameters:

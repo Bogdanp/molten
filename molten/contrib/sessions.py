@@ -20,13 +20,13 @@ import hmac
 import json
 from inspect import Parameter
 from time import time
-from typing import Any, Callable, Optional, no_type_check
+from typing import Any, Callable, Dict, Optional, no_type_check
 from uuid import uuid4
 
 from typing_extensions import Protocol
 
-from ..dependency_injection import DependencyResolver
-from ..http import Cookie, Cookies
+from molten.dependency_injection import DependencyResolver
+from molten.http import Cookie, Cookies
 
 #: The name of the key the CookieStore inserts into session objects to
 #: represent the expiration time of the session.
@@ -37,12 +37,12 @@ COOKIE_EXPIRATION_KEY = "__EXP__"
 DEFAULT_EXPIRATION_TIME = float("inf")
 
 
-class Session(dict):
+class Session(Dict[str, Any]):
     """Session objects are ordinary dictionaries that are guaranteed
     to be constructed with an "id" key.
     """
 
-    def __init__(self, id: str, **data) -> None:
+    def __init__(self, id: str, **data: Dict[str, Any]) -> None:
         super().__init__(id=id, **data)
 
     @classmethod

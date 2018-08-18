@@ -180,12 +180,12 @@ class _DataFrameHeader:
     OPCODE_MASK = 0x0F
     LENGTH_MASK = 0x7F
 
-    def __init__(self, fin: bool = False, flags: int = 0, opcode: int = 0, length: int = 0, mask: bytearray = b"") -> None:
+    def __init__(self, fin: bool = False, flags: int = 0, opcode: int = 0, length: int = 0, mask: Optional[bytearray] = None) -> None:  # noqa
         self.fin = fin
         self.flags = flags
         self.opcode = opcode
         self.length = length
-        self.mask = mask
+        self.mask = mask or bytearray()
 
     def mask_data(self, data: bytes) -> bytes:
         data_array = bytearray(data)
@@ -329,7 +329,7 @@ class Message:
         """
         data = self.buf.getbuffer()
         header = _DataFrameHeader(fin=True, opcode=OPCODES_BY_MESSAGE[type(self)], length=len(data))
-        frame = _DataFrame(header, data)
+        frame = _DataFrame(header, data)  # type: ignore
         frame.to_stream(stream)
 
     def get_data(self) -> bytes:
@@ -507,7 +507,7 @@ class Websocket:
 
         message.to_stream(self.stream)
 
-    def close(self, message: Optional[CloseMessage] = None) -> None:
+    def close(self, message: Optional[Message] = None) -> None:
         """Close this websocket and send a close message to the client.
 
         Note:
@@ -596,7 +596,11 @@ class WebsocketsMiddleware:
             except HeaderMissing as e:
                 raise HTTPError(HTTP_400, {"errors": {str(e): "this header is required"}})
 
-            origin = request.headers.get("origin", "")
+            try:
+                origin = request.headers["origin"]
+            except HeaderMissing:
+                origin = ""
+
             if self.origin_re and not self.origin_re.match(origin):
                 raise HTTPError(HTTP_400, {"error": "invalid origin"})
 
@@ -634,7 +638,7 @@ class _WebsocketsTestConnection:
 
     __slots__ = ["__future", "__socket"]
 
-    def __init__(self, future: Future, socket: Websocket) -> None:
+    def __init__(self, future: Future, socket: Websocket) -> None:  # type: ignore
         self.__future = future
         self.__socket = socket
 
@@ -646,10 +650,10 @@ class _WebsocketsTestConnection:
         finally:
             self.__future.result()
 
-    def __enter__(self) -> "WebsocketsTestConnection":
+    def __enter__(self) -> "_WebsocketsTestConnection":
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
         self.close()
 
     def __getattr__(self, name: str) -> Any:
@@ -662,18 +666,15 @@ class WebsocketsTestClient(TestClient):
     connect to websocket endpoints.
 
     Example:
-
       >>> client = WebsocketsTestClient(app)
       >>> with client.connect("/echo") as sock:
       ...   sock.send(TextMessage("hi!"))
       ...   assert sock.receive(timeout=1).get_text() == "hi!"
 
     Note:
-
       In order for :meth:`receive's<Websocket.receive>` "timeout"
       parameter to work, you need use gevent to monkeypatch sockets
       before running your tests.
-
     """
 
     def __init__(self, app: BaseApp) -> None:
@@ -699,7 +700,7 @@ class WebsocketsTestClient(TestClient):
         headers = headers or Headers()
         headers["connection"] = "upgrade"
         headers["upgrade"] = "websocket"
-        headers["sec-websocket-key"] = b64encode(b"a" * 16)
+        headers["sec-websocket-key"] = b64encode(b"a" * 16).decode()
         headers["sec-websocket-version"] = "13"
 
         rsock, wsock = socket.socketpair()
@@ -726,8 +727,8 @@ class WebsocketsTestClient(TestClient):
             response_data += data
 
         assert response_data == UPGRADE_RESPONSE_TEMPLATE % {
-            b"websocket_accept": b"3HqoXi7JuX/Kr4omwxf/PWj99aU=",
-        }, "invalid upgrade response"
+            b"websocket_accept": b"3SC6TZx4582OZaOogPVxMx5CGS0=",
+        }, f"invalid upgrade response: {response_data}"
 
         websocket = Websocket(_BufferedStream(wsock))
         return _WebsocketsTestConnection(future, websocket)

@@ -22,14 +22,14 @@ from typing import Any, Callable, NewType, Optional
 from molten import DependencyResolver, Settings
 
 try:
-    from sqlalchemy import create_engine
+    from sqlalchemy import create_engine  # type: ignore
     from sqlalchemy.orm import Session, sessionmaker
 except ImportError:  # pragma: no cover
     raise ImportError("'sqlalchemy' package missing. Run 'pip install sqlalchemy'.")
 
 
 #: The type of session factories.
-SessionFactory = NewType("SessionFactory", sessionmaker)
+SessionFactory = NewType("SessionFactory", sessionmaker)  # type: ignore
 
 #: A named tuple containing an instantiated SQLAlchemy ``engine``
 #: object and the ``session_factory``.
@@ -97,7 +97,7 @@ class SQLAlchemySessionComponent:
     def can_handle_parameter(self, parameter: Parameter) -> bool:
         return parameter.annotation is Session
 
-    def resolve(self, engine_data: EngineData) -> Session:
+    def resolve(self, engine_data: EngineData) -> Session:  # type: ignore
         return engine_data.session_factory()
 
 
@@ -136,7 +136,7 @@ class SQLAlchemyMiddleware:
         return middleware
 
 
-def get_optional_session(resolver: DependencyResolver) -> Optional[Session]:
+def get_optional_session(resolver: DependencyResolver) -> Optional[Session]:  # type: ignore
     """Get a session object from the resolver iff one was previously
     requested.  Returns None if no function has requested a session so
     far.

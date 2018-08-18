@@ -102,4 +102,5 @@ class TOMLSettingsComponent:
         return parameter.annotation is Settings
 
     def resolve(self) -> Settings:
+        assert self.environment
         return TOMLSettings.from_path(self.path, self.environment)

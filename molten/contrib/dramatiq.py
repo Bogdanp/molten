@@ -18,7 +18,7 @@
 import functools
 import inspect
 from inspect import Parameter
-from typing import Any, Callable, Dict, Iterable, Optional
+from typing import Any, Callable, Dict, Optional, Sequence, no_type_check
 
 from molten import BaseApp
 
@@ -50,6 +50,7 @@ def setup_dramatiq(app: BaseApp) -> None:
     _INJECTOR = app.injector
 
 
+@no_type_check
 def actor(fn=None, **kwargs):
     """Use this in place of dramatiq.actor in order to create actors
     that can request components via dependency injection.  This is
@@ -75,6 +76,7 @@ def actor(fn=None, **kwargs):
     return decorator(fn)
 
 
+@no_type_check
 def _inject(fn: Optional[Callable[..., Any]] = None) -> Callable[..., Any]:
     def decorator(fn):
         parameters = {name: i for i, name in enumerate(inspect.signature(fn).parameters)}
@@ -104,7 +106,7 @@ class _ArgumentResolver:
     is_cacheable = False
     is_singleton = False
 
-    def __init__(self, parameters: Dict[str, int], args: Iterable[Any], kwargs: Dict[str, Any]) -> None:
+    def __init__(self, parameters: Dict[str, int], args: Sequence[Any], kwargs: Dict[str, Any]) -> None:
         self.state = state = kwargs
         for name, idx in parameters.items():
             if name not in state:

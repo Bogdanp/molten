@@ -14,4 +14,4 @@ mypy --ignore-missing-imports \
      --disallow-incomplete-defs \
      --disallow-subclassing-any \
      --no-implicit-optional \
-     molten
+     molten molten/contrib

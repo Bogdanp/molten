@@ -64,7 +64,7 @@ def expose_metrics_multiprocess() -> Response:  # pragma: no cover
     """
     registry = CollectorRegistry()
     multiprocess.MultiProcessCollector(registry)
-    return Response(HTTP_200, headers=_HEADERS, content=BytesIO(generate_latest(registry)))
+    return Response(HTTP_200, headers=_HEADERS, stream=BytesIO(generate_latest(registry)))
 
 
 def prometheus_middleware(handler: Callable[..., Any]) -> Callable[..., Any]:

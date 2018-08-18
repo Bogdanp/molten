@@ -31,7 +31,7 @@ def get_request_id() -> Optional[str]:
     return getattr(STATE, "request_id", None)
 
 
-def set_request_id(request_id: Optional[str]) -> str:
+def set_request_id(request_id: Optional[str]) -> None:
     """Set a request id for the current thread.  If ``request_id`` is
     None, then a random id will be generated.
     """
@@ -91,7 +91,7 @@ class RequestIdMiddleware:
     """
 
     def __call__(self, handler: Callable[..., Any]) -> Callable[..., Any]:
-        def middleware(x_request_id: Optional[Header]):
+        def middleware(x_request_id: Optional[Header]) -> Any:
             set_request_id(x_request_id)
             response = handler()
             response.headers.add("x-request-id", get_request_id())
