@@ -1,3 +1,8 @@
+# Issues
+
+GitHub issues are for bugs.  If you have questions, please ask them on the [discussion board](https://www.reddit.com/r/moltenframework/).
+
+
 ## Checklist
 
 * [ ] Does your title concisely summarize the problem?
