@@ -459,7 +459,7 @@ class Websocket:
       ... def echo(sock: Websocket):
       ...     while not sock.closed:
       ...         message = sock.receive()
-      ...         if isintance(message, CloseMessage):
+      ...         if isinstance(message, CloseMessage):
       ...             break
       ...
       ...         sock.send(message)
