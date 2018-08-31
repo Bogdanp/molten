@@ -95,7 +95,7 @@ html_theme_options = {
     'code_font_size': '0.8em',
     'show_related': True,
     'fixed_sidebar': False,
-    'github_banner': True,
+    'github_banner': False,
     'github_button': True,
     'github_type': 'star',
     'github_user': 'Bogdanp',
