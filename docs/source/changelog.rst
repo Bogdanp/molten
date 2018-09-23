@@ -9,6 +9,18 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 -------------
 
+Fixed
+^^^^^
+
+* An issue where OpenAPI docs containing typed list fields would blow
+  up at render time.  (`#12`_)
+* OpenAPI docs now use ``{read,write}Only`` field markers instead of
+  generating one schema per context (request, response).  This may be
+  a breaking change if your tests depended on the old way for some
+  reason, but I'm treating it as a bugfix.
+
+.. _#12: https://github.com/Bogdanp/molten/issues/12
+
 
 `0.5.0`_ -- 2018-08-18
 ----------------------
