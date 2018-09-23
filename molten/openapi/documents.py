@@ -229,7 +229,7 @@ def generate_openapi_document(
             # objects themselves.
             response_annotation = annotations.get("return")
             response_annotation_origin = get_origin(response_annotation)
-            if response_annotation is not None and response_annotation_origin in (tuple, Tuple):
+            if response_annotation is not None and response_annotation_origin in _TUPLE_TYPES:
                 arguments = get_args(response_annotation)
                 if len(arguments) == 2 and arguments[0] is str and is_schema(arguments[1]):
                     response_annotation = arguments[1]
@@ -242,7 +242,7 @@ def generate_openapi_document(
                             "schema": _make_schema_ref(response_schema_name),
                         }
 
-                elif response_annotation_origin in (list, List):
+                elif response_annotation_origin in _LIST_TYPES:
                     arguments = get_args(response_annotation)
                     if is_schema(arguments[0]):
                         response_schema_name = _generate_schema("response", arguments[0], schemas)
@@ -336,18 +336,21 @@ def _generate_field_schema(field: Field, context: str, schemas: Dict[str, Schema
 
     elif is_generic_type(annotation):
         origin = get_origin(annotation)
-        if origin in (list, List):
+        if origin in _LIST_TYPES:
             arguments = get_args(annotation)
-            if not arguments or arguments == [Any] or is_typevar(arguments[0]):
-                field_schema = _generate_primitive_schema(list)
-
-            else:
+            if arguments and is_schema(arguments[0]):
                 item_schema_name = _generate_schema(context, arguments[0], schemas)
                 field_schema = Schema("array", items=_make_schema_ref(item_schema_name))
 
-        elif origin in (dict, Dict):
-            # TODO: Improve support for dicts.
+            else:
+                field_schema = _generate_primitive_schema(annotation)
+
+        elif origin in _DICT_TYPES:
+            # TODO: Add support for additionalFields.
             field_schema = _generate_primitive_schema(dict)
+
+        else:
+            raise ValueError(f"Unsupported type {origin} for field {field.name!r}.")
 
     else:
         field_schema = _generate_primitive_schema(annotation)
@@ -367,7 +370,16 @@ def _generate_primitive_schema(annotation: Any) -> Optional[Schema]:
         arguments = _PRIMITIVE_ANNOTATION_MAP[annotation]
         return Schema(*arguments)
     except KeyError:
-        # TODO: Figure out a better way to handle this.
+        origin = get_origin(annotation)
+        if origin in _LIST_TYPES:
+            arguments = get_args(annotation)
+            if is_typevar(arguments[0]):
+                return Schema("array", items=_ANY_VALUE)
+
+            else:
+                return Schema("array", items=_generate_primitive_schema(arguments[0]))
+
+        # TODO: Add support for additionalFields.
         return Schema("string")
 
 
@@ -417,8 +429,16 @@ _PRIMITIVE_ANNOTATION_MAP = {
     int: ["integer", "int64"],
     str: ["string"],
     bool: ["boolean"],
-    list: ["array"],
     dict: ["object"],
     float: ["number", "double"],
     bytes: ["string", "binary"],
+}
+
+_DICT_TYPES = {dict, Dict}
+_LIST_TYPES = {list, List}
+_TUPLE_TYPES = {tuple, Tuple}
+
+_ANY_VALUE = {
+    "description": "Can be any value, including null.",
+    "nullable": True,
 }

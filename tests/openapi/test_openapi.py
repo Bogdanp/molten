@@ -2,11 +2,16 @@ import json
 from datetime import datetime
 from typing import Dict, List, Optional, Tuple
 
+import pytest
+
 from molten import (
     HTTP_201, HTTP_204, HTTP_404, App, Header, HTTPError, Include, QueryParam, RequestData, Route,
     annotate, field, schema, testing
 )
-from molten.openapi import Contact, HTTPSecurityScheme, Metadata, OpenAPIHandler, OpenAPIUIHandler
+from molten.openapi import (
+    Contact, HTTPSecurityScheme, Metadata, OpenAPIHandler, OpenAPIUIHandler,
+    generate_openapi_document
+)
 
 
 @schema
@@ -222,3 +227,40 @@ def test_complex_apps_can_render_the_swagger_ui():
     assert response.status_code == 200
     assert response.headers["content-type"] == "text/html"
     assert app.reverse_uri("schema") in response.data
+
+
+@pytest.mark.parametrize("fields,expected", [
+    (
+        {"xs": List[str]},
+        {"xs": {"type": "array", "items": {"type": "string"}}},
+    ),
+    (
+        {"xs": List[List[str]]},
+        {"xs": {"type": "array", "items": {"type": "array", "items": {"type": "string"}}}},
+    ),
+    (
+        {"xs": List[List]},
+        {"xs": {"type": "array", "items": {"type": "array", "items": {
+            "description": "Can be any value, including null.",
+            "nullable": True,
+        }}}},
+    )
+])
+def test_openapi_can_render_lists_of_x(fields, expected):
+    # Given that I have a schema that has a list of something in it
+    A = type("A", (object,), fields)
+    A.__annotations__ = fields
+    A = schema(A)
+
+    def index() -> A:
+        pass
+
+    # And an app
+    app = App(routes=[Route("/", index)])
+
+    # When I generate a document
+    document = generate_openapi_document(app, Metadata("example", "an example", "0.0.0"), [])
+
+    # Then the return schema should have an array of that thing
+    response_schema = document["components"]["schemas"]["response:tests.openapi.test_openapi.A"]
+    assert response_schema["properties"] == expected
