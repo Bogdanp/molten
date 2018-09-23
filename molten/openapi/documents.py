@@ -232,7 +232,7 @@ def generate_openapi_document(
             response_annotation = annotations.get("return")
             response_annotation_origin = get_origin(response_annotation)
             if response_annotation is not None and response_annotation_origin in _TUPLE_TYPES:
-                arguments = get_args(response_annotation)
+                arguments = _get_args(response_annotation)
                 if len(arguments) == 2 and arguments[0] is str and is_schema(arguments[1]):
                     response_annotation = arguments[1]
 
@@ -245,7 +245,7 @@ def generate_openapi_document(
                         }
 
                 elif response_annotation_origin in _LIST_TYPES:
-                    arguments = get_args(response_annotation)
+                    arguments = _get_args(response_annotation)
                     if is_schema(arguments[0]):
                         response_schema_name = _generate_schema(arguments[0], schemas)
                         for media_type in response_mime_types:
@@ -330,7 +330,7 @@ def _generate_field_schema(field_name: str, field: Field, schemas: Dict[str, Sch
     elif is_generic_type(annotation):
         origin = get_origin(annotation)
         if origin in _LIST_TYPES:
-            arguments = get_args(annotation)
+            arguments = _get_args(annotation)
             if arguments and is_schema(arguments[0]):
                 item_schema_name = _generate_schema(arguments[0], schemas)
                 field_schema = Schema("array", items=_make_schema_ref(item_schema_name))
@@ -379,8 +379,8 @@ def _generate_primitive_schema(annotation: Any) -> Optional[Schema]:
     except KeyError:
         origin = get_origin(annotation)
         if origin in _LIST_TYPES:
-            arguments = get_args(annotation)
-            if is_typevar(arguments[0]):
+            arguments = _get_args(annotation)
+            if not arguments or is_typevar(arguments[0]):
                 return Schema("array", items=_ANY_VALUE)
 
             else:
@@ -405,6 +405,18 @@ def _make_schema_ref(name: str) -> Dict[str, str]:
 
 def _get_annotation(handler: Callable[..., Any], name: str, default: Any = None) -> Any:
     return getattr(handler, f"openapi_{name}", default)
+
+
+def _get_args(annotation: Any) -> Any:
+    # This is a safe version of get_args that works the same on Python
+    # 3.6 and 3.7 by ensuring that expanded type arguments are merged
+    # into their original type.
+    arguments = list(get_args(annotation))
+    for i, argument in enumerate(arguments[:]):
+        if isinstance(argument, tuple):
+            arguments[i] = argument[0][argument[1:]]
+
+    return arguments
 
 
 def _sort_dict(data: Dict[Any, Any]) -> Dict[Any, Any]:
