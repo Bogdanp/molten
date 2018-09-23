@@ -1,8 +1,6 @@
 # molten
 
 [![Build Status](https://travis-ci.org/Bogdanp/molten.svg?branch=master)](https://travis-ci.org/Bogdanp/molten)
-[![Maintainability](https://api.codeclimate.com/v1/badges/f7ab5fdd188fda33c3e1/maintainability)](https://codeclimate.com/github/Bogdanp/molten/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/f7ab5fdd188fda33c3e1/test_coverage)](https://codeclimate.com/github/Bogdanp/molten/test_coverage)
 [![PyPI version](https://badge.fury.io/py/molten.svg)](https://badge.fury.io/py/molten)
 [![Documentation](https://img.shields.io/badge/doc-latest-brightgreen.svg)](https://moltenframework.com)
 [![Reddit](https://img.shields.io/badge/discuss-online-orange.svg)](https://www.reddit.com/r/moltenframework/)
