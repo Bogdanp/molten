@@ -262,5 +262,62 @@ def test_openapi_can_render_lists_of_x(fields, expected):
     document = generate_openapi_document(app, Metadata("example", "an example", "0.0.0"), [])
 
     # Then the return schema should have an array of that thing
-    response_schema = document["components"]["schemas"]["response:tests.openapi.test_openapi.A"]
+    response_schema = document["components"]["schemas"]["tests.openapi.test_openapi.A"]
     assert response_schema["properties"] == expected
+
+
+def test_openapi_can_render_request_only_fields():
+    # Given that I have a schema that has request-only fields
+    @schema
+    class A:
+        x: int = field(request_only=True)
+
+    def index(a: A) -> A:
+        pass
+
+    # And an app
+    app = App(routes=[Route("/", index)])
+
+    # When I generate a document
+    document = generate_openapi_document(app, Metadata("example", "an example", "0.0.0"), [])
+
+    # Then the schema should mark that field as writeOnly
+    response_schema = document["components"]["schemas"]["tests.openapi.test_openapi.A"]
+    assert response_schema["properties"] == {
+        "x": {
+            "type": "integer",
+            "format": "int64",
+            "writeOnly": True,
+        },
+    }
+
+
+def test_openapi_can_render_fields_with_different_request_and_response_names():
+    # Given that I have a schema that has different names based on whether it's in the request or response
+    @schema
+    class A:
+        x: int = field(request_name="X", response_name="Y")
+
+    def index(a: A) -> A:
+        pass
+
+    # And an app
+    app = App(routes=[Route("/", index)])
+
+    # When I generate a document
+    document = generate_openapi_document(app, Metadata("example", "an example", "0.0.0"), [])
+
+    # Then the schema should mark that field as writeOnly
+    response_schema = document["components"]["schemas"]["tests.openapi.test_openapi.A"]
+    assert response_schema["properties"] == {
+        "X": {
+            "type": "integer",
+            "format": "int64",
+            "writeOnly": True,
+        },
+        "Y": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": True,
+        },
+    }

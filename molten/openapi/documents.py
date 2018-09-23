@@ -98,6 +98,8 @@ class Schema:
     multiple_of: Optional[Union[int, float]] = field(response_name="multipleOf", default=None)
     min_length: Optional[int] = field(response_name="minLength", default=None)
     max_length: Optional[int] = field(response_name="maxLength", default=None)
+    read_only: Optional[bool] = field(response_name="readOnly", default=None)
+    write_only: Optional[bool] = field(response_name="writeOnly", default=None)
 
 
 @schema
@@ -202,7 +204,7 @@ def generate_openapi_document(
                     ))
 
                 elif is_schema(annotation):
-                    request_schema_name = _generate_schema("request", annotation, schemas)
+                    request_schema_name = _generate_schema(annotation, schemas)
 
             operation = paths[route.template][method] = {
                 "tags": _get_annotation(handler, "tags", []),
@@ -236,7 +238,7 @@ def generate_openapi_document(
 
             if response_annotation is not None:
                 if is_schema(response_annotation):
-                    response_schema_name = _generate_schema("response", response_annotation, schemas)
+                    response_schema_name = _generate_schema(response_annotation, schemas)
                     for media_type in response_mime_types:
                         operation["responses"]["200"]["content"][media_type] = {
                             "schema": _make_schema_ref(response_schema_name),
@@ -245,7 +247,7 @@ def generate_openapi_document(
                 elif response_annotation_origin in _LIST_TYPES:
                     arguments = get_args(response_annotation)
                     if is_schema(arguments[0]):
-                        response_schema_name = _generate_schema("response", arguments[0], schemas)
+                        response_schema_name = _generate_schema(arguments[0], schemas)
                         for media_type in response_mime_types:
                             operation["responses"]["200"]["content"][media_type] = {
                                 "schema": {
@@ -267,7 +269,7 @@ def generate_openapi_document(
             # the status code finder couldn't find a 200 status code,
             # then it should be safe to drop that code from the
             # responses object.
-            if get_origin(annotations.get("return")) in (tuple, Tuple) and 200 not in status_codes:
+            if get_origin(annotations.get("return")) in _TUPLE_TYPES and 200 not in status_codes:
                 del operation["responses"]["200"]
 
             # TODO: Add support for OAuth2 security scheme.
@@ -288,8 +290,8 @@ def generate_openapi_document(
 
 
 @no_type_check
-def _generate_schema(context: str, schema: Any, schemas: Dict[str, Schema]) -> str:
-    name = f"{context}:{schema.__module__}.{schema.__name__}"
+def _generate_schema(schema: Any, schemas: Dict[str, Schema]) -> str:
+    name = f"{schema.__module__}.{schema.__name__}"
     if name in schemas:
         return name
 
@@ -301,37 +303,28 @@ def _generate_schema(context: str, schema: Any, schemas: Dict[str, Schema]) -> s
     )
 
     for field in schema._FIELDS.values():  # noqa
-        if context == "request":
-            field_name = field.request_name
+        if field.request_name == field.response_name:
+            field_names = [field.request_name]
+        else:
+            field_names = [field.request_name, field.response_name]
 
-        elif context == "response":
-            field_name = field.response_name
+        for field_name in field_names:
+            is_optional, field_schema = _generate_field_schema(field_name, field, schemas)
+            if field_schema is not None:
+                definition.properties[field_name] = field_schema
 
-        else:  # pragma: no cover
-            raise RuntimeError(f"invalid schema context {context!r}")
-
-        # This is definitely covered but coverage.py seems to ignore
-        # it for whatever reason.
-        if context == "request" and field.response_only or \
-           context == "response" and field.request_only:  # pragma: no cover
-            continue
-
-        is_optional, field_schema = _generate_field_schema(field, context, schemas)
-        if field_schema is not None:
-            definition.properties[field_name] = field_schema
-
-        if not is_optional:
-            definition.required.append(field_name)
+            if not is_optional:
+                definition.required.append(field_name)
 
     schemas[name] = definition
     return name
 
 
 @no_type_check
-def _generate_field_schema(field: Field, context: str, schemas: Dict[str, Schema]) -> Tuple[bool, Schema]:
+def _generate_field_schema(field_name: str, field: Field, schemas: Dict[str, Schema]) -> Tuple[bool, Schema]:
     is_optional, annotation = extract_optional_annotation(field.annotation)
     if is_schema(annotation):
-        field_schema_name = _generate_schema(context, annotation, schemas)
+        field_schema_name = _generate_schema(annotation, schemas)
         field_schema = Schema(all_of=[_make_schema_ref(field_schema_name)])
 
     elif is_generic_type(annotation):
@@ -339,7 +332,7 @@ def _generate_field_schema(field: Field, context: str, schemas: Dict[str, Schema
         if origin in _LIST_TYPES:
             arguments = get_args(annotation)
             if arguments and is_schema(arguments[0]):
-                item_schema_name = _generate_schema(context, arguments[0], schemas)
+                item_schema_name = _generate_schema(arguments[0], schemas)
                 field_schema = Schema("array", items=_make_schema_ref(item_schema_name))
 
             else:
@@ -349,7 +342,7 @@ def _generate_field_schema(field: Field, context: str, schemas: Dict[str, Schema
             # TODO: Add support for additionalFields.
             field_schema = _generate_primitive_schema(dict)
 
-        else:
+        else:  # pragma: no cover
             raise ValueError(f"Unsupported type {origin} for field {field.name!r}.")
 
     else:
@@ -357,6 +350,20 @@ def _generate_field_schema(field: Field, context: str, schemas: Dict[str, Schema
 
     if field_schema is not None:
         field_schema.description = field.description
+
+        if field.request_name != field.response_name:
+            if field_name == field.request_name:
+                field_schema.write_only = True
+
+            else:
+                field_schema.read_only = True
+
+        elif field.response_only:
+            field_schema.read_only = True
+
+        elif field.request_only:
+            field_schema.write_only = True
+
         for option, value in field.validator_options.items():
             if option in Schema._FIELDS:
                 setattr(field_schema, option, value)
@@ -434,11 +441,13 @@ _PRIMITIVE_ANNOTATION_MAP = {
     bytes: ["string", "binary"],
 }
 
-_DICT_TYPES = {dict, Dict}
-_LIST_TYPES = {list, List}
-_TUPLE_TYPES = {tuple, Tuple}
-
+#: A schema that accepts any value whatsoever.  Used in generic types
+#: w/o a type annotation (eg. List).
 _ANY_VALUE = {
     "description": "Can be any value, including null.",
     "nullable": True,
 }
+
+_DICT_TYPES = {dict, Dict}
+_LIST_TYPES = {list, List}
+_TUPLE_TYPES = {tuple, Tuple}
