@@ -9,6 +9,13 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 -------------
 
+Fixed
+^^^^^
+
+* OpenAPI docs can now be generated from handler methods.  (`#13`_)
+
+.. _#13: https://github.com/Bogdanp/molten/issues/13
+
 
 `0.5.1`_ -- 2018-09-23
 ----------------------
