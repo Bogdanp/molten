@@ -23,7 +23,7 @@ import inspect
 from collections import defaultdict
 from operator import itemgetter
 from textwrap import dedent
-from types import FunctionType
+from types import FunctionType, MethodType
 from typing import (
     Any, Callable, Dict, List, Optional, Set, Tuple, Union, get_type_hints, no_type_check
 )
@@ -167,7 +167,7 @@ def generate_openapi_document(
 
         for route in routes:
             handler = route.handler
-            if not isinstance(handler, FunctionType):
+            if not isinstance(handler, (FunctionType, MethodType)):
                 handler = handler.__call__  # type: ignore
 
             parameters = []

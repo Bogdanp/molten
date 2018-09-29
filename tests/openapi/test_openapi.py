@@ -321,3 +321,24 @@ def test_openapi_can_render_fields_with_different_request_and_response_names():
             "readOnly": True,
         },
     }
+
+
+def test_openapi_can_render_documents_with_method_handlers():
+    # Given that I have a resource class
+    @schema
+    class User:
+        username: str
+
+    class Users:
+        def get_users(self) -> User:
+            pass
+
+    # And an app that uses that an instance of that resource
+    users = Users()
+    app = App(routes=[Route("/users", users.get_users)])
+
+    # When I generate a document
+    document = generate_openapi_document(app, Metadata("example", "an example", "0.0.0"), [])
+
+    # Then I should get back a valid document
+    assert document
