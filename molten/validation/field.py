@@ -21,10 +21,10 @@ from typing import (
 )
 
 from typing_extensions import Protocol
-from typing_inspect import get_origin, is_generic_type, is_typevar
+from typing_inspect import get_origin, is_generic_type, is_typevar, is_union_type
 
 from ..errors import FieldValidationError, ValidationError
-from ..typing import extract_optional_annotation
+from ..typing import extract_optional_annotation, get_args
 from .common import Missing, _Missing, is_schema
 
 _T = TypeVar("_T")
@@ -183,7 +183,9 @@ class Field(Generic[_T]):
 
             return value
 
-        if not is_generic_type(annotation) and \
+        if annotation not in (Any,) and \
+           not is_generic_type(annotation) and \
+           not is_union_type(annotation) and \
            not is_typevar(annotation) and \
            not is_schema(annotation) and \
            not isinstance(value, annotation):
@@ -445,6 +447,34 @@ class DictValidator:
         return value
 
 
+class UnionValidator:
+    """Validates union types.
+    """
+
+    def can_validate_field(self, field: Field[_T]) -> bool:
+        _, annotation = extract_optional_annotation(field.annotation)
+        return is_union_type(annotation)
+
+    def validate(self, field: Field[_T], value: Any) -> Any:
+        _, annotation = extract_optional_annotation(field.annotation)
+        annotations = get_args(annotation)
+
+        error_groups = []
+        for annotation in annotations:
+            error_group_name = getattr(annotation, "__name__", None) or str(annotation)
+            error_groups.append(error_group_name)
+
+            try:
+                value_field: Field[Any] = Field(annotation=annotation)
+                value_field.select_validator()
+                return value_field.validate(value)
+            except (FieldValidationError, ValidationError):
+                continue
+        else:
+            # TODO: Figure out a better way to represent these errors.
+            raise FieldValidationError(f"expected a valid {' or '.join(repr(group) for group in error_groups)} value")
+
+
 class SchemaValidator:
     """Validates dictionaries against schema classes.
     """
@@ -466,6 +496,7 @@ VALIDATORS: List[Validator[Any]] = [
     StringValidator(),
     ListValidator(),
     DictValidator(),
+    UnionValidator(),
     SchemaValidator(),
 ]
 

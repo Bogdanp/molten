@@ -17,6 +17,8 @@
 
 from typing import Any, BinaryIO, Callable, Dict, List, NewType, Tuple, Union
 
+import typing_inspect
+
 #: An alias representing a WSGI environment dictionary.
 Environ = Dict[str, Any]
 
@@ -55,6 +57,18 @@ RequestBody = NewType("RequestBody", bytes)
 
 #: Parsed request data.
 RequestData = NewType("RequestData", Dict[str, Any])
+
+
+def get_args(annotation: Any) -> Any:
+    # This is a safe version of get_args that works the same on Python
+    # 3.6 and 3.7 by ensuring that expanded type arguments are merged
+    # into their original type.
+    arguments = list(typing_inspect.get_args(annotation))
+    for i, argument in enumerate(arguments[:]):
+        if isinstance(argument, tuple):
+            arguments[i] = argument[0][argument[1:]]
+
+    return arguments
 
 
 def extract_optional_annotation(annotation: Any) -> Tuple[bool, Any]:

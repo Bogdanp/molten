@@ -1,6 +1,6 @@
 import json
 from datetime import datetime
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Union
 
 import pytest
 
@@ -342,3 +342,58 @@ def test_openapi_can_render_documents_with_method_handlers():
 
     # Then I should get back a valid document
     assert document
+
+
+def test_openapi_can_render_documents_with_union_types():
+    # Given that I have a schema that uses union types
+    @schema
+    class A:
+        x: int
+
+    @schema
+    class B:
+        x: str
+
+    @schema
+    class C:
+        x: Union[A, B, int]
+
+    def index() -> C:
+        pass
+
+    # And an app that uses that an instance of that resource
+    app = App(routes=[Route("/", index)])
+
+    # When I generate a document
+    document = generate_openapi_document(app, Metadata("example", "an example", "0.0.0"), [])
+
+    # Then I should get back a valid document
+    assert document["components"]["schemas"] == {
+        "tests.openapi.test_openapi.A": {
+            "type": "object",
+            "required": ["x"],
+            "properties": {
+                "x": {"type": "integer", "format": "int64"},
+            },
+        },
+        "tests.openapi.test_openapi.B": {
+            "type": "object",
+            "required": ["x"],
+            "properties": {
+                "x": {"type": "string"},
+            },
+        },
+        "tests.openapi.test_openapi.C": {
+            "type": "object",
+            "required": ["x"],
+            "properties": {
+                "x": {
+                    "anyOf": [
+                        {"$ref": "#/components/schemas/tests.openapi.test_openapi.A"},
+                        {"$ref": "#/components/schemas/tests.openapi.test_openapi.B"},
+                        {"type": "integer", "format": "int64"},
+                    ],
+                },
+            }
+        }
+    }

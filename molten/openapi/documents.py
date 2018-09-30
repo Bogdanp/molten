@@ -28,11 +28,11 @@ from typing import (
     Any, Callable, Dict, List, Optional, Set, Tuple, Union, get_type_hints, no_type_check
 )
 
-from typing_inspect import get_args, get_origin, is_generic_type, is_typevar
+from typing_inspect import get_origin, is_generic_type, is_typevar, is_union_type
 
 from ..app import BaseApp
 from ..router import get_route_parameters
-from ..typing import Header, QueryParam, extract_optional_annotation
+from ..typing import Header, QueryParam, extract_optional_annotation, get_args
 from ..validation import Field, dump_schema, field, is_schema, schema
 
 
@@ -100,6 +100,7 @@ class Schema:
     max_length: Optional[int] = field(response_name="maxLength", default=None)
     read_only: Optional[bool] = field(response_name="readOnly", default=None)
     write_only: Optional[bool] = field(response_name="writeOnly", default=None)
+    ref: Optional[str] = field(response_name="$ref", default=None)
 
 
 @schema
@@ -232,7 +233,7 @@ def generate_openapi_document(
             response_annotation = annotations.get("return")
             response_annotation_origin = get_origin(response_annotation)
             if response_annotation is not None and response_annotation_origin in _TUPLE_TYPES:
-                arguments = _get_args(response_annotation)
+                arguments = get_args(response_annotation)
                 if len(arguments) == 2 and arguments[0] is str and is_schema(arguments[1]):
                     response_annotation = arguments[1]
 
@@ -245,7 +246,7 @@ def generate_openapi_document(
                         }
 
                 elif response_annotation_origin in _LIST_TYPES:
-                    arguments = _get_args(response_annotation)
+                    arguments = get_args(response_annotation)
                     if is_schema(arguments[0]):
                         response_schema_name = _generate_schema(arguments[0], schemas)
                         for media_type in response_mime_types:
@@ -325,12 +326,12 @@ def _generate_field_schema(field_name: str, field: Field, schemas: Dict[str, Sch
     is_optional, annotation = extract_optional_annotation(field.annotation)
     if is_schema(annotation):
         field_schema_name = _generate_schema(annotation, schemas)
-        field_schema = Schema(all_of=[_make_schema_ref(field_schema_name)])
+        field_schema = Schema(ref=_make_ref_path(field_schema_name))
 
     elif is_generic_type(annotation):
         origin = get_origin(annotation)
         if origin in _LIST_TYPES:
-            arguments = _get_args(annotation)
+            arguments = get_args(annotation)
             if arguments and is_schema(arguments[0]):
                 item_schema_name = _generate_schema(arguments[0], schemas)
                 field_schema = Schema("array", items=_make_schema_ref(item_schema_name))
@@ -344,6 +345,14 @@ def _generate_field_schema(field_name: str, field: Field, schemas: Dict[str, Sch
 
         else:  # pragma: no cover
             raise ValueError(f"Unsupported type {origin} for field {field.name!r}.")
+
+    elif is_union_type(annotation):
+        sub_schemas = []
+        for arg in get_args(annotation):
+            _, sub_schema = _generate_field_schema("", Field(annotation=arg), schemas)
+            sub_schemas.append(dump_schema(sub_schema, sparse=True))
+
+        field_schema = Schema(any_of=sub_schemas)
 
     else:
         field_schema = _generate_primitive_schema(annotation)
@@ -379,7 +388,7 @@ def _generate_primitive_schema(annotation: Any) -> Optional[Schema]:
     except KeyError:
         origin = get_origin(annotation)
         if origin in _LIST_TYPES:
-            arguments = _get_args(annotation)
+            arguments = get_args(annotation)
             if not arguments or is_typevar(arguments[0]):
                 return Schema("array", items=_ANY_VALUE)
 
@@ -399,24 +408,16 @@ def _extract_status_codes(handler: Callable[..., Any]) -> List[int]:
         return []
 
 
+def _make_ref_path(name: str) -> str:
+    return f"#/components/schemas/{name}"
+
+
 def _make_schema_ref(name: str) -> Dict[str, str]:
-    return {"$ref": f"#/components/schemas/{name}"}
+    return {"$ref": _make_ref_path(name)}
 
 
 def _get_annotation(handler: Callable[..., Any], name: str, default: Any = None) -> Any:
     return getattr(handler, f"openapi_{name}", default)
-
-
-def _get_args(annotation: Any) -> Any:
-    # This is a safe version of get_args that works the same on Python
-    # 3.6 and 3.7 by ensuring that expanded type arguments are merged
-    # into their original type.
-    arguments = list(get_args(annotation))
-    for i, argument in enumerate(arguments[:]):
-        if isinstance(argument, tuple):
-            arguments[i] = argument[0][argument[1:]]
-
-    return arguments
 
 
 def _sort_dict(data: Dict[Any, Any]) -> Dict[Any, Any]:

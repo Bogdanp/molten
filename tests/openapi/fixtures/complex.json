@@ -412,11 +412,7 @@
             "readOnly": true
           },
           "category": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/tests.openapi.test_openapi.Category"
-              }
-            ]
+            "$ref": "#/components/schemas/tests.openapi.test_openapi.Category"
           },
           "metadata": {
             "type": "object"

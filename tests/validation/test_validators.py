@@ -1,9 +1,11 @@
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 import pytest
 
 from molten import Field, FieldValidationError, ValidationError
-from molten.validation.field import DictValidator, ListValidator, NumberValidator, StringValidator
+from molten.validation.field import (
+    DictValidator, ListValidator, NumberValidator, StringValidator, UnionValidator
+)
 
 
 def _test_validator(cls, field, options, value, expected):
@@ -170,3 +172,15 @@ def test_list_validator(annotation, options, value, expected):
 ])
 def test_dict_validator(annotation, options, value, expected):
     _test_validator(DictValidator, Field(annotation=annotation), options, value, expected)
+
+
+@pytest.mark.parametrize("annotation,value,expected", [
+    (Union[int, str], 1, 1),
+    (Union[int, str], "a", "a"),
+    (Union[int, str], [], FieldValidationError("expected a valid 'int' or 'str' value")),
+    (Union[List[int], str], [], []),
+    (Union[List[int], str], [1], [1]),
+    (Union[List[int], str], "a", "a"),
+])
+def test_union_validator(annotation, value, expected):
+    _test_validator(UnionValidator, Field(annotation=annotation), {}, value, expected)

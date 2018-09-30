@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 import pytest
 
@@ -360,3 +360,15 @@ def test_schema_fields_can_have_custom_validators():
     # Then load some data
     # Then my validator should be used
     assert load_schema(Post, {"tags": "a,b,c"}) == Post(tags=["a", "b", "c"])
+
+
+def test_schemas_can_have_fields_of_type_Any():
+    # Given that I have a schema with a field of type Any
+    @schema
+    class A:
+        x: Any
+
+    # Then that field should accept values of any type
+    assert load_schema(A, {"x": 1}) == A(x=1)
+    assert load_schema(A, {"x": "1"}) == A(x="1")
+    assert load_schema(A, {"x": []}) == A(x=[])
