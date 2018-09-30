@@ -9,6 +9,17 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 -------------
 
+Added
+^^^^^
+
+* Support for ``typing.Union`` in schemas.
+
+Fixed
+^^^^^
+
+* ``Any`` can now be used to annotate schema fields that can contain
+  values of any type.
+
 
 `0.5.2`_ -- 2018-09-29
 ----------------------
