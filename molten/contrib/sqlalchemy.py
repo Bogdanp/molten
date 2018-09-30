@@ -43,7 +43,7 @@ class SQLAlchemyEngineComponent:
 
     Your settings dictionary must contain a ``database_engine_dsn``
     setting pointing at the database to use.  Additionally, you may
-    provide a ``database_engine_params`` setting represeting
+    provide a ``database_engine_params`` setting representing
     dictionary data that will be passed directly to
     ``sqlalchemy.create_engine``.
 
