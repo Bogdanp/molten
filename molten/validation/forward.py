@@ -30,15 +30,28 @@ def forward_ref(name: str) -> Any:
     """Generate a proxy type for a schema that is going to be defined
     at some point after the current statement.
 
-    Example:
+    Examples:
+      Schema "A" includes a reference to a yet-to-be-defined schema
+      "B"::
 
-       @schema
-       class A:
-           b: forward_ref("B")
+        @schema
+        class A:
+            b: forward_ref("B")
 
-       @schema
-       class B:
-           x: int
+        @schema
+        class B:
+            x: int
+
+      ``forward_ref`` can be used as a type parameter to other types
+      as well::
+
+        @schema
+        class A:
+            b: List[forward_ref("B")]
+
+        @schema
+        class B:
+            x: int
 
     Parameters:
       name: The name of the schema being referenced.  This name must

@@ -139,6 +139,7 @@ Schemas
 .. autofunction:: is_schema
 .. autofunction:: dump_schema
 .. autofunction:: load_schema
+.. autofunction:: forward_ref
 
 Fields and Validators
 ^^^^^^^^^^^^^^^^^^^^^

@@ -144,7 +144,7 @@ def test_list_validator(annotation, options, value, expected):
             "a": Field(annotation=int),
             "b": Field(annotation=Optional[Dict[str, str]]),
         }}, {"a": 42, "b": {"a": 1}},
-        ValidationError({"b": {"a": "value must be a dict"}}),
+        ValidationError({"b": {"a": "unexpected type int"}}),
     ),
 
     (

@@ -378,6 +378,7 @@ def test_schemas_can_have_fields_of_type_Any():
 class A:
     b: forward_ref("B")
     b_opt: Optional[forward_ref("B")] = None
+    b_list: Optional[List[forward_ref("B")]] = None
 
 
 @schema
@@ -390,13 +391,19 @@ def test_schemas_can_have_forward_references():
     # Then that schema should validate as normal
     assert load_schema(A, {"b": {"x": 42}}) == A(b=B(x=42))
     assert load_schema(A, {"b": {"x": 42}, "b_opt": {"x": 43}}) == A(b=B(x=42), b_opt=B(x=43))
+    assert load_schema(A, {"b": {"x": 42}, "b_list": [{"x": 43}, {"x": 44}]}) == A(b=B(x=42), b_list=[B(x=43), B(x=44)])
 
     with pytest.raises(ValidationError) as e:
         load_schema(A, {"b": {"x": 42}, "b_opt": {"x": "43"}})
 
     assert e.value.reasons == {"b_opt": {"x": "unexpected type str"}}
 
+    with pytest.raises(ValidationError) as e:
+        load_schema(A, {"b": {"x": 42}, "b_list": [{}]})
+
+    assert e.value.reasons == {"b_list": {0: {"x": "this field is required"}}}
+
     # When I dump instances of those schemas
     # Then that operation should succeed
     assert dump_schema(load_schema(A, {"b": {"x": 42}})) == \
-        {"b": {"x": 42}, "b_opt": None}
+        {"b": {"x": 42}, "b_list": None, "b_opt": None}

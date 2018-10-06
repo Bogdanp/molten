@@ -339,9 +339,10 @@ class ListValidator:
         if max_items is not None and len(value) > max_items:
             raise FieldValidationError(f"length must be <= {max_items}")
 
+        _, annotation = extract_optional_annotation(field.annotation)
         # If the argument is Any, then the list can contain anything,
         # otherwise each item needs to be validated.
-        annotation_args = getattr(field.annotation, "__args__", [])
+        annotation_args = getattr(annotation, "__args__", [])
         if annotation_args != (Any,):
             # This is a little piggy but it works well enough in practice.
             item_validator_options = item_validator_options or {}
@@ -440,9 +441,10 @@ class DictValidator:
 
             return items
 
+        _, annotation = extract_optional_annotation(field.annotation)
         # If the args are [Any, Any], then the dict can contain
         # anything, otherwise each item needs to be validated.
-        annotation_args = getattr(field.annotation, "__args__", [])
+        annotation_args = getattr(annotation, "__args__", [])
         if annotation_args and annotation_args != (Any, Any):
             key_validator_options = key_validator_options or {}
             key_field = Field(annotation=annotation_args[0], **key_validator_options)
