@@ -125,9 +125,10 @@ class APIKeySecurityScheme:
     https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.1.md#securitySchemeObject
     """
 
-    name: str
-    in_: str = field(choices=["query", "header", "cookie"])
-    type: str = field(response_only=True, default="apiKey")
+    name: str = field(request_only=True)
+    param_name: str = field(response_name="name")
+    in_: str = field(response_name="in", choices=["query", "header", "cookie"])
+    type: str = field(response_only=True, choices=["apiKey"], default="apiKey")
 
 
 @schema
@@ -139,7 +140,7 @@ class HTTPSecurityScheme:
 
     name: str
     scheme: str = field(choices=["basic", "bearer"])
-    type: str = field(response_only=True, default="http")
+    type: str = field(response_only=True, choices=["http"], default="http")
 
 
 #: The union of acceptable security schemes.

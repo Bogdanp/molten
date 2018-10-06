@@ -20,6 +20,10 @@ Fixed
 
 * ``Any`` can now be used to annotate schema fields that can contain
   values of any type.
+* |APIKeySecurityScheme| now takes a ``param_name`` that correctly
+  identifies the header/query param/cookie name.  (`#17`_)
+
+.. _#17: https://github.com/Bogdanp/molten/issues/17
 
 
 `0.5.2`_ -- 2018-09-29

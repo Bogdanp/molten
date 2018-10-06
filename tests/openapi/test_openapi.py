@@ -9,7 +9,7 @@ from molten import (
     annotate, field, schema, testing
 )
 from molten.openapi import (
-    Contact, HTTPSecurityScheme, Metadata, OpenAPIHandler, OpenAPIUIHandler,
+    APIKeySecurityScheme, Contact, HTTPSecurityScheme, Metadata, OpenAPIHandler, OpenAPIUIHandler,
     generate_openapi_document
 )
 
@@ -396,4 +396,38 @@ def test_openapi_can_render_documents_with_union_types():
                 },
             }
         }
+    }
+
+
+# REF: https://github.com/Bogdanp/molten/issues/17
+def test_openapi_can_render_api_key_security_schemes_correctly():
+    # Given that I have an APIKeySecurityScheme
+    security_scheme = APIKeySecurityScheme(
+        name="api-key",
+        param_name="x-api-key",
+        in_="header",
+    )
+
+    # When I generate a document with that security scheme
+    document = generate_openapi_document(
+        App(),
+        Metadata(
+            "example",
+            "an example",
+            "0.0.0",
+        ),
+        security_schemes=[security_scheme],
+        default_security_scheme="api-key",
+    )
+
+    # Then I should get back a valid, non-ambiguous, OpenAPI document
+    assert document["components"] == {
+        "schemas": {},
+        "securitySchemes": {
+            "api-key": {
+                "name": "x-api-key",
+                "in": "header",
+                "type": "apiKey",
+            },
+        },
     }

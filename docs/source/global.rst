@@ -1,3 +1,4 @@
+.. |APIKeySecurityScheme| replace:: :class:`APIKeySecurityScheme<molten.openapi.APIKeySecurityScheme>`
 .. |App| replace:: :class:`App<molten.App>`
 .. |BaseApp| replace:: :class:`BaseApp<molten.BaseApp>`
 .. |CORSMixin| replace:: :class:`CORSMixin<molten.contrib.cors.CORSMixin>`
