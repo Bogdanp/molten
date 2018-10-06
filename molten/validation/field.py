@@ -26,6 +26,7 @@ from typing_inspect import get_origin, is_generic_type, is_typevar, is_union_typ
 from ..errors import FieldValidationError, ValidationError
 from ..typing import extract_optional_annotation, get_args
 from .common import Missing, _Missing, is_schema
+from .forward import is_forward_ref
 
 _T = TypeVar("_T")
 
@@ -184,6 +185,7 @@ class Field(Generic[_T]):
             return value
 
         if annotation not in (Any,) and \
+           not is_forward_ref(annotation) and \
            not is_generic_type(annotation) and \
            not is_union_type(annotation) and \
            not is_typevar(annotation) and \
@@ -204,6 +206,25 @@ class Field(Generic[_T]):
     def __repr__(self) -> str:
         params = ", ".join(f"{name}={repr(getattr(self, name))}" for name in self.__slots__)
         return f"{type(self).__name__}({params})"
+
+
+class ForwardRefValidator:
+    """Validates forward references.
+    """
+
+    def can_validate_field(self, field: Field[_T]) -> bool:
+        return is_forward_ref(field.annotation) or \
+            is_forward_ref(extract_optional_annotation(field.annotation)[1])
+
+    @no_type_check
+    def validate(self, field: Field[_T], value: Any) -> Any:
+        forward_ref = field.annotation
+        if not is_forward_ref(field.annotation):
+            _, forward_ref = extract_optional_annotation(field.annotation)
+
+        field = Field(annotation=forward_ref.lookup())
+        field.select_validator()
+        return field.validate(value)
 
 
 class NumberValidator:
@@ -298,7 +319,7 @@ class ListValidator:
 
     def can_validate_field(self, field: Field[_T]) -> bool:
         _, annotation = extract_optional_annotation(field.annotation)
-        return get_origin(annotation) in (list, List)
+        return get_origin(annotation) in LIST_TYPES
 
     @no_type_check
     def validate(
@@ -389,7 +410,7 @@ class DictValidator:
 
     def can_validate_field(self, field: Field[_T]) -> bool:
         _, annotation = extract_optional_annotation(field.annotation)
-        return get_origin(annotation) in (dict, Dict)
+        return get_origin(annotation) in DICT_TYPES
 
     @no_type_check
     def validate(
@@ -489,9 +510,14 @@ class SchemaValidator:
         return load_schema(annotation, value)
 
 
+DICT_TYPES = {dict, Dict}
+LIST_TYPES = {list, List}
+
+
 #: The set of built-in validators.  Fields will attempt to use one of
 #: these unless otherwise specified.
 VALIDATORS: List[Validator[Any]] = [
+    ForwardRefValidator(),
     NumberValidator(),
     StringValidator(),
     ListValidator(),

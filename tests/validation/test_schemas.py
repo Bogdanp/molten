@@ -3,7 +3,7 @@ from typing import Any, Dict, List, Optional
 
 import pytest
 
-from molten import Field, ValidationError, dump_schema, field, load_schema, schema
+from molten import Field, ValidationError, dump_schema, field, forward_ref, load_schema, schema
 
 
 def safe_date():
@@ -372,3 +372,31 @@ def test_schemas_can_have_fields_of_type_Any():
     assert load_schema(A, {"x": 1}) == A(x=1)
     assert load_schema(A, {"x": "1"}) == A(x="1")
     assert load_schema(A, {"x": []}) == A(x=[])
+
+
+@schema
+class A:
+    b: forward_ref("B")
+    b_opt: Optional[forward_ref("B")] = None
+
+
+@schema
+class B:
+    x: int
+
+
+def test_schemas_can_have_forward_references():
+    # Given that I have a schema that references a schema that isn't defined yet
+    # Then that schema should validate as normal
+    assert load_schema(A, {"b": {"x": 42}}) == A(b=B(x=42))
+    assert load_schema(A, {"b": {"x": 42}, "b_opt": {"x": 43}}) == A(b=B(x=42), b_opt=B(x=43))
+
+    with pytest.raises(ValidationError) as e:
+        load_schema(A, {"b": {"x": 42}, "b_opt": {"x": "43"}})
+
+    assert e.value.reasons == {"b_opt": {"x": "unexpected type str"}}
+
+    # When I dump instances of those schemas
+    # Then that operation should succeed
+    assert dump_schema(load_schema(A, {"b": {"x": 42}})) == \
+        {"b": {"x": 42}, "b_opt": None}

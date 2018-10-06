@@ -39,7 +39,7 @@ from .typing import (
     RequestData, RequestInput, Scheme, StartResponse
 )
 from .validation import (
-    Field, Missing, Validator, dump_schema, field, is_schema, load_schema, schema
+    Field, Missing, Validator, dump_schema, field, forward_ref, is_schema, load_schema, schema
 )
 
 __version__ = "0.5.2"
@@ -74,7 +74,7 @@ __all__ = [
     "ResponseRendererMiddleware",
 
     # Validation
-    "Field", "Missing", "Validator", "field", "schema", "is_schema", "dump_schema", "load_schema",
+    "Field", "Missing", "Validator", "field", "forward_ref", "schema", "is_schema", "dump_schema", "load_schema",
 
     # Helpers
     "RedirectType", "redirect",

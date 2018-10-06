@@ -17,9 +17,10 @@
 
 from .common import Missing, is_schema
 from .field import Field, Validator, field
+from .forward import forward_ref
 from .schema import dump_schema, load_schema, schema
 
 __all__ = [
-    "Missing", "Field", "Validator", "field",
+    "Missing", "Field", "Validator", "field", "forward_ref",
     "schema", "dump_schema", "load_schema", "is_schema",
 ]
