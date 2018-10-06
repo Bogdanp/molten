@@ -13,6 +13,7 @@ Added
 ^^^^^
 
 * Support for ``typing.Union`` in schemas.
+* Support for |forward_refs|.
 
 Fixed
 ^^^^^

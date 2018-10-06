@@ -36,4 +36,5 @@
 .. |_templating| replace:: :ref:`templating<templates contrib>`
 .. |_websockets| replace:: :ref:`websockets<websockets contrib>`
 .. |field| replace:: :class:`Field<molten.Field>`
+.. |forward_refs| replace:: :func:`forward_refs<molten.forward_ref>`
 .. |prometheus_middleware| replace:: :class:`prometheus_middleware<molten.contrib.prometheus.prometheus_middleware>`
