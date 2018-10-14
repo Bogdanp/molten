@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "molten"
-version = "0.6.0"
+version = "0.6.1"
 readme = "README.md"
 homepage = "https://moltenframework.com"
 description = "A minimal, extensible, fast and productive API framework."
