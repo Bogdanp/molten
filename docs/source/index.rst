@@ -200,6 +200,7 @@ how to use molten.
    motivation
    guide
    components
+   advanced
 
 
 API Reference
