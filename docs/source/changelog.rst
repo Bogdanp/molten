@@ -9,6 +9,14 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 -------------
 
+Fixed
+^^^^^
+
+* OpenAPI UI assets are now loaded over https.  (`#20`_, `@joranbeasley`_)
+
+.. _#20: https://github.com/Bogdanp/molten/issues/20
+.. _@joranbeasley: https://github.com/joranbeasley
+
 
 `0.6.0`_ -- 2018-10-06
 ----------------------
