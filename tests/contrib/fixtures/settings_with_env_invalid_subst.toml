@@ -1,0 +1,4 @@
+[common]
+
+[common.db]
+database_uri = "$"

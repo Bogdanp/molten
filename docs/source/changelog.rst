@@ -9,6 +9,14 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 -------------
 
+Changed
+^^^^^^^
+
+* Environment variables can now be substituted into TOML settings
+  using the ``$VARIABLE_NAME`` syntax.  This is a breaking change if
+  your settings files contain ``$`` characters; replace them with
+  ``$$`` to escape them.
+
 
 `0.6.1`_ -- 2018-10-14
 ----------------------

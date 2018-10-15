@@ -1,3 +1,5 @@
+import os
+
 import pytest
 
 from molten import App, Route, Settings, testing
@@ -81,3 +83,43 @@ def test_toml_settings_can_look_up_required_values():
     # When I call strict_get with a valid path
     # Then I should get that value back
     assert settings.strict_get("sessions.secret")
+
+
+def test_toml_settings_can_substitute_environment_variables():
+    # Given that I have a DATABASE_URL environment variable
+    os.environ["DATABASE_URL"] = "postgres://example@example.com/postgres"
+    # And an OAUTH_CLIENT_ID environment variable
+    os.environ["OAUTH_CLIENT_ID"] = "fake-client-id"
+
+    try:
+        # When I load a settings file that references those variables
+        settings = TOMLSettings.from_path("tests/contrib/fixtures/settings_with_env.toml", "prod")
+
+        # Then my settings values should be substituted
+        assert settings.strict_get("db.database_uris") == ["postgres://example@example.com/postgres"]
+        assert settings.strict_get("oauth_providers") == [{"client_id": "fake-client-id"}]
+    finally:
+        del os.environ["DATABASE_URL"]
+        del os.environ["OAUTH_CLIENT_ID"]
+
+
+def test_toml_settings_raise_helpful_errors_for_missing_substitutions():
+    # Given that I have a settings file that has an substitutions for missing env vars
+    # When I load it
+    # Then a RuntimeError should be raised
+    with pytest.raises(RuntimeError) as e:
+        TOMLSettings.from_path("tests/contrib/fixtures/settings_with_env.toml", "prod")
+
+    # And the message should be helpful
+    assert str(e.value) == "'DATABASE_URL' environment variable missing for setting '$.db.database_uris.0'."
+
+
+def test_toml_settings_raise_helpful_errors_for_invalid_substitutions():
+    # Given that I have a settings file that has an invalid env substitution
+    # When I load it
+    # Then a RuntimeError should be raised
+    with pytest.raises(RuntimeError) as e:
+        TOMLSettings.from_path("tests/contrib/fixtures/settings_with_env_invalid_subst.toml", "prod")
+
+    # And the message should be helpful
+    assert str(e.value) == "Invalid variable substitution syntax for value '$' in setting '$.db.database_uri'."

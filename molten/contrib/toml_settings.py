@@ -17,7 +17,8 @@
 
 import os
 from inspect import Parameter
-from typing import Optional
+from string import Template
+from typing import Any, Dict, List, Optional, Union
 
 from molten import Settings as Settings
 
@@ -29,6 +30,39 @@ except ImportError:  # pragma: no cover
 
 #: Canary value representing missing values.
 Missing = object()
+
+
+def _substitute(setting: str, value: str, env: Dict[str, str]) -> str:
+    try:
+        return Template(value).substitute(env)
+    except KeyError as e:
+        raise RuntimeError(f"{e} environment variable missing for setting {setting!r}.")
+    except ValueError as e:
+        raise RuntimeError(f"Invalid variable substitution syntax for value {value!r} in setting {setting!r}.")
+
+
+def _substitute_from_env(
+        ob: Union[Dict[str, Any], List[Any]],
+        env: Dict[str, str] = os.environ,
+        parent: str = "$",
+) -> None:
+    if isinstance(ob, list):
+        for i, item in enumerate(ob):
+            setting_name = f"{parent}.{i}"
+            if isinstance(item, str):
+                ob[i] = _substitute(setting_name, item, env)
+
+            elif isinstance(item, (dict, list)):
+                _substitute_from_env(item, env, parent=setting_name)
+
+    elif isinstance(ob, dict):
+        for name, value in ob.items():
+            setting_name = f"{parent}.{name}"
+            if isinstance(value, str):
+                ob[name] = _substitute(setting_name, value, env)
+
+            elif isinstance(value, (dict, list)):
+                _substitute_from_env(value, env, parent=setting_name)
 
 
 class TOMLSettings(Settings):
@@ -49,7 +83,9 @@ class TOMLSettings(Settings):
         all_settings = toml.load(open(path))
         common_settings = all_settings.get("common", {})
         environment_settings = all_settings.get(environment, {})
-        return cls({**common_settings, **environment_settings})
+        settings = cls({**common_settings, **environment_settings})
+        _substitute_from_env(settings)
+        return settings
 
 
 class TOMLSettingsComponent:
@@ -66,12 +102,17 @@ class TOMLSettingsComponent:
     Example settings file::
 
       [common]
+      coon_uri = "sqlite:///"
       conn_pooling = true
       conn_pool_size = 1
 
       [dev]
 
       [prod]
+      # conn_uri is loaded from the DATABASE_URL environment variable.
+      # This is not a standard TOML feature, but is provided for
+      # convenience.  This uses the built-in `string.Template` parser.
+      conn_uri = "$DATABASE_URL"
       con_pool_size = 32
 
     Examples::

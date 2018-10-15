@@ -173,8 +173,11 @@ class _BufferedStream:
         self.socket.sendall(data)
 
     def close(self) -> None:
-        self.socket.shutdown(True)
-        self.socket.close()
+        try:
+            self.socket.shutdown(True)
+            self.socket.close()
+        except Exception as e:
+            LOGGER.warning("Failed to close underlying socket: %s", e)
 
 
 class _DataFrameHeader:
