@@ -1,4 +1,5 @@
 from inspect import Parameter
+from itertools import permutations
 from typing import NewType
 
 import pytest
@@ -20,12 +21,29 @@ class SettingsComponent:
         return Settings()
 
 
-class DB:
-
+class Metrics:
     __slots__ = ["settings"]
 
     def __init__(self, settings: Settings) -> None:
         self.settings = settings
+
+
+class MetricsComponent:
+    is_singleton = True
+
+    def can_handle_parameter(self, parameter: Parameter) -> bool:
+        return parameter.annotation is Metrics
+
+    def resolve(self, settings: Settings) -> Metrics:
+        return Metrics(settings)
+
+
+class DB:
+    __slots__ = ["settings", "metrics"]
+
+    def __init__(self, settings: Settings, metrics: Metrics) -> None:
+        self.settings = settings
+        self.metrics = metrics
 
 
 class DBComponent:
@@ -34,8 +52,8 @@ class DBComponent:
     def can_handle_parameter(self, parameter: Parameter) -> bool:
         return parameter.annotation is DB
 
-    def resolve(self, settings: Settings) -> DB:
-        return DB(settings)
+    def resolve(self, settings: Settings, metrics: Metrics) -> DB:
+        return DB(settings, metrics)
 
 
 class Accounts:
@@ -58,6 +76,7 @@ def test_di_can_inject_dependencies():
     # Given that I have a DI instance
     di = DependencyInjector(components=[
         SettingsComponent(),
+        MetricsComponent(),
         DBComponent(),
         AccountsComponent(),
     ])
@@ -105,3 +124,30 @@ def test_di_can_fail_to_inject_unregistered_components():
     # Then a DIError should be raised
     with pytest.raises(DIError):
         resolved_example()
+
+
+@pytest.mark.parametrize("component_classes", permutations([AccountsComponent, DBComponent, MetricsComponent, SettingsComponent]))
+def test_di_correctly_instantiates_singleton_dependencies(component_classes):
+    # Given that I have a DI instance with its components ordered randomly
+    di = DependencyInjector(components=[k() for k in component_classes])
+
+    # And a function that uses DI
+    def example(accounts: Accounts, db: DB, metrics: Metrics, settings: Settings):
+        return accounts, db, metrics, settings
+
+    # Then all the singletons should only be instantiated once
+    resolver = di.get_resolver()
+    resolved_example = resolver.resolve(example)
+    accounts_1, db_1, metrics_1, settings_1 = resolved_example()
+    assert metrics_1.settings is settings_1
+    assert db_1.settings is settings_1
+    assert db_1.metrics is metrics_1
+    assert accounts_1.db is db_1
+
+    resolver = di.get_resolver()
+    resolved_example = resolver.resolve(example)
+    accounts_2, db_2, metrics_2, settings_2 = resolved_example()
+    assert accounts_2 is not accounts_1
+    assert db_2 is db_1
+    assert metrics_2 is metrics_1
+    assert settings_2 is settings_1

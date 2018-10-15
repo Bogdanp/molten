@@ -9,6 +9,13 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 -------------
 
+Fixed
+^^^^^
+
+* Fixed an issue where Singletons that were depdendencies of other
+  singletons were instantiated multiple times.
+
+
 `0.7.0`_ -- 2018-10-15
 ----------------------
 
