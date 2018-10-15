@@ -15,7 +15,7 @@ All notable changes to this project will be documented in this file.
 Fixed
 ^^^^^
 
-* Fixed an issue where Singletons that were depdendencies of other
+* Fixed an issue where singletons that were dependencies of other
   singletons were instantiated multiple times.
 
 
