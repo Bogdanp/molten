@@ -12,6 +12,8 @@ All notable changes to this project will be documented in this file.
 Changed
 ^^^^^^^
 
+* |CookieStore| now accepts string signing keys and automatically
+  encodes them to bytes.
 * Environment variables can now be substituted into TOML settings
   using the ``$VARIABLE_NAME`` syntax.  This is a breaking change if
   your settings files contain ``$`` characters; replace them with

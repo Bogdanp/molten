@@ -20,7 +20,7 @@ import hmac
 import json
 from inspect import Parameter
 from time import time
-from typing import Any, Callable, Dict, Optional, no_type_check
+from typing import Any, Callable, Dict, Optional, Union, no_type_check
 from uuid import uuid4
 
 from typing_extensions import Protocol
@@ -99,7 +99,7 @@ class CookieStore:
 
     def __init__(
             self,
-            signing_key: bytes, *,
+            signing_key: Union[bytes, str], *,
             signing_method: str = "sha256",
             cookie_ttl: int = 86400 * 7,
             cookie_name: str = "__sess__",
@@ -107,7 +107,7 @@ class CookieStore:
             cookie_path: Optional[str] = None,
             cookie_secure: bool = False,
     ) -> None:
-        self.signing_key = signing_key
+        self.signing_key = signing_key if isinstance(signing_key, bytes) else signing_key.encode()
         self.signing_method = signing_method
         self.cookie_ttl = cookie_ttl
         self.cookie_name = cookie_name
