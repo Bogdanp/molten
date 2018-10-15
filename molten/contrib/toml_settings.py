@@ -18,7 +18,7 @@
 import os
 from inspect import Parameter
 from string import Template
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union, cast
 
 from molten import Settings as Settings
 
@@ -43,7 +43,7 @@ def _substitute(setting: str, value: str, env: Dict[str, str]) -> str:
 
 def _substitute_from_env(
         ob: Union[Dict[str, Any], List[Any]],
-        env: Dict[str, str] = os.environ,
+        env: Dict[str, str] = cast(Dict[str, str], os.environ),  # noqa
         parent: str = "$",
 ) -> None:
     if isinstance(ob, list):
