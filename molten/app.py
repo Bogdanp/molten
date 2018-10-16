@@ -100,7 +100,7 @@ class BaseApp:
             singletons={BaseApp: self},  # type: ignore
         )
     
-    def route(self,route_path:str, method:Optional[str]="GET",name:Optional[str]=None):
+    def route(self,route_path:str, method:Optional[str]="GET", name:Optional[str]=None):
         """
         provide a route decorator (like flask @app.route)
 
