@@ -99,7 +99,24 @@ class BaseApp:
             components=self.components,
             singletons={BaseApp: self},  # type: ignore
         )
+    
+    def route(self,route_path:str, method:Optional[str]="GET",name:Optional[str]=None):
+        """
+        provide a route decorator (like flask @app.route)
 
+        >>> app = molten.App()
+        >>> @app.route("/hello/{name}/{age}")
+        ... def hello(name:str,age:int):
+        ...     return f"Hi {name}, you are {age} today!"
+        
+        :param route_path:
+        :return:
+        """
+        def inner_fn(f):
+            self.add_route(route_path,f,method,name)
+            return f
+        return inner_fn
+    
     def handle_404(self) -> Response:
         """Called whenever a route cannot be found.  Dependencies are
         injected into this just like a normal handler.
