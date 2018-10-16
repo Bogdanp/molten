@@ -19,12 +19,14 @@ to it::
 
   from molten import App, Route
 
-
+  app = App()
+  
+  @app.route("/hello/{name}/{age}")
   def hello(name: str) -> str:
       return f"Hello {name}!"
 
 
-  app = App(routes=[Route("/hello/{name}", hello)])
+  
 
 Once you've done that, you should be able to run that app behind
 gunicorn with::
