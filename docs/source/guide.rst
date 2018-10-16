@@ -31,6 +31,16 @@ gunicorn with::
 
   $ gunicorn --reload app:app
 
+.. note::
+   
+   gunicorn is only one of a number of options if you want to serve this in a developement environment you can also use something like
+   waitress::
+
+      app = App(routes=[...])
+      import waitress
+      waitress.serve(app)
+   
+   
 If you then make a curl request to ``http://127.0.0.1:8000/hello/Jim``
 you'll get back a JSON response containing the string ``"Hello
 Jim!"``::
