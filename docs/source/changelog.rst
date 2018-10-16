@@ -9,6 +9,41 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 -------------
 
+`0.7.1`_ -- 2018-10-15
+----------------------
+
+Fixed
+^^^^^
+
+* Fixed an issue where singletons that were dependencies of other
+  singletons were instantiated multiple times.
+
+
+`0.7.0`_ -- 2018-10-15
+----------------------
+
+Changed
+^^^^^^^
+
+* |CookieStore| now accepts string signing keys and automatically
+  encodes them to bytes.
+* Environment variables can now be substituted into TOML settings
+  using the ``$VARIABLE_NAME`` syntax.  This is a breaking change if
+  your settings files contain ``$`` characters; replace them with
+  ``$$`` to escape them.
+
+
+`0.6.1`_ -- 2018-10-14
+----------------------
+
+Fixed
+^^^^^
+
+* OpenAPI UI assets are now loaded over https.  (`#20`_, `@joranbeasley`_)
+
+.. _#20: https://github.com/Bogdanp/molten/issues/20
+.. _@joranbeasley: https://github.com/joranbeasley
+
 
 `0.6.0`_ -- 2018-10-06
 ----------------------
@@ -199,7 +234,10 @@ Changed
 * Initial release.
 
 
-.. _Unreleased: https://github.com/Bogdanp/molten/compare/v0.6.0...HEAD
+.. _Unreleased: https://github.com/Bogdanp/molten/compare/v0.7.1...HEAD
+.. _0.7.1: https://github.com/Bogdanp/molten/compare/v0.7.0...v0.7.1
+.. _0.7.0: https://github.com/Bogdanp/molten/compare/v0.6.1...v0.7.0
+.. _0.6.1: https://github.com/Bogdanp/molten/compare/v0.6.0...v0.6.1
 .. _0.6.0: https://github.com/Bogdanp/molten/compare/v0.5.2...v0.6.0
 .. _0.5.2: https://github.com/Bogdanp/molten/compare/v0.5.1...v0.5.2
 .. _0.5.1: https://github.com/Bogdanp/molten/compare/v0.5.0...v0.5.1

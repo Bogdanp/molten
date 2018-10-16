@@ -88,11 +88,23 @@ class DependencyInjector:
         self.components = components or []
         self.singletons = singletons or {}
 
+        def is_singleton(component: Component[Any]) -> bool:
+            return getattr(component, "is_singleton", False) and component not in self.singletons
+
         for component in components:
-            if getattr(component, "is_singleton", False) and component not in self.singletons:
+            if is_singleton(component):
                 resolver = self.get_resolver()
                 resolved_component = resolver.resolve(component.resolve)
                 self.singletons[component] = resolved_component()
+
+                # Also register any singleton components that were
+                # instantiated during the resolving process of the
+                # current component.  This is necessary so that
+                # singletons don't get instantiated by each dependent
+                # component in part.
+                for component, instance in resolver.instances.items():
+                    if is_singleton(component):
+                        self.singletons[component] = instance
 
     def get_resolver(self, instances: Optional[Dict[Any, Any]] = None) -> "DependencyResolver":
         """Get the resolver for this Injector.

@@ -9,3 +9,4 @@ those changes to CLEARTYPE SRL.
 | Username | Name |
 | :------- | :--- |
 | [@gaqzi](https://github.com/gaqzi) | Björn Andersson |
+| [@joranbeasley](https://github.com/joranbeasley) | |

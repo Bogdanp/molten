@@ -1,0 +1,13 @@
+[common]
+
+[common.db]
+database_uris = ["sqlite:///"]
+
+[[common.oauth_providers]]
+client_id = "$OAUTH_CLIENT_ID"
+
+
+[prod]
+
+[prod.db]
+database_uris = ["$DATABASE_URL"]
