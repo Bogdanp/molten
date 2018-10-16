@@ -31,7 +31,7 @@ from .http import (
 )
 from .parsers import JSONParser, MultiPartParser, RequestParser, URLEncodingParser
 from .renderers import JSONRenderer, ResponseRenderer
-from .router import RouteLike, Router
+from .router import RouteLike, Router, Route
 from .typing import (
     Environ, Host, Method, Middleware, Port, QueryString, RequestInput, Scheme, StartResponse
 )
@@ -108,12 +108,12 @@ class BaseApp:
         >>> @app.route("/hello/{name}/{age}")
         ... def hello(name:str,age:int):
         ...     return f"Hi {name}, you are {age} today!"
-        
+
         :param route_path:
         :return:
         """
         def inner_fn(f):
-            self.add_route(route_path,f,method,name)
+            self.add_route(Route(route_path,f,method,name))
             return f
         return inner_fn
     
@@ -230,3 +230,7 @@ class App(BaseApp):
             return wrapper(response.stream)
         else:
             return []
+
+
+if __name__ == "__main__":
+    pass
