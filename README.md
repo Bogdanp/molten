@@ -11,7 +11,8 @@
 
 **Changelog**: https://moltenframework.com/changelog.html <br/>
 **Community**: https://www.reddit.com/r/moltenframework/ <br/>
-**Documentation**: https://moltenframework.com
+**Documentation**: https://moltenframework.com <br/>
+**Professional Support**: [https://tidelift.com](https://tidelift.com/subscription/pkg/pypi-molten?utm_source=pypi-molten&utm_medium=referral&utm_campaign=readme)
 
 <hr/>
 

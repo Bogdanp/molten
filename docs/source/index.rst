@@ -3,10 +3,11 @@
 molten: modern API framework
 ============================
 
-Release v\ |release|. (:doc:`installation`, :doc:`changelog`, `Discuss`_, `Source Code`_)
+Release v\ |release|. (:doc:`installation`, :doc:`changelog`, `Discuss`_, `Source Code`_, `Professional Support`_)
 
 .. _Discuss: https://www.reddit.com/r/moltenframework/
 .. _Source Code: https://github.com/Bogdanp/molten
+.. _Professional Support: https://tidelift.com/subscription/pkg/pypi-molten?utm_source=pypi-molten&utm_medium=referral&utm_campaign=readme
 
 .. image:: https://img.shields.io/badge/license-LGPL-blue.svg
    :target: license.html
@@ -226,4 +227,5 @@ Project Info
    Contributing <https://github.com/Bogdanp/molten/blob/master/CONTRIBUTING.md>
    Contributors <https://github.com/Bogdanp/molten/blob/master/CONTRIBUTORS.md>
    Discussion Board <https://www.reddit.com/r/moltenframework/>
+   Professional Support <https://tidelift.com/subscription/pkg/pypi-molten?utm_source=pypi-molten&utm_medium=referral&utm_campaign=readme>
    license
