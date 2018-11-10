@@ -23,9 +23,10 @@ Fixed
 ^^^^^
 
 * |UploadedFile| now renders a file upload element in OpenAPI
-documents.  (`#23`_)
+  documents.  (`#23`_)
 
 .. _#23: https://github.com/Bogdanp/molten/issues/23
+
 
 `0.7.1`_ -- 2018-10-15
 ----------------------
