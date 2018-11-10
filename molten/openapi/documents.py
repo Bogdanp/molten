@@ -31,6 +31,7 @@ from typing import (
 from typing_inspect import get_origin, is_generic_type, is_typevar, is_union_type
 
 from ..app import BaseApp
+from ..http import UploadedFile
 from ..router import get_route_parameters
 from ..typing import Header, QueryParam, extract_optional_annotation, get_args
 from ..validation import Field, dump_schema, field, is_schema, schema
@@ -447,6 +448,7 @@ class _StatusCodeFinder(ast.NodeVisitor):
 
 #: Maps primitive types to Schema parameters.
 _PRIMITIVE_ANNOTATION_MAP = {
+    UploadedFile: ["string", "binary"],
     int: ["integer", "int64"],
     str: ["string"],
     bool: ["boolean"],
