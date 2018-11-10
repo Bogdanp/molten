@@ -110,7 +110,6 @@ def get_size(f: UploadedFile) -> int:
 
 
 def get_size_opt(f: Optional[UploadedFile], r: RequestData) -> int:
-    print(r)
     return f and len(f.read()) or int(r.get("n"))
 
 
