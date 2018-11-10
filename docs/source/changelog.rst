@@ -9,6 +9,16 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 -------------
 
+`0.7.2`_ -- 2018-11-10
+----------------------
+
+Added
+^^^^^
+
+* |UploadedFile| can now be requested via DI inside handlers.
+* The test client now supports file uploads via the ``file`` keyword
+  argument.
+
 `0.7.1`_ -- 2018-10-15
 ----------------------
 
@@ -234,7 +244,8 @@ Changed
 * Initial release.
 
 
-.. _Unreleased: https://github.com/Bogdanp/molten/compare/v0.7.1...HEAD
+.. _Unreleased: https://github.com/Bogdanp/molten/compare/v0.7.2...HEAD
+.. _0.7.2: https://github.com/Bogdanp/molten/compare/v0.7.1...v0.7.2
 .. _0.7.1: https://github.com/Bogdanp/molten/compare/v0.7.0...v0.7.1
 .. _0.7.0: https://github.com/Bogdanp/molten/compare/v0.6.1...v0.7.0
 .. _0.6.1: https://github.com/Bogdanp/molten/compare/v0.6.0...v0.6.1

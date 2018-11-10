@@ -22,7 +22,8 @@ from wsgiref.util import FileWrapper  # type: ignore
 
 from .components import (
     CookiesComponent, HeaderComponent, QueryParamComponent, RequestBodyComponent,
-    RequestDataComponent, RouteComponent, RouteParamsComponent, SchemaComponent
+    RequestDataComponent, RouteComponent, RouteParamsComponent, SchemaComponent,
+    UploadedFileComponent
 )
 from .dependency_injection import Component, DependencyInjector
 from .errors import ParseError, RequestHandled, RequestParserNotAvailable
@@ -94,6 +95,7 @@ class BaseApp:
             RequestBodyComponent(),
             RequestDataComponent(self.parsers),
             SchemaComponent(),
+            UploadedFileComponent(),
         ]
         self.injector = DependencyInjector(
             components=self.components,

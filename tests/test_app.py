@@ -1,12 +1,13 @@
 import os
+from io import BytesIO
 from typing import Optional, Tuple
 
 import pytest
 
 from molten import (
     HTTP_200, HTTP_201, HTTP_204, App, BaseApp, Cookies, Field, Header, QueryParam, QueryParams,
-    Request, RequestData, RequestHandled, Response, Route, StartResponse, StreamingResponse, schema,
-    testing
+    Request, RequestData, RequestHandled, Response, Route, StartResponse, StreamingResponse,
+    UploadedFile, schema, testing
 )
 
 
@@ -104,6 +105,15 @@ def upgrade(start_response: StartResponse) -> None:
     raise RequestHandled("request upgraded")
 
 
+def get_size(f: UploadedFile) -> int:
+    return len(f.read())
+
+
+def get_size_opt(f: Optional[UploadedFile], r: RequestData) -> int:
+    print(r)
+    return f and len(f.read()) or int(r.get("n"))
+
+
 app = App(routes=[
     Route("/", index),
     Route("/params", params),
@@ -124,6 +134,8 @@ app = App(routes=[
     Route("/accounts", create_account, method="POST"),
     Route("/stream/{n}", stream),
     Route("/upgrade", upgrade),
+    Route("/get-size", get_size, method="POST"),
+    Route("/get-size-opt", get_size_opt, method="POST"),
 ])
 client = testing.TestClient(app)
 
@@ -494,3 +506,45 @@ def test_apps_skip_response_processing_for_handled_requests():
     assert response.status_code == 200
     # And the response should a custom header
     assert response.headers["success"] == "yes"
+
+
+def test_apps_can_inject_uploaded_files():
+    # Given that I have an app
+    # When I make a request to a handler that requires a file upload without that file
+    response = client.post(app.reverse_uri("get_size"), files={
+        "g": ("abc.txt", BytesIO()),
+    })
+
+    # Then I should get back a 400 response
+    assert response.status_code == 400
+    # And the response should contain the size of my input file
+    assert response.json() == {"errors": {"f": "must be a file"}}
+
+    # When I make a request to a handler that requires a file upload
+    response = client.post(app.reverse_uri("get_size"), files={
+        "f": ("abc.txt", BytesIO(b"abc")),
+    })
+
+    # Then I should get back a 200 response
+    assert response.status_code == 200
+    # And the response should contain the size of my input file
+    assert response.json() == 3
+
+
+def test_apps_can_inject_optional_uploaded_files():
+    # Given that I have an app
+    # When I make a request to a handler that optionally processes uploaded files without a file
+    response = client.post(
+        app.reverse_uri("get_size_opt"),
+        data={
+            "n": "5",
+        },
+        files={
+            "g": ("abc.txt", BytesIO()),
+        },
+    )
+
+    # Then I should get back a 200 response
+    assert response.status_code == 200
+    # And the response should contain the size of my input file
+    assert response.json() == 5

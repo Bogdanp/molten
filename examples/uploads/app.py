@@ -1,6 +1,6 @@
 import os
 
-from molten import App, RequestData, Route
+from molten import App, RequestData, Route, UploadedFile
 
 
 def path_to(*segments):
@@ -13,4 +13,11 @@ def upload(data: RequestData) -> None:
         uploaded_file.save(path_to("uploads", uploaded_file.filename))
 
 
-app = App(routes=[Route("/upload", upload, method="POST")])
+def upload_one(f: UploadedFile) -> None:
+    f.save(path_to("uploads", f.filename))
+
+
+app = App(routes=[
+    Route("/upload", upload, method="POST"),
+    Route("/upload-one", upload_one, method="POST"),
+])

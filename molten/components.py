@@ -22,7 +22,7 @@ from .dependency_injection import DependencyResolver
 from .errors import (
     HeaderMissing, HTTPError, ParamMissing, RequestParserNotAvailable, ValidationError
 )
-from .http import HTTP_400, Cookies, Headers, QueryParams
+from .http import HTTP_400, Cookies, Headers, QueryParams, UploadedFile
 from .parsers import RequestParser
 from .router import Route
 from .typing import (
@@ -232,3 +232,32 @@ class SchemaComponent:
             return load_schema(parameter.annotation, data)
         except ValidationError as e:
             raise HTTPError(HTTP_400, {"errors": e.reasons})
+
+
+class UploadedFileComponent:
+    """Retrieves a named UploadedFile from the request.
+
+    Examples:
+
+      def handle(f: UploadedFile) -> Response:
+        ...
+    """
+
+    is_cacheable = False
+    is_singleton = False
+
+    def can_handle_parameter(self, parameter: Parameter) -> bool:
+        _, annotation = extract_optional_annotation(parameter.annotation)
+        return annotation is UploadedFile
+
+    def resolve(self, parameter: Parameter, request: RequestData) -> Optional[UploadedFile]:
+        is_optional, _ = extract_optional_annotation(parameter.annotation)
+
+        uploaded_file = request.get(parameter.name)
+        if isinstance(uploaded_file, UploadedFile):
+            return uploaded_file
+
+        if is_optional:
+            return None
+
+        raise HTTPError(HTTP_400, {"errors": {parameter.name: "must be a file"}})

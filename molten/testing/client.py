@@ -16,10 +16,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import json
+import os
+import random
+import string
 from functools import partial
 from io import BytesIO
 from json import dumps as to_json
-from typing import Any, BinaryIO, Callable, Dict, Optional, Union, cast
+from typing import Any, BinaryIO, Callable, Dict, Optional, Tuple, Union, cast
 from urllib.parse import urlencode
 
 from ..app import BaseApp
@@ -99,6 +102,7 @@ class TestClient:
             params: Optional[Union[ParamsDict, QueryParams]] = None,
             body: Optional[bytes] = None,
             data: Optional[Dict[str, str]] = None,
+            files: Optional[Dict[str, Tuple[str, BinaryIO]]] = None,
             json: Optional[Any] = None,
             auth: Optional[Callable[[Request], Request]] = None,
             prepare_environ: Optional[Callable[[Environ], Environ]] = None,
@@ -115,12 +119,13 @@ class TestClient:
           params: Optional query params.
           body: An optional bytestring for the request body.
           data: An optional dictionary for the request body that gets url-encoded.
+          files: An optional dictionary of files to upload as part of a multipart request.
           json: An optional value for the request body that gets json-encoded.
           auth: An optional function that can be used to add auth
             headers to the request.
         """
-        if data is not None and json is not None:
-            raise RuntimeError("either 'data' or 'json' should be provided, not both")
+        if data is not None and json is not None or files is not None and json is not None:
+            raise RuntimeError("either 'data'/'files' or 'json' should be provided, not both")
 
         request = Request(
             method=method.upper(),
@@ -132,7 +137,31 @@ class TestClient:
             request.headers["content-length"] = f"{len(body)}"
             request.body_file = BytesIO(body)
 
-        if data is not None:
+        elif files is not None:
+            boundary = "--" + "".join(random.choice(string.ascii_letters) for _ in range(30))
+            request.body_file = content = BytesIO()
+
+            content.write(f"{boundary}\r\n".encode())
+            for field_name, (file_name, file_stream) in files.items():
+                content.write(f"--{boundary}\r\n".encode())
+                content.write(f'content-disposition: multipart/form-data; name="{field_name}"; filename="{file_name}"\r\n'.encode())
+                content.write(b"\r\n")
+                content.write(file_stream.read())
+                content.write(b"\r\n")
+
+            for field_name, field_value in (data or {}).items():
+                content.write(f"--{boundary}\r\n".encode())
+                content.write(f'content-disposition: multipart/form-data; name="{field_name}"\r\n'.encode())
+                content.write(b"\r\n")
+                content.write(field_value.encode())
+                content.write(b"\r\n")
+
+            content.write(f"--{boundary}--\r\n".encode())
+            request.headers["content-type"] = f"multipart/form-data; boundary={boundary}"
+            request.headers["content-length"] = content.tell()
+            content.seek(0, os.SEEK_SET)
+
+        elif data is not None:
             request_content = urlencode(data).encode("utf-8")
             request.headers["content-type"] = "application/x-www-form-urlencoded"
             request.headers["content-length"] = f"{len(request_content)}"

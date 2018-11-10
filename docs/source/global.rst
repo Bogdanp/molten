@@ -35,6 +35,7 @@
 .. |Settings| replace:: :class:`Settings<molten.Settings>`
 .. |StringValidator| replace:: :class:`StringValidator<molten.validation.field.StringValidator>`
 .. |TOMLSettingsComponent| replace:: :class:`TOMLSettingsComponent<molten.contrib.toml_settings.TOMLSettingsComponent>`
+.. |UploadedFile| replace:: :class:`UploadedFile<molten.http.UploadedFile>`
 .. |_conf_files| replace:: :ref:`configuration files<settings contrib>`
 .. |_prometheus| replace:: :ref:`prometheus metrics<prometheus contrib>`
 .. |_request_ids| replace:: :ref:`request ids<request id contrib>`
