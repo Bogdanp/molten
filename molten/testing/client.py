@@ -158,7 +158,7 @@ class TestClient:
 
             content.write(f"--{boundary}--\r\n".encode())
             request.headers["content-type"] = f"multipart/form-data; boundary={boundary}"
-            request.headers["content-length"] = content.tell()
+            request.headers["content-length"] = str(content.tell())
             content.seek(0, os.SEEK_SET)
 
         elif data is not None:
