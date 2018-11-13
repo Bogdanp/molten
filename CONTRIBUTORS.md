@@ -11,3 +11,4 @@ those changes to CLEARTYPE SRL.
 | [@gaqzi](https://github.com/gaqzi)               | Björn Andersson |
 | [@joranbeasley](https://github.com/joranbeasley) |                 |
 | [@mands](https://github.com/mands)               | Mandeep Gill    |
+| [@edwardgeorge](https://github.com/edwardgeorge) | Edward George   |
