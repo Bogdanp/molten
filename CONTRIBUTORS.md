@@ -8,5 +8,6 @@ those changes to CLEARTYPE SRL.
 
 | Username | Name |
 | :------- | :--- |
+| [@edwardgeorge](https://github.com/edwardgeorge) | Edward George |
 | [@gaqzi](https://github.com/gaqzi) | Björn Andersson |
 | [@joranbeasley](https://github.com/joranbeasley) | |

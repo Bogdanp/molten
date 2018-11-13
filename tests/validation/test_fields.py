@@ -1,3 +1,5 @@
+from typing import Optional, Union
+
 import pytest
 
 from molten import Field, FieldValidationError
@@ -40,3 +42,20 @@ def test_fields_can_fail_to_coerce_values():
         field.validate("invalid")
 
     assert e_data.value.message == "value could not be coerced to int"
+
+
+@pytest.mark.parametrize("annotation,value,expected", [
+    (Optional[Union[int, str]], None, None),
+    (Optional[Union[int, str]], 1, 1),
+    (Optional[Union[int, str]], "a", "a"),
+    (Union[Optional[int], str], None, None),
+    (Union[Optional[int], str], 1, 1),
+    (Union[Optional[int], str], "a", "a"),
+    (Union[int, Optional[str]], None, None),
+    (Union[int, Optional[str]], 1, 1),
+    (Union[int, Optional[str]], "a", "a"),
+])
+def test_fields_with_optional_unions(annotation, value, expected):
+    field = Field(annotation=annotation)
+    field.select_validator()
+    assert field.validate(value) == expected

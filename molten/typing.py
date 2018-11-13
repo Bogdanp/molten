@@ -75,16 +75,14 @@ def extract_optional_annotation(annotation: Any) -> Tuple[bool, Any]:
     """Returns a tuple denoting whether or not the annotation is an
     Optional type and the inner annotation.
     """
-    if is_optional_annotation(annotation):
-        return True, annotation.__args__[0]
+    if typing_inspect.is_union_type(annotation):
+        args = get_args(annotation)
+        # filter arguments for NoneType
+        inner = tuple(
+            arg for arg in args
+            if not isinstance(arg, type) or not issubclass(arg, type(None)))
+        if len(inner) < len(args):
+            # if filtered list is less than original
+            # then we have an optional annotation.
+            return True, Union[inner]
     return False, annotation
-
-
-def is_optional_annotation(annotation: Any) -> bool:
-    """Returns True if the given annotation represents an Optional type.
-    """
-    try:
-        return getattr(annotation, "__origin__", None) is Union and \
-            issubclass(annotation.__args__[1], type(None))
-    except TypeError:  # pragma: no cover
-        return False
