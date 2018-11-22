@@ -37,7 +37,7 @@ class Templates:
             loader=jinja2.FileSystemLoader(path),
         )
 
-    def render(self, template_name: str, **context: Dict[str, Any]) -> Response:
+    def render(self, template_name: str, **context: Any) -> Response:
         """Find a template and render it.
 
         Parameters:
