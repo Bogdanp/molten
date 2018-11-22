@@ -169,7 +169,7 @@ class App(BaseApp):
             Request: request,
             RequestInput: RequestInput(request.body_file),
             Scheme: Scheme(request.scheme),
-            StartResponse: start_response,
+            StartResponse: start_response,  # type: ignore
         })
 
         try:
