@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from inspect import Parameter
-from typing import Any, Dict
+from typing import Any
 
 from molten import HTTP_200, Response
 
