@@ -9,6 +9,18 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 -------------
 
+`0.7.3`_ -- 2018-11-10
+----------------------
+
+Fixed
+^^^^^
+
+* A type annotation in ``Templates``.  (`#25`_, `@mands`_)
+
+.. _#25: https://github.com/Bogdanp/molten/pull/25
+.. _@mands: https://github.com/mands
+
+
 `0.7.2`_ -- 2018-11-10
 ----------------------
 
@@ -253,7 +265,8 @@ Changed
 * Initial release.
 
 
-.. _Unreleased: https://github.com/Bogdanp/molten/compare/v0.7.2...HEAD
+.. _Unreleased: https://github.com/Bogdanp/molten/compare/v0.7.3...HEAD
+.. _0.7.3: https://github.com/Bogdanp/molten/compare/v0.7.2...v0.7.3
 .. _0.7.2: https://github.com/Bogdanp/molten/compare/v0.7.1...v0.7.2
 .. _0.7.1: https://github.com/Bogdanp/molten/compare/v0.7.0...v0.7.1
 .. _0.7.0: https://github.com/Bogdanp/molten/compare/v0.6.1...v0.7.0
