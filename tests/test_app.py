@@ -511,7 +511,7 @@ def test_apps_can_inject_uploaded_files():
     # Given that I have an app
     # When I make a request to a handler that requires a file upload without that file
     response = client.post(app.reverse_uri("get_size"), files={
-        "g": ("abc.txt", BytesIO()),
+        "g": ("abc.txt", BytesIO(), "text/plain"),
     })
 
     # Then I should get back a 400 response
@@ -521,7 +521,7 @@ def test_apps_can_inject_uploaded_files():
 
     # When I make a request to a handler that requires a file upload
     response = client.post(app.reverse_uri("get_size"), files={
-        "f": ("abc.txt", BytesIO(b"abc")),
+        "f": ("abc.txt", BytesIO(b"abc"), "text/plain"),
     })
 
     # Then I should get back a 200 response
@@ -539,7 +539,7 @@ def test_apps_can_inject_optional_uploaded_files():
             "n": "5",
         },
         files={
-            "g": ("abc.txt", BytesIO()),
+            "g": ("abc.txt", BytesIO(), "text/plain"),
         },
     )
 
