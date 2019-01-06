@@ -9,6 +9,16 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 -------------
 
+Changed
+^^^^^^^
+
+* The test client now supports specifying the mime type of each
+  uploaded file.  (`#30`_, `@jairojair`_)
+
+.. _#30: https://github.com/Bogdanp/molten/pull/30
+.. _@jairojair: https://github.com/jairojair
+
+
 `0.7.3`_ -- 2018-11-10
 ----------------------
 

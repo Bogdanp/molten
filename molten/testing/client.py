@@ -84,6 +84,12 @@ class TestResponse:
         return getattr(self._response, name)
 
 
+FileSpec = Union[
+    Tuple[str, BinaryIO],
+    Tuple[str, str, BinaryIO],
+]
+
+
 class TestClient:
     """Test clients are used to simulate requests against an
     application instance.
@@ -102,7 +108,7 @@ class TestClient:
             params: Optional[Union[ParamsDict, QueryParams]] = None,
             body: Optional[bytes] = None,
             data: Optional[Dict[str, str]] = None,
-            files: Optional[Dict[str, Tuple[str, BinaryIO]]] = None,
+            files: Optional[Dict[str, FileSpec]] = None,
             json: Optional[Any] = None,
             auth: Optional[Callable[[Request], Request]] = None,
             prepare_environ: Optional[Callable[[Environ], Environ]] = None,
@@ -142,9 +148,16 @@ class TestClient:
             request.body_file = content = BytesIO()
 
             content.write(f"{boundary}\r\n".encode())
-            for field_name, (file_name, file_stream) in files.items():
+            for field_name, file_spec in files.items():
+                file_type = "application/octet-stream"
+                if len(file_spec) == 3:
+                    file_name, file_type, file_stream = file_spec  # type: ignore
+                else:
+                    file_name, file_stream = file_spec  # type: ignore
+
                 content.write(f"--{boundary}\r\n".encode())
                 content.write(f'content-disposition: multipart/form-data; name="{field_name}"; filename="{file_name}"\r\n'.encode())
+                content.write(f'content-type: {file_type}\r\n'.encode())
                 content.write(b"\r\n")
                 content.write(file_stream.read())
                 content.write(b"\r\n")

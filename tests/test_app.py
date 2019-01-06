@@ -113,6 +113,10 @@ def get_size_opt(f: Optional[UploadedFile], r: RequestData) -> int:
     return f and len(f.read()) or int(r.get("n"))
 
 
+def get_content_type(f: UploadedFile) -> str:
+    return f.headers["content-type"]
+
+
 app = App(routes=[
     Route("/", index),
     Route("/params", params),
@@ -135,6 +139,7 @@ app = App(routes=[
     Route("/upgrade", upgrade),
     Route("/get-size", get_size, method="POST"),
     Route("/get-size-opt", get_size_opt, method="POST"),
+    Route("/get-content-type", get_content_type, method="POST"),
 ])
 client = testing.TestClient(app)
 
@@ -547,3 +552,16 @@ def test_apps_can_inject_optional_uploaded_files():
     assert response.status_code == 200
     # And the response should contain the size of my input file
     assert response.json() == 5
+
+
+def test_uploaded_files_can_have_a_content_type():
+    # Given that I have an app
+    # When I make a request to a handler that requires a file upload w/ a specific content type
+    response = client.post(app.reverse_uri("get_content_type"), files={
+        "f": ("abc.txt", "text/plain", BytesIO(b"abc")),
+    })
+
+    # Then I should get back a 200 response
+    assert response.status_code == 200
+    # And the response should contain the content type
+    assert response.json() == "text/plain"
