@@ -5,8 +5,8 @@ to serve static content.
 
 ## Usage
 
-Install molten with `poetry develop` then `pip install whitenoise` and
-run the app with `gunicorn app:app`.
+Install molten with `pip install -e '.[dev]'` then `pip install
+whitenoise` and run the app with `gunicorn app:app`.
 
 ## Example requests
 

@@ -4,7 +4,8 @@ A simple pastebin built with molten.
 
 ## Usage
 
-Install molten with `poetry develop` then run the app with `gunicorn app:app`.
+Install molten with `pip install -e '.[dev]'` then run the app with
+`gunicorn app:app`.
 
 ## Example requests
 

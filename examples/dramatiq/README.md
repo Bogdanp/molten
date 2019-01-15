@@ -4,9 +4,9 @@ An example demonstrating the [dramatiq] integration.
 
 ## Usage
 
-Install molten with `poetry develop` then run the app with `gunicorn
-app:app`, then run dramatiq workers with `dramatiq app`.  You'll also
-need a running RabbitMQ server.
+Install molten with `pip install -e '.[dev]'` then run the app with
+`gunicorn app:app`, then run dramatiq workers with `dramatiq app`.
+You'll also need a running RabbitMQ server.
 
 ## Example requests
 

@@ -31,8 +31,7 @@ then install it to your local site-packages by running
 
 ::
 
-   $ pip install poetry
-   $ poetry develop
+   $ pip install -e '.[dev]'
 
 in the cloned directory.
 

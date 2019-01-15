@@ -5,7 +5,7 @@ build a simple chat application.
 
 ## Usage
 
-Install molten with `poetry develop` then run the app with:
+Install molten with `pip install -e '.[dev]'` then run the app with:
 
     $ gunicorn -k gevent --worker-connections 128 app:app
 

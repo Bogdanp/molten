@@ -5,8 +5,8 @@ build a basic chatroom app.
 
 ## Usage
 
-Install molten with `poetry develop` then install gunicorn and gevent
-with `pip install gunicorn gevent`.  Run the server:
+Install molten with `pip install -e '.[dev]'` then install gunicorn
+and gevent with `pip install gunicorn gevent`.  Run the server:
 
     $ gunicorn -k gevent app:app
 

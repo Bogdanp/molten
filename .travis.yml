@@ -20,8 +20,7 @@ matrix:
     - python: "nightly"
 
 install:
-  - pip install poetry
-  - poetry develop
+  - pip install -e '.[dev]'
 
 before_script:
   - ./scripts/pre-build.sh

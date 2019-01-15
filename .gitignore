@@ -5,4 +5,3 @@ __pycache__
 dist
 htmlcov
 molten.egg-info
-setup.py
