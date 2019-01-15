@@ -92,7 +92,7 @@ class Field(Generic[_T]):
       validator: The validator to use when loading data.  The schema
         decorator will automatically pick a validator for builtin
         types.
-      \**validator_options: Arbitrary options passed to the field's
+      **validator_options: Arbitrary options passed to the field's
         validator.
     """
 

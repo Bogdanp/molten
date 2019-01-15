@@ -164,7 +164,7 @@ class Router:
 
         Parameters:
           route_name: The name of the route to reverse.
-          \**params: Route params used to build up the path.
+          **params: Route params used to build up the path.
         """
         try:
             route = self._routes_by_name[route_name]

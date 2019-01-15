@@ -42,7 +42,7 @@ class Templates:
 
         Parameters:
           template_name: The name of the template to render.
-          \**context: Bindings passed to the template.
+          **context: Bindings passed to the template.
         """
         template = self.environment.get_template(template_name)
         rendered_template = template.render(**context)
