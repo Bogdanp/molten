@@ -37,7 +37,7 @@ def _substitute(setting: str, value: str, env: Dict[str, str]) -> str:
         return Template(value).substitute(env)
     except KeyError as e:
         raise RuntimeError(f"{e} environment variable missing for setting {setting!r}.")
-    except ValueError as e:
+    except ValueError:
         raise RuntimeError(f"Invalid variable substitution syntax for value {value!r} in setting {setting!r}.")
 
 

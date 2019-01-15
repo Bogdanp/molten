@@ -357,7 +357,7 @@ class Message:
         """
         try:
             return self.buf.getvalue().decode("utf-8")
-        except UnicodeDecodeError as e:
+        except UnicodeDecodeError:
             raise WebsocketProtocolError("Invalid UTF-8 payload.") from None
 
     def get_output(self) -> Union[bytes, bytearray, memoryview]:

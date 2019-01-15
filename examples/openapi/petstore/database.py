@@ -16,7 +16,7 @@ class Database:
         try:
             yield cursor
             self.connection.commit()
-        except Exception as e:
+        except Exception:
             self.connection.rollback()
             raise
         finally:

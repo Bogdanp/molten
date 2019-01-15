@@ -196,7 +196,7 @@ class Field(Generic[_T]):
 
             try:
                 value = annotation(value)
-            except Exception as e:
+            except Exception:
                 raise FieldValidationError(f"value could not be coerced to {annotation.__name__}")
 
         if self.validator:
