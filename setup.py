@@ -34,7 +34,6 @@ extra_dependencies["dev"] = extra_dependencies["all"] + [
     "alabaster>0.7",
     "sphinx<1.8",
     "sphinxcontrib-napoleon",
-    "sphinxcontrib-versioning",
 
     # Linting
     "flake8",
