@@ -21,7 +21,7 @@ building HTTP APIs with Python.
 
 .. raw:: html
 
-   <iframe width="660" height="371" src="https://www.youtube.com/embed/PvJ5rpzTyyw?rel=0&amp;showinfo=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+   <iframe width="660" height="371" sandbox="allow-same-origin allow-scripts" src="https://peertube.social/videos/embed/2d25052d-7182-480f-881b-a02bebbd821d" frameborder="0" allowfullscreen></iframe>
 
 Here's a quick taste::
 
