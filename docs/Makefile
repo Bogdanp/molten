@@ -16,7 +16,7 @@ all:
 
 .PHONY: deploy
 deploy: all
-	gcloud app deploy --project molten-207708 app.yaml
+	rsync -r --delete build/html/* moltenframework@moltenframework.com:~/www
 
 
 help:
