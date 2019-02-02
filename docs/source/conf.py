@@ -21,7 +21,7 @@
 import molten
 
 project = 'molten'
-copyright = '2018, CLEARTYPE SRL'
+copyright = '2018, 2019 CLEARTYPE SRL'
 author = 'CLEARTYPE SRL'
 
 # The short X.Y version
