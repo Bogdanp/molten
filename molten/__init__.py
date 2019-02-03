@@ -42,7 +42,7 @@ from .validation import (
     Field, Missing, Validator, dump_schema, field, forward_ref, is_schema, load_schema, schema
 )
 
-__version__ = "0.7.3"
+__version__ = "0.7.4"
 
 __all__ = [
     "BaseApp", "App", "Middleware", "annotate",
