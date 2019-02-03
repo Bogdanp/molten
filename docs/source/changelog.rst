@@ -9,13 +9,23 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 -------------
 
+`0.7.4`_ -- 2018-11-10
+----------------------
+
 Changed
 ^^^^^^^
 
 * The test client now supports specifying the mime type of each
   uploaded file.  (`#30`_, `@jairojair`_)
 
+Fixed
+^^^^^
+
+* Optional union types are now handled correctly.  (`#24`_, `@edwardgeorge`_)
+
+.. _#24: https://github.com/Bogdanp/molten/pull/24
 .. _#30: https://github.com/Bogdanp/molten/pull/30
+.. _@edwardgeorge: https://github.com/edwardgeorge
 .. _@jairojair: https://github.com/jairojair
 
 
@@ -275,7 +285,8 @@ Changed
 * Initial release.
 
 
-.. _Unreleased: https://github.com/Bogdanp/molten/compare/v0.7.3...HEAD
+.. _Unreleased: https://github.com/Bogdanp/molten/compare/v0.7.4...HEAD
+.. _0.7.4: https://github.com/Bogdanp/molten/compare/v0.7.3...v0.7.4
 .. _0.7.3: https://github.com/Bogdanp/molten/compare/v0.7.2...v0.7.3
 .. _0.7.2: https://github.com/Bogdanp/molten/compare/v0.7.1...v0.7.2
 .. _0.7.1: https://github.com/Bogdanp/molten/compare/v0.7.0...v0.7.1
