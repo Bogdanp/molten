@@ -371,9 +371,13 @@ def _generate_field_schema(field_name: str, field: Field, schemas: Dict[str, Sch
 
         elif field.response_only:
             field_schema.read_only = True
+            if is_optional:
+                is_optional = not field.required
 
         elif field.request_only:
             field_schema.write_only = True
+            if is_optional:
+                is_optional = not field.required
 
         for option, value in field.validator_options.items():
             if option in Schema._FIELDS:

@@ -16,7 +16,7 @@ from molten.openapi import (
 
 @schema
 class Category:
-    id: Optional[int] = field(response_only=True)
+    id: Optional[int] = field(response_only=True, required=True)
     name: str
 
 
