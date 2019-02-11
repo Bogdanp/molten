@@ -21,7 +21,7 @@ def test_fields_are_representable():
 
     # When I call repr on it
     # Then I should get back its string representation
-    assert repr(field) == "Field(name='example', annotation=<class 'int'>, description=None, default=Missing, default_factory=None, request_name='example', response_name='example', request_only=False, response_only=False, allow_coerce=False, validator=None, validator_options={})"  # noqa
+    assert repr(field) == "Field(name='example', annotation=<class 'int'>, description=None, default=Missing, default_factory=None, request_name='example', response_name='example', request_only=False, response_only=False, required=False, allow_coerce=False, validator=None, validator_options={})"  # noqa
 
 
 @pytest.mark.parametrize("field,value,expected", [
