@@ -422,12 +422,13 @@ def _make_schema_ref(name: str) -> Dict[str, str]:
 def _get_annotation(handler: Callable[..., Any], name: str, default: Any = None) -> Any:
     return getattr(handler, f"openapi_{name}", default)
 
+
 def _parse_docstring(docstring):
     """
     parse a docstring and return both a summary and description
     ... maybe at some point parse additional parameter info as well
 
-    >>> _parse_docstring("a short docstring") == {'description':'','summary':'a short docstring'}
+    >>> _parse_docstring("a short docstring") == {'description': '','summary':'a short docstring'}
     True
     >>> _parse_docstring('a summary\\n\\n\\nand a description') == {'description':'and a description','summary':'a summary'}
     True
@@ -437,7 +438,7 @@ def _parse_docstring(docstring):
     :return: a dictionary with 2 keys 'description' and 'summary' guaranteed to be strings
     """
     #: split off any argument definitions from the docstring
-    docstring = re.split('[:@](?:param|return|type)[^:]*?\:', docstring, 1)[0]
+    docstring = re.split('[:@](?:param|return|type)[^:]*?:', docstring, 1)[0]
     summary = ""
     parts = docstring.split("\n\n", 1)
     if len(parts) == 1:
@@ -456,7 +457,7 @@ def _parse_docstring(docstring):
         else:  #: too long for a summary
             docstring = docstring
             summary = ""
-    return {'description':docstring,'summary':summary}
+    return {'description': docstring, 'summary': summary}
 
 
 def _sort_dict(data: Dict[Any, Any]) -> Dict[Any, Any]:
