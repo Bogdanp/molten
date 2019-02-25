@@ -20,6 +20,7 @@
 
 import ast
 import inspect
+import re
 from collections import defaultdict
 from operator import itemgetter
 from textwrap import dedent
@@ -212,12 +213,12 @@ def generate_openapi_document(
             operation = paths[route.template][method] = {
                 "tags": _get_annotation(handler, "tags", []),
                 "operationId": route.name,
-                "description": dedent(handler.__doc__ or "").rstrip(),
                 "parameters": [dump_schema(param, sparse=True) for param in parameters],
                 "deprecated": _get_annotation(handler, "deprecated", False),
                 "responses": {"200": {"description": "A successful response.", "content": {}}},
             }
-
+            #: update our 'description' and 'summary' keys
+            operation.update(_parse_docstring(handler.__doc__ or ""))
             if request_schema_name is not None:
                 operation["requestBody"] = {"content": {}}
                 for media_type in request_mime_types:
@@ -420,6 +421,42 @@ def _make_schema_ref(name: str) -> Dict[str, str]:
 
 def _get_annotation(handler: Callable[..., Any], name: str, default: Any = None) -> Any:
     return getattr(handler, f"openapi_{name}", default)
+
+def _parse_docstring(docstring):
+    """
+    parse a docstring and return both a summary and description
+    ... maybe at some point parse additional parameter info as well
+
+    >>> _parse_docstring("a short docstring") == {'description':'','summary':'a short docstring'}
+    True
+    >>> _parse_docstring('a summary\\n\\n\\nand a description') == {'description':'and a description','summary':'a summary'}
+    True
+
+
+    :param docstring:
+    :return: a dictionary with 2 keys 'description' and 'summary' guaranteed to be strings
+    """
+    #: split off any argument definitions from the docstring
+    docstring = re.split('[:@](?:param|return|type)[^:]*?\:', docstring, 1)[0]
+    summary = ""
+    parts = docstring.split("\n\n", 1)
+    if len(parts) == 1:
+        #: this is a summary if its short enough otherwise a description
+        if len(parts[0]) <= 80:
+            summary = parts[0]
+            docstring = ""
+        else:  #: too long lets use it as a description
+            docstring = parts[0]
+            summary = ""
+    else:
+        #: if our summary is short enough lets use it
+        if len(parts[0]) <= 120:
+            summary = parts[0]
+            docstring = parts[1]
+        else:  #: too long for a summary
+            docstring = docstring
+            summary = ""
+    return {'description':docstring,'summary':summary}
 
 
 def _sort_dict(data: Dict[Any, Any]) -> Dict[Any, Any]:
