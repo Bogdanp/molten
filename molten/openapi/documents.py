@@ -423,7 +423,7 @@ def _get_annotation(handler: Callable[..., Any], name: str, default: Any = None)
     return getattr(handler, f"openapi_{name}", default)
 
 
-def _parse_docstring(docstring) -> Dict[str, str]:
+def _parse_docstring(docstring: str) -> Dict[str, str]:
     """
     parse a docstring and return both a summary and description
     ... maybe at some point parse additional parameter info as well
