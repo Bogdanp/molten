@@ -10,7 +10,8 @@
       "get": {
         "tags": [],
         "operationId": "OpenAPIUIHandler",
-        "description": "Renders the Swagger UI.",
+        "summary": "Renders the Swagger UI.",
+        "description": "",
         "parameters": [],
         "deprecated": false,
         "responses": {
@@ -29,7 +30,8 @@
       "get": {
         "tags": [],
         "operationId": "schema",
-        "description": "Generates an OpenAPI v3 document.",
+        "description": "",
+        "summary": "Generates an OpenAPI v3 document.",
         "parameters": [],
         "deprecated": false,
         "responses": {
