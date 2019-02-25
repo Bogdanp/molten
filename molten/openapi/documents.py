@@ -457,7 +457,7 @@ def _parse_docstring(docstring) -> Dict[str, str]:
         else:  #: too long for a summary
             docstring = docstring
             summary = ""
-    return {'description': docstring, 'summary': summary}
+    return {'description': docstring.strip(), 'summary': summary.strip()}
 
 
 def _sort_dict(data: Dict[Any, Any]) -> Dict[Any, Any]:

@@ -52,6 +52,7 @@
         ],
         "operationId": "add_pet_deprecated",
         "description": "",
+        "summary": "",
         "parameters": [
           {
             "name": "accept",
@@ -107,7 +108,8 @@
           "pets"
         ],
         "operationId": "add_pet",
-        "description": "Add a new pet to the store.",
+        "summary": "Add a new pet to the store.",
+        "description": "",
         "parameters": [],
         "deprecated": false,
         "responses": {
@@ -153,6 +155,7 @@
         ],
         "operationId": "list_pets",
         "description": "",
+        "summary": "",
         "parameters": [],
         "deprecated": false,
         "responses": {
@@ -183,7 +186,8 @@
           "pets"
         ],
         "operationId": "update_pet",
-        "description": "Update an existing pet.",
+        "summary": "Update an existing pet.",
+        "description": "",
         "parameters": [
           {
             "name": "pet_id",
@@ -243,7 +247,8 @@
           "pets"
         ],
         "operationId": "delete_pet",
-        "description": "Delete an existing pet.",
+        "summary": "Delete an existing pet.",
+        "description": "",
         "parameters": [
           {
             "name": "pet_id",
@@ -279,7 +284,8 @@
           "pets"
         ],
         "operationId": "add_photo",
-        "description": "Add a photo to a pet.",
+        "summary": "Add a photo to a pet.",
+        "description": "",
         "parameters": [
           {
             "name": "pet_id",
@@ -323,6 +329,7 @@
         ],
         "operationId": "update_settings",
         "description": "",
+        "summary": "",
         "parameters": [],
         "deprecated": false,
         "responses": {
