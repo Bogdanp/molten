@@ -3,15 +3,13 @@
 molten: modern API framework
 ============================
 
-Release v\ |release|. (:doc:`installation`, :doc:`changelog`, `Discuss`_, `Source Code`_, `Support via Liberapay`_, `Support via Tidelift`_)
+Release v\ |release|. (:doc:`installation`, :doc:`changelog`, `Discuss`_, `Source Code`_, `Support via Patreon`_, `Support via Tidelift`_)
 
 .. _Discuss: https://www.reddit.com/r/moltenframework/
 .. _Source Code: https://github.com/Bogdanp/molten
-.. _Support via Liberapay: https://liberapay.com/bogdan
+.. _Support via Patreon: https://patreon.com/popabogdanp
 .. _Support via Tidelift: https://tidelift.com/subscription/pkg/pypi-molten?utm_source=pypi-molten&utm_medium=referral&utm_campaign=readme
 
-.. image:: http://img.shields.io/liberapay/patrons/bogdan.svg?logo=liberapay
-   :target: https://liberapay.com/bogdan
 .. image:: https://img.shields.io/badge/license-LGPL-blue.svg
    :target: license.html
 .. image:: https://travis-ci.org/Bogdanp/molten.svg?branch=master
@@ -56,14 +54,13 @@ project.  There are three ways in which you can do this right now:
    route to supporting both Molten and other open source projects
    that you depend on.
 2. If you're an individual or a company that doesn't want to go
-   through Tidelift then you can support the project via a recurring
-   donation on Liberapay_.
+   through Tidelift then you can support the project via Patreon_.
 3. If you're a company and neither option works for you and you would
    like to receive an invoice from me directly then email me at
    bogdan@defn.io and let's talk.
 
 .. _Tidelift: https://tidelift.com/subscription/pkg/pypi-molten?utm_source=pypi-molten&utm_medium=referral&utm_campaign=readme
-.. _Liberapay: https://liberapay.com/bogdan
+.. _Patreon: https://patreon.com/popabogdanp
 
 
 Features
@@ -254,6 +251,6 @@ Project Info
    Contributing <https://github.com/Bogdanp/molten/blob/master/CONTRIBUTING.md>
    Contributors <https://github.com/Bogdanp/molten/blob/master/CONTRIBUTORS.md>
    Discussion Board <https://www.reddit.com/r/moltenframework/>
-   Support via Liberapay <https://liberapay.com/bogdan>
+   Support via Patreon <https://patreon.com/popabogdanp>
    Support via Tidelift <https://tidelift.com/subscription/pkg/pypi-molten?utm_source=pypi-molten&utm_medium=referral&utm_campaign=readme>
    license
