@@ -24,7 +24,7 @@ building HTTP APIs with Python.
 
 .. raw:: html
 
-   <iframe width="660" height="371" sandbox="allow-same-origin allow-scripts" src="https://peertube.social/videos/embed/2d25052d-7182-480f-881b-a02bebbd821d" frameborder="0" allowfullscreen></iframe>
+   <video width="660" src="https://media.defn.io/molten.mp4" controls></video>
 
 Here's a quick taste::
 
