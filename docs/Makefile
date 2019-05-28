@@ -16,7 +16,7 @@ all:
 
 .PHONY: deploy
 deploy: all
-	rsync -avz --delete build/html/* moltenframework@ssh.moltenframework.com:~/www
+	rsync -avz --delete build/html/* moltenframework:~/www
 
 
 help:
