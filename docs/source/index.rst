@@ -3,12 +3,10 @@
 molten: modern API framework
 ============================
 
-Release v\ |release|. (:doc:`installation`, :doc:`changelog`, `Discuss`_, `Source Code`_, `Support via Patreon`_, `Support via Tidelift`_)
+Release v\ |release|. (:doc:`installation`, :doc:`changelog`, `Discuss`_, `Source Code`_)
 
 .. _Discuss: https://www.reddit.com/r/moltenframework/
 .. _Source Code: https://github.com/Bogdanp/molten
-.. _Support via Patreon: https://patreon.com/popabogdanp
-.. _Support via Tidelift: https://tidelift.com/subscription/pkg/pypi-molten?utm_source=pypi-molten&utm_medium=referral&utm_campaign=readme
 
 .. image:: https://img.shields.io/badge/license-LGPL-blue.svg
    :target: license.html
@@ -16,8 +14,6 @@ Release v\ |release|. (:doc:`installation`, :doc:`changelog`, `Discuss`_, `Sourc
    :target: https://travis-ci.org/Bogdanp/molten
 .. image:: https://badge.fury.io/py/molten.svg
    :target: https://badge.fury.io/py/molten
-.. image:: https://tidelift.com/badges/github/Bogdanp/molten
-   :target: https://tidelift.com/subscription/pkg/pypi-molten?utm_source=pypi-molten&utm_medium=referral&utm_campaign=docs
 
 **molten** is a minimal, extensible, fast and productive framework for
 building HTTP APIs with Python.
@@ -40,27 +36,6 @@ Here's a quick taste::
 For more, take a look at the examples_ folder in the GitHub repo.
 
 .. _examples: https://github.com/Bogdanp/molten/tree/master/examples
-
-
-Support the Project
--------------------
-
-If you use and love Molten and want to make sure it gets the love
-and attention it deserves then you should consider supporting the
-project.  There are three ways in which you can do this right now:
-
-1. If you're a company that uses Molten in production then you can
-   get a Tidelift_ subscription.  Doing so will give you an easy
-   route to supporting both Molten and other open source projects
-   that you depend on.
-2. If you're an individual or a company that doesn't want to go
-   through Tidelift then you can support the project via Patreon_.
-3. If you're a company and neither option works for you and you would
-   like to receive an invoice from me directly then email me at
-   bogdan@defn.io and let's talk.
-
-.. _Tidelift: https://tidelift.com/subscription/pkg/pypi-molten?utm_source=pypi-molten&utm_medium=referral&utm_campaign=readme
-.. _Patreon: https://patreon.com/popabogdanp
 
 
 Features
@@ -251,6 +226,4 @@ Project Info
    Contributing <https://github.com/Bogdanp/molten/blob/master/CONTRIBUTING.md>
    Contributors <https://github.com/Bogdanp/molten/blob/master/CONTRIBUTORS.md>
    Discussion Board <https://www.reddit.com/r/moltenframework/>
-   Support via Patreon <https://patreon.com/popabogdanp>
-   Support via Tidelift <https://tidelift.com/subscription/pkg/pypi-molten?utm_source=pypi-molten&utm_medium=referral&utm_campaign=readme>
    license
