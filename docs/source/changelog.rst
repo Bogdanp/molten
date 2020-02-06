@@ -9,6 +9,14 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 -------------
 
+Changed
+^^^^^^^
+
+* Updated version pin for ``typing-inspect`` to allow ``0.5``.  (`#35`_)
+
+.. _#35: https://github.com/Bogdanp/molten/pull/35
+
+
 `0.7.4`_ -- 2018-11-10
 ----------------------
 
