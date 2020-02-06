@@ -24,7 +24,7 @@ with open(rel("molten", "__init__.py"), "r") as f:
 
 dependencies = [
     "typing-extensions>=3.6,<4.0",
-    "typing-inspect>=0.3.1,<0.4",
+    "typing-inspect>=0.3.1,<0.6",
 ]
 
 extra_dependencies = {}
