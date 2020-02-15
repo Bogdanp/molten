@@ -1,0 +1,2 @@
+include molten/openapi/templates/index.html
+include molten/py.typed

@@ -9,6 +9,19 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 -------------
 
+`1.0.1`_ -- 2020-02-15
+----------------------
+
+Fixed
+^^^^^
+
+I just _knew_ I was tempting fate with that 1.0 release.  This release
+fixes a build issue with the package where a template file was
+missing.  (`#37`)
+
+.. _#37: https://github.com/Bogdanp/molten/pull/37
+
+
 `1.0.0`_ -- 2020-02-15
 ----------------------
 
@@ -299,7 +312,8 @@ Changed
 * Initial release.
 
 
-.. _Unreleased: https://github.com/Bogdanp/molten/compare/v1.0.0...HEAD
+.. _Unreleased: https://github.com/Bogdanp/molten/compare/v1.0.1...HEAD
+.. _1.0.1: https://github.com/Bogdanp/molten/compare/v1.0.0...v1.0.1
 .. _1.0.0: https://github.com/Bogdanp/molten/compare/v0.7.4...v1.0.0
 .. _0.7.4: https://github.com/Bogdanp/molten/compare/v0.7.3...v0.7.4
 .. _0.7.3: https://github.com/Bogdanp/molten/compare/v0.7.2...v0.7.3
