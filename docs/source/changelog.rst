@@ -9,6 +9,12 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 -------------
 
+`1.0.0`_ -- 2020-02-15
+----------------------
+
+Molten has been extremely stable for the past year and a half so I've
+decided to make it official by tagging this release as 1.0.
+
 Changed
 ^^^^^^^
 
@@ -293,7 +299,8 @@ Changed
 * Initial release.
 
 
-.. _Unreleased: https://github.com/Bogdanp/molten/compare/v0.7.4...HEAD
+.. _Unreleased: https://github.com/Bogdanp/molten/compare/v1.0.0...HEAD
+.. _1.0.0: https://github.com/Bogdanp/molten/compare/v0.7.4...v1.0.0
 .. _0.7.4: https://github.com/Bogdanp/molten/compare/v0.7.3...v0.7.4
 .. _0.7.3: https://github.com/Bogdanp/molten/compare/v0.7.2...v0.7.3
 .. _0.7.2: https://github.com/Bogdanp/molten/compare/v0.7.1...v0.7.2
