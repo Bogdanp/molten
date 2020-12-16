@@ -24,7 +24,7 @@ with open(rel("molten", "__init__.py"), "r") as f:
 
 dependencies = [
     "typing-extensions>=3.6,<4.0",
-    "typing-inspect>=0.3.1,<0.6",
+    "typing-inspect>=0.3.1,<0.7",
 ]
 
 extra_dependencies = {}
@@ -58,7 +58,6 @@ extra_dependencies["dev"] = extra_dependencies["all"] + [
 
     # Testing
     "pytest",
-    "pytest-cov",
 ]
 
 setup(

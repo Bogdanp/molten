@@ -1,0 +1,39 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    name: lint
+    steps:
+      - uses: actions/checkout@master
+      - uses: actions/setup-python@v2
+        with:
+          python-version: "3.9"
+      - run: pip install -e '.[dev]'
+      - run: flake8 molten tests examples
+
+  test:
+    runs-on: ubuntu-latest
+    name: test
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.6", "3.7", "3.8", "3.9"]
+    steps:
+      - uses: actions/checkout@master
+      - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install molten & deps
+        run: pip install -e '.[dev]'
+      - name: Test molten
+        run: py.test
+      # - name: Test examples
+      #   run: |
+      #     for folder in examples/*; do
+      #       pushd "$folder"
+      #       if [ -f test_app.py ]; then
+      #         py.test
+      #       fi
+      #       popd
+      #     done

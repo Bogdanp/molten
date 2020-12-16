@@ -233,7 +233,7 @@ def generate_openapi_document(
             # contain custom status codes followed by the response
             # objects themselves.
             response_annotation = annotations.get("return")
-            response_annotation_origin = get_origin(response_annotation)
+            response_annotation_origin = _get_origin(response_annotation)
             if response_annotation is not None and response_annotation_origin in _TUPLE_TYPES:
                 arguments = get_args(response_annotation)
                 if len(arguments) == 2 and arguments[0] is str and is_schema(arguments[1]):
@@ -272,7 +272,7 @@ def generate_openapi_document(
             # the status code finder couldn't find a 200 status code,
             # then it should be safe to drop that code from the
             # responses object.
-            if get_origin(annotations.get("return")) in _TUPLE_TYPES and 200 not in status_codes:
+            if _get_origin(annotations.get("return")) in _TUPLE_TYPES and 200 not in status_codes:
                 del operation["responses"]["200"]
 
             # TODO: Add support for OAuth2 security scheme.
@@ -324,14 +324,28 @@ def _generate_schema(schema: Any, schemas: Dict[str, Schema]) -> str:
 
 
 @no_type_check
+def _get_origin(annotation: Any) -> Any:
+    return get_origin(annotation) or annotation
+
+
+@no_type_check
+def _is_generic_type(annotation: Any) -> bool:
+    # On 3.9, typing_inspect doesn't clasify annotations without type
+    # parameters as generic so we add fallback cases here.
+    return is_generic_type(annotation) or \
+        annotation in _LIST_TYPES or \
+        annotation in _DICT_TYPES
+
+
+@no_type_check
 def _generate_field_schema(field_name: str, field: Field, schemas: Dict[str, Schema]) -> Tuple[bool, Schema]:
     is_optional, annotation = extract_optional_annotation(field.annotation)
     if is_schema(annotation):
         field_schema_name = _generate_schema(annotation, schemas)
         field_schema = Schema(ref=_make_ref_path(field_schema_name))
 
-    elif is_generic_type(annotation):
-        origin = get_origin(annotation)
+    elif _is_generic_type(annotation):
+        origin = _get_origin(annotation)
         if origin in _LIST_TYPES:
             arguments = get_args(annotation)
             if arguments and is_schema(arguments[0]):
@@ -388,7 +402,7 @@ def _generate_primitive_schema(annotation: Any) -> Optional[Schema]:
         arguments = _PRIMITIVE_ANNOTATION_MAP[annotation]
         return Schema(*arguments)
     except KeyError:
-        origin = get_origin(annotation)
+        origin = _get_origin(annotation)
         if origin in _LIST_TYPES:
             arguments = get_args(annotation)
             if not arguments or is_typevar(arguments[0]):

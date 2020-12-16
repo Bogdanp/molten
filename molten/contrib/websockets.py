@@ -20,8 +20,10 @@
 
 import io
 import logging
+import selectors
 import socket
 import struct
+import time
 from base64 import b64encode
 from concurrent.futures import Future, ThreadPoolExecutor
 from hashlib import sha1
@@ -740,6 +742,12 @@ class WebsocketsTestClient(TestClient):
 
         client_sock, server_sock = socket.socketpair()
 
+        def get(*args, **kwargs):
+            try:
+                return self.get(*args, **kwargs)
+            finally:
+                client_sock.close()
+
         def prepare_environ(environ: Environ) -> Environ:
             nonlocal client_sock
             environ["gunicorn.socket"] = client_sock
@@ -750,30 +758,45 @@ class WebsocketsTestClient(TestClient):
         # to it so we can keep track of exceptions that occur in the
         # handler.
         future = self.executor.submit(
-            self.get, path, headers, params, auth=auth,
+            get, path, headers, params, auth=auth,
             prepare_environ=prepare_environ,
         )
-
-        # Delete the client sock so that, if the future completes w/o
-        # upgrading the request, it'll get freed (closed) and we're
-        # not stuck waiting for a response below.
-        del client_sock
-
-        # Consume the upgrade response and make sure it looks right.
-        # This is kind of piggy, but it should be fine.
-        response_data = b""
-        while b"\r\n\r\n" not in response_data and future.running():
-            data = server_sock.recv(CHUNKSIZE)
-            if not data:
-                break
-
-            response_data += data
 
         expected_response = UPGRADE_RESPONSE_TEMPLATE % {
             b"websocket_accept": b"3SC6TZx4582OZaOogPVxMx5CGS0=",
         }
-        if not response_data == expected_response:
-            raise ValueError(f"Invalid upgrade response: {response_data}. Did you connect() to a standard endpoint?")
+
+        # Consume the upgrade response and make sure it looks right.
+        response_data = _chomp(server_sock, expected_response, timeout=5)
+        if response_data is None:
+            raise RuntimeError("timed out while waiting for upgrade response")
+
+        elif not response_data == expected_response:
+            raise ValueError(f"Invalid upgrade response: {response_data!r}. Did you connect() to a standard endpoint?")
 
         websocket = Websocket(_BufferedStream(server_sock))
         return _WebsocketsTestConnection(future, websocket)
+
+
+def _chomp(sock: socket.socket, expected: bytes, timeout: float) -> Union[bytes, None]:
+    try:
+        res = b''
+        sock.setblocking(False)
+        with selectors.DefaultSelector() as sel:
+            sel.register(sock, selectors.EVENT_READ)
+            deadline = time.monotonic() + timeout
+            while True:
+                events = sel.select(timeout=max(0, deadline - time.monotonic()))
+                if not events:
+                    return None
+
+                for _, _ in events:
+                    data = sock.recv(CHUNKSIZE)
+                    if not data:
+                        return res
+
+                    res += data
+                    if res == expected:
+                        return res
+    finally:
+        sock.setblocking(True)
