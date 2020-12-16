@@ -1,6 +1,6 @@
 # molten
 
-[![Build Status](https://travis-ci.org/Bogdanp/molten.svg?branch=master)](https://travis-ci.org/Bogdanp/molten)
+[![CI](https://github.com/Bogdanp/molten/workflows/CI/badge.svg)](https://github.com/Bogdanp/molten/actions?query=workflow%3ACI)
 [![PyPI version](https://badge.fury.io/py/molten.svg)](https://badge.fury.io/py/molten)
 [![Documentation](https://img.shields.io/badge/doc-latest-brightgreen.svg)](https://moltenframework.com)
 [![Reddit](https://img.shields.io/badge/discuss-online-orange.svg)](https://www.reddit.com/r/moltenframework/)

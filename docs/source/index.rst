@@ -10,8 +10,8 @@ Release v\ |release|. (:doc:`installation`, :doc:`changelog`, `Discuss`_, `Sourc
 
 .. image:: https://img.shields.io/badge/license-LGPL-blue.svg
    :target: license.html
-.. image:: https://travis-ci.org/Bogdanp/molten.svg?branch=master
-   :target: https://travis-ci.org/Bogdanp/molten
+.. image:: https://github.com/Bogdanp/molten/actions?query=workflow%3ACI
+   :target: https://github.com/Bogdanp/molten/workflows/CI/badge.svg
 .. image:: https://badge.fury.io/py/molten.svg
    :target: https://badge.fury.io/py/molten
 
