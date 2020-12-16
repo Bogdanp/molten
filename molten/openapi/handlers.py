@@ -85,7 +85,7 @@ class OpenAPIUIHandler:
 
     def __init__(self, schema_route_name: str = "OpenAPIHandler") -> None:
         self.schema_route_name = schema_route_name
-        self.template = pkg_resources.resource_string(f"molten.openapi.templates", "index.html").decode("utf-8")
+        self.template = pkg_resources.resource_string("molten.openapi.templates", "index.html").decode("utf-8")
 
     @property
     def __name__(self) -> str:
