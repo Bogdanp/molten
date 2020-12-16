@@ -58,7 +58,6 @@ extra_dependencies["dev"] = extra_dependencies["all"] + [
 
     # Testing
     "pytest",
-    "pytest-cov",
 ]
 
 setup(
