@@ -9,6 +9,15 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 -------------
 
+Fixed
+^^^^^
+
+* Relaxed version pins on ``gevent`` and ``typing_inspect``.  The
+  former switched to calendar-versioning back in April.
+* Fixed OpenAPI generation for generic types w/o type parameters under
+  Python 3.9.
+* Fixed a deadlock in ``WebsocketsTestClient`` under Python 3.9.
+
 `1.0.1`_ -- 2020-02-15
 ----------------------
 
