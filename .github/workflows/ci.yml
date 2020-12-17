@@ -28,12 +28,12 @@ jobs:
         run: pip install -e '.[dev]'
       - name: Test molten
         run: py.test
-      # - name: Test examples
-      #   run: |
-      #     for folder in examples/*; do
-      #       pushd "$folder"
-      #       if [ -f test_app.py ]; then
-      #         py.test
-      #       fi
-      #       popd
-      #     done
+      - name: Test examples
+        run: |
+          for folder in examples/*; do
+            pushd "$folder"
+            if [ -f test_app.py ]; then
+              py.test
+            fi
+            popd
+          done
