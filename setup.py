@@ -47,7 +47,7 @@ extra_dependencies["dev"] = extra_dependencies["all"] + [
 
     # Contrib
     "dramatiq[rabbitmq]>1.3,<2.0",
-    "gevent>1.3,<2.0",
+    "gevent",
     "gunicorn>19.8",
     "jinja2>=2.10,<3.0",
     "msgpack>0.5,<0.6",
