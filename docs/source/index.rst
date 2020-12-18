@@ -5,7 +5,7 @@ molten: modern API framework
 
 Release v\ |release|. (:doc:`installation`, :doc:`changelog`, `Discuss`_, `Source Code`_)
 
-.. _Discuss: https://www.reddit.com/r/moltenframework/
+.. _Discuss: https://groups.io/g/molten-users
 .. _Source Code: https://github.com/Bogdanp/molten
 
 .. image:: https://img.shields.io/badge/license-LGPL-blue.svg
@@ -225,5 +225,5 @@ Project Info
    changelog
    Contributing <https://github.com/Bogdanp/molten/blob/master/CONTRIBUTING.md>
    Contributors <https://github.com/Bogdanp/molten/blob/master/CONTRIBUTORS.md>
-   Discussion Board <https://www.reddit.com/r/moltenframework/>
+   Discussion Board <https://groups.io/g/molten-users>
    license
