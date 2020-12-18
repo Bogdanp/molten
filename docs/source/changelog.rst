@@ -9,6 +9,9 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 -------------
 
+`1.0.2`_ -- 2020-12-18
+----------------------
+
 Fixed
 ^^^^^
 
@@ -321,7 +324,8 @@ Changed
 * Initial release.
 
 
-.. _Unreleased: https://github.com/Bogdanp/molten/compare/v1.0.1...HEAD
+.. _Unreleased: https://github.com/Bogdanp/molten/compare/v1.0.2...HEAD
+.. _1.0.2: https://github.com/Bogdanp/molten/compare/v1.0.1...v1.0.2
 .. _1.0.1: https://github.com/Bogdanp/molten/compare/v1.0.0...v1.0.1
 .. _1.0.0: https://github.com/Bogdanp/molten/compare/v0.7.4...v1.0.0
 .. _0.7.4: https://github.com/Bogdanp/molten/compare/v0.7.3...v0.7.4
