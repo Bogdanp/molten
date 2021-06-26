@@ -188,7 +188,8 @@ def test_empty_app_can_return_openapi_document():
                 "get": {
                     "tags": [],
                     "operationId": "schema",
-                    "description": "Generates an OpenAPI v3 document.",
+                    "summary": "Generates an OpenAPI v3 document.",
+                    "description": "",
                     "deprecated": False,
                     "parameters": [],
                     "responses": {
