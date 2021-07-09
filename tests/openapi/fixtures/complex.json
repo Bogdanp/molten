@@ -369,6 +369,7 @@
       "tests.openapi.test_openapi.Category": {
         "type": "object",
         "required": [
+          "id",
           "name"
         ],
         "properties": {

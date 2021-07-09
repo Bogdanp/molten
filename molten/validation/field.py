@@ -87,6 +87,7 @@ class Field(Generic[_T]):
         responses.  Defaults to False.
       response_only: Whether or not to ignore this field when loading
         requests.  Defaults to False.
+      required: Whether this field is required. Defaults to False.
       allow_coerce: Whether or not values passed to this field may be
         coerced to the correct type.  Defaults to False.
       validator: The validator to use when loading data.  The schema
@@ -106,6 +107,7 @@ class Field(Generic[_T]):
         "response_name",
         "request_only",
         "response_only",
+        "required",
         "allow_coerce",
         "validator",
         "validator_options",
@@ -122,6 +124,7 @@ class Field(Generic[_T]):
             response_name: Optional[str] = None,
             request_only: bool = False,
             response_only: bool = False,
+            required: bool = False,
             allow_coerce: bool = False,
             validator: Optional[Validator[_T]] = None,
             **validator_options: Any,
@@ -135,6 +138,7 @@ class Field(Generic[_T]):
         self.response_name = response_name or name
         self.request_only = request_only
         self.response_only = response_only
+        self.required = required
         self.allow_coerce = allow_coerce
         self.validator = validator
         self.validator_options = validator_options
